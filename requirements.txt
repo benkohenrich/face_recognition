@@ -1,0 +1,12 @@
+singleton
+requests
+flask
+flask-sqlalchemy
+flask-restful
+flask-script
+mysqlclient
+uuid
+gunicorn
+StringIO
+enums
+sklearn
