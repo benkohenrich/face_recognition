@@ -67,3 +67,13 @@ class ImageHelper(object):
 	@staticmethod
 	def delete_image(path):
 		os.unlink(path)
+
+	@staticmethod
+	def prepare_face(face):
+		image_path = ImageHelper.decode_base64_to_filename(face)
+		ImageHelper.minimalize(image_path)
+		face = ImageHelper.encode_base64_from_path(image_path)
+		face = ImageHelper.decode_base64(face.decode())
+		ImageHelper.delete_image(image_path)
+
+		return face

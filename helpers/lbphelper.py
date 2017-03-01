@@ -1,6 +1,7 @@
 import base64
 from PIL import Image
 import cv2
+from flask import json
 
 try:
 	from StringIO import StringIO
@@ -12,6 +13,7 @@ from skimage.feature import local_binary_pattern
 from scipy.stats import itemfreq
 from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser
+from helpers.parsers import ResponseParser
 # from matplotlib import pyplot as plt
 
 
@@ -56,6 +58,22 @@ class HistogramMaker(object):
 		hist = x[:, 1] / sum(x[:, 1])
 
 		result = {'radius': radius, 'points': no_points, 'histogram': hist, 'method': method}
+		result_response = {'radius': radius, 'points': no_points, 'histogram':  json.dumps(hist.tolist()), 'method': method}
+
+		process = {
+			"parameters" : result_response,
+			"messages" : {
+
+			},
+			"images" : {
+
+			},
+			"metadata" : {
+
+			}
+		}
+
+		ResponseParser().add_process('extraction', process)
 
 		return result
 
@@ -77,13 +95,3 @@ class HistogramMaker(object):
 		# print(type(npimg))
 		#
 		return HistogramMaker.create_histogram_from_image(npimg)
-
-	@staticmethod
-	def prepare_face(face):
-		image_path = ImageHelper.decode_base64_to_filename(face)
-		ImageHelper.minimalize(image_path)
-		face = ImageHelper.encode_base64_from_path(image_path)
-		face = ImageHelper.decode_base64(face.decode())
-		ImageHelper.delete_image(image_path)
-
-		return face

@@ -28,7 +28,8 @@ class LBPHistogram(Resource):
 
 		if face is not None:
 
-			# histogram_id = LBPHistogram.save_histogram()
+			face = ImageHelper.prepare_face(face)
+
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
 			recognizer = LBPRecognizer(histogram_id, i_parser.__getattr__('points'), i_parser.__getattr__('radius'), i_parser.__getattr__('method'))
@@ -46,7 +47,8 @@ class LBPHistogram(Resource):
 
 		if face is not None:
 
-			image = HistogramMaker.prepare_face(face)
+			image = ImageHelper.prepare_face(face)
+
 			# Save image to DB
 			image = Image(image=image, type=InputParser().face_type)
 			image.save()
@@ -60,9 +62,9 @@ class LBPHistogram(Resource):
 
 			histogram_results['histogram'] = histogram_json
 			
-			data['parameters'] = histogram_results
-			
-			ResponseParser().add_process('extraction', data)
+			# data['parameters'] = histogram_results
+			#
+			# ResponseParser().add_process('extraction', data)
 
 			# Save generated histogram to DB
 			histogram_model = Histogram(image_id=image.id,
