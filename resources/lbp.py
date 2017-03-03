@@ -1,4 +1,5 @@
 import cv2
+from flask import g
 
 from flask import json
 from flask_restful import Resource, abort
@@ -32,7 +33,7 @@ class LBPHistogram(Resource):
 
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
-			recognizer = LBPRecognizer(histogram_id, i_parser.__getattr__('points'), i_parser.__getattr__('radius'), i_parser.__getattr__('method'))
+			recognizer = LBPRecognizer(histogram_id.get('histogram'), i_parser.__getattr__('points'), i_parser.__getattr__('radius'), i_parser.__getattr__('method'))
 
 			recognizer.recognize()
 		else:
@@ -68,11 +69,11 @@ class LBPHistogram(Resource):
 
 			# Save generated histogram to DB
 			histogram_model = Histogram(image_id=image.id,
-										user_id=2,
+										user_id=g.user.id,
 										histogram=histogram_json,
 										number_points=histogram_results['points'],
 										radius=histogram_results['radius'],
-										method=histogram_results['method']
+										method=histogram_results['method'],
 										)
 			histogram_model.save()
 			

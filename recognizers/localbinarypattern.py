@@ -1,7 +1,7 @@
 import argparse
 import cv2
 #Flask
-from flask import json
+import json
 from flask import request
 #OpenCv
 from sklearn.svm import LinearSVC
@@ -35,7 +35,6 @@ class LBPRecognizer:
 		# Get the function from switcher dictionary
 		func = switcher.get(argument, lambda: "nothing")
 
-		# print(func)
 		# Execute the function
 		func()
 
@@ -83,14 +82,10 @@ class LBPRecognizer:
 		print("########## FIT MODEL #########")
 		model.fit(data, labels)
 
-		# loop over the testing images
-		# todo get the new face histogram for recognization
-		# hist = Histogram.query.filter(Histogram.image_id == self.comparing_histogram_id).first()
 		# hist_test = "[0.059, 0.06746666666666666, 0.0628, 0.4444, 0.15346666666666667, 0.1236, 0.06133333333333333, 0.05555, 0.07426666666666666, 0.18586666666666668]"
-		# hist = json.loads(hist.histogram)
-		# hist = json.loads(hist_test)
-		# hist = np.asarray(hist)
+
 		hist = self.comparing_histogram_id
+		print(hist)
 		print("########## PREDICT #########")
 		prediction = model.predict(hist.reshape(1, -1))[0]
 		# prediction = model.predict(hist)[0]
@@ -99,7 +94,7 @@ class LBPRecognizer:
 		process = {
 			"parameters" : {
 				"algorithm" : "svm",
-				"recognize_histogram" : json.dumbs(hist),
+				"recognize_histogram" : json.dumps(hist),
 				"total_compared_histograms" : total_image,
 				"predict_user" : {
 					"id" : int(prediction),

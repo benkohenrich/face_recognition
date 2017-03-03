@@ -12,7 +12,7 @@ class BaseConfig(object):
 	DEBUG = True
 	TESTING = True
 	BASE_DIR = root
-	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_1'
+	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_2'
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	DATABASE_CONNECT_OPTIONS = {}
 	THREADS_PER_PAGE = 1

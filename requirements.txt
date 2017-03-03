@@ -11,3 +11,4 @@ StringIO
 enums
 sklearn
 flask_httpauth
+passlib
