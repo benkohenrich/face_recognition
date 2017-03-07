@@ -1,8 +1,6 @@
 import base64
 import enum
 from models.base import Base, db
-from helpers.imagehelper import ImageHelper
-
 
 class Image(Base):
 
@@ -13,6 +11,7 @@ class Image(Base):
 		default=str('histogram')
 	)
 
+	user_id = db.Column(db.Integer, nullable=True)
 	image = db.Column(db.BLOB, nullable=False)
 
 	def save(self):

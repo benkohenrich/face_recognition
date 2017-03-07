@@ -6,9 +6,10 @@ from flask import jsonify
 import base64
 import PIL
 from PIL import Image
+from models.image import Image as ModelImage
+
 
 class ImageHelper(object):
-
 	crop_string = {
 		'data:image/png;base64,',
 		'data:image/jpeg;base64,',
@@ -16,9 +17,9 @@ class ImageHelper(object):
 	}
 
 	@staticmethod
-	def decode_base64_to_filename(img_string, filename = "tmp.jpg"):
+	def decode_base64_to_filename(img_string, filename="tmp.jpg"):
 
-		for crop in ImageHelper.crop_string :
+		for crop in ImageHelper.crop_string:
 			img_string = img_string.replace(crop, "")
 
 		imgdata = base64.b64decode(img_string)
@@ -77,3 +78,11 @@ class ImageHelper(object):
 		ImageHelper.delete_image(image_path)
 
 		return face
+
+	@staticmethod
+	def save_image(image, image_type, user_id):
+
+		image = ModelImage(user_id=user_id, image=image, type=image_type)
+		image.save()
+
+		return image.id

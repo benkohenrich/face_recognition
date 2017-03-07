@@ -7,7 +7,7 @@ from flask import Flask, abort
 from flask import g
 from flask import json, jsonify
 from flask import request, url_for
-from flask_restful import Api
+# from flask_restful import Api
 from requests import auth
 # from requests.auth import HTTPBasicAuth
 from flask_httpauth import HTTPBasicAuth
@@ -16,7 +16,9 @@ from helpers.response import ResponseHelper
 from models.base import db
 from models.user import User
 from resources.lbp import LBPHistogram
-from helpers.parsers import InputParser
+from helpers.parsers import InputParser, ErrorParser
+
+from resources.eigenfaces import Eigenfaces
 
 
 def create_app():
@@ -41,17 +43,21 @@ def create_app():
 	# Local Binary Pattern routers
 	@app.route('/api/lbp/face/', methods=['GET', 'POST'])
 	@auth.login_required
-	def lbph_photo():
+	def lbp_face():
 
 		inputs = InputParser()
+		inputs.validate_attributes = {'extraction_settings'}
 		inputs.set_attributes(request)
 
-		if request.method == 'POST':
+		error_parser = ErrorParser()
 
+		if not error_parser.is_empty():
+			return ResponseHelper.create_response(), 400
+
+		if request.method == 'POST':
 			LBPHistogram.save_histogram()
 
 			return ResponseHelper.create_response() , 201
-			# return ResponseHelper.create_response(response, message), 200
 		else:
 			return ResponseHelper.create_response(message), 200
 
@@ -60,6 +66,7 @@ def create_app():
 	def lbp():
 
 		inputs = InputParser()
+		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
 		inputs.set_attributes(request)
 
 		LBPHistogram.recognize_face()
@@ -67,32 +74,27 @@ def create_app():
 		return ResponseHelper.create_response(message), 200
 
 	# Eigenfaces routers
-	@app.route('/api/eigen/face/', methods=['GET', 'POST'])
-	@auth.login_required
-	def lbph_photo():
-
-		inputs = InputParser()
-		inputs.set_attributes(request)
-
-		if request.method == 'POST':
-
-			LBPHistogram.save_histogram()
-
-			return ResponseHelper.create_response() , 201
-			# return ResponseHelper.create_response(response, message), 200
-		else:
-			return ResponseHelper.create_response(message), 200
+	# @app.route('/api/eigen/face/', methods=['GET', 'POST'])
+	# @auth.login_required
+	# def lbph_photo():
+	#
+	# 	inputs = InputParser()
+	# 	inputs.set_attributes(request)
+	#
+	# 	if request.method == 'POST':
+	#
+	# 		LBPHistogram.save_histogram()
+	#
+	# 		return ResponseHelper.create_response() , 201
+	# 		# return ResponseHelper.create_response(response, message), 200
+	# 	else:
+	# 		return ResponseHelper.create_response(message), 200
 
 	@app.route('/api/eigen/', methods=['POST'])
-	@auth.login_required
-	def lbp():
+	# @auth.login_required
+	def eigenfaces():
+		Eigenfaces.test()
 
-		inputs = InputParser()
-		inputs.set_attributes(request)
-
-		LBPHistogram.recognize_face()
-
-		return ResponseHelper.create_response(message), 200
 
 	# Authorization Routers
 	@app.route('/api/token/', methods=['GET'])

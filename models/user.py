@@ -21,7 +21,7 @@ class User(Base):
 	def verify_password(self, password):
 		return pwd_context.verify(password, self.password)
 
-	def generate_auth_token(self, expiration = 600):
+	def generate_auth_token(self, expiration = 60000):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_in = expiration)
 		return s.dumps({ 'id': self.id })
 

@@ -1,27 +1,28 @@
 import cv2
-from flask import g
 
+from flask import g
 from flask import json
 from flask_restful import Resource, abort
 from flask import request
+
 # from requests import api
 from packages.lbph1.pyimagesearch.localbinarypatterns import LocalBinaryPatterns
 from sklearn.svm import LinearSVC
 from imutils import paths
 
 from helpers.imagehelper import ImageHelper
-from helpers.parsers import InputParser, ResponseParser
+from helpers.parsers import InputParser, ResponseParser, ErrorParser
 from helpers.lbphelper import HistogramMaker
 from helpers.response import ResponseHelper
 
 from models.base import db
 from models.image import Image
 from models.histogram import Histogram
+
 from recognizers.localbinarypattern import LBPRecognizer
 
 
 class LBPHistogram(Resource):
-
 	@staticmethod
 	def recognize_face():
 		i_parser = InputParser()
@@ -33,12 +34,14 @@ class LBPHistogram(Resource):
 
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
-			recognizer = LBPRecognizer(histogram_id.get('histogram'), i_parser.__getattr__('points'), i_parser.__getattr__('radius'), i_parser.__getattr__('method'))
+			recognizer = LBPRecognizer(
+				histogram_id.get('histogram'),
+				i_parser.__getattr__('points'),
+				i_parser.__getattr__('radius'),
+				i_parser.__getattr__('method')
+			)
 
 			recognizer.recognize()
-		else:
-			# todo exception no image
-			print("NO IMAGE")
 
 	@staticmethod
 	def save_histogram():
@@ -51,21 +54,20 @@ class LBPHistogram(Resource):
 			image = ImageHelper.prepare_face(face)
 
 			# Save image to DB
-			image = Image(image=image, type=InputParser().face_type)
+			image = Image(user_id=g.user.id, image=image, type=InputParser().face_type)
 			image.save()
+
+			#Validate parameters
+			errors = LBPHistogram.validate_attributes()
+
+			if not errors.is_empty():
+				return
 
 			histogram_results = HistogramMaker.create_histogram_from_b64(image.image)
 
-			histogram_original = histogram_results['histogram']
 			histogram_json = json.dumps(histogram_results['histogram'].tolist())
 
-			data = {}
-
 			histogram_results['histogram'] = histogram_json
-			
-			# data['parameters'] = histogram_results
-			#
-			# ResponseParser().add_process('extraction', data)
 
 			# Save generated histogram to DB
 			histogram_model = Histogram(image_id=image.id,
@@ -74,12 +76,38 @@ class LBPHistogram(Resource):
 										number_points=histogram_results['points'],
 										radius=histogram_results['radius'],
 										method=histogram_results['method'],
+										gray_image_id=histogram_results['gray_image_id']
 										)
 			histogram_model.save()
-			
+
 			return histogram_model.id
 
 		elif histogram is not None:
 			print("save histogram")
 
+	@staticmethod
+	def validate_attributes(type='normal'):
 
+		errors = ErrorParser()
+
+		if InputParser().__getattr__('points') is None:
+			errors.add_error('points', 'extraction.points.required')
+
+		if InputParser().__getattr__('radius') is None:
+			errors.add_error('radius', 'extraction.radius.required')
+
+		if InputParser().__getattr__('method') is None:
+			errors.add_error('method', 'extraction.method.required')
+		else:
+			if InputParser().__getattr__('method') not in {'default', 'ror', 'uniform', 'nri_uniform', 'var'}:
+				errors.add_error('method_allowed', 'extraction.method.not_allowed')
+
+		if type == 'recognition':
+			# todo add more clasification algorithm
+			if InputParser().__getattr__('algorithm') is None:
+				errors.add_error('algorithm', 'recognition.algorithm.required')
+
+			if InputParser().__getattr__('algorithm') not in {'svm'}:
+				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
+
+		return errors

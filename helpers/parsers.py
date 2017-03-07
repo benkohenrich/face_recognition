@@ -39,9 +39,11 @@ class InputParser(object):
 
 	face = None
 	face_type = None
-	extraction_settings = None
-	recognition_settings = None
+	extraction_settings = {}
+	recognition_settings = {}
 	histogram = None
+
+	validate_attributes = {}
 
 	allowed_face_types = ["full", "full_grey", "face", "face_grey", "histogram"]
 
@@ -59,28 +61,44 @@ class InputParser(object):
 				self.parse_get_attributes(my_request.args)
 
 		if self.http_method == 'POST':
-			self.parse_attributes(my_request.json)
+			self.parse_post_attributes(my_request.json)
 
-	def parse_attributes(self, attributes):
+	def parse_post_attributes(self, attributes):
 
 		data = attributes
-
-		# print(data)
-		if data.get('face', None) is not None:
-			self.face = data.get('face')
+		errors = ErrorParser()
 
 		if data.get('face_type', None) is not None:
 			if data.get('face_type', None) in self.allowed_face_types:
 				self.face_type = data.get('face_type', None)
+			else:
+				errors.add_error('face_type', 'generals.face_type.not_allowed')
+		else:
+			errors.add_error('face_type', 'generals.face_type.required')
 
-		if data.get('extraction_settings', None) is not None:
-			self.extraction_settings = data.get('extraction_settings')
+		if data.get('face', None) is not None and (
+						data.get('face_type', None) is not 'histogram' or data.get('face_type', None) is not None):
+			self.face = data.get('face')
+		else:
+			if data.get('face_type', None) is not 'histogram':
+				errors.add_error('face', 'generals.face.required')
 
-		if data.get('recognition_settings', None) is not None:
-			self.recognition_settings = data.get('recognition_settings')
+		if 'extraction_settings' in self.validate_attributes:
+			if data.get('extraction_settings', None) is not None:
+				self.extraction_settings = data.get('extraction_settings')
+			else:
+				errors.add_error('extraction_settings', 'extraction.required')
+
+		if 'recognition_settings' in self.validate_attributes:
+			if data.get('recognition_settings', None) is not None:
+				self.recognition_settings = data.get('recognition_settings')
+			else:
+				errors.add_error('recognition_settings', 'recognition_settings.required')
 
 		if data.get('histogram', None) is not None and self.face_type == "histogram":
 			self.histogram = data.get('histogram')
+		elif self.face_type == 'histogram':
+			errors.add_error('histogram', 'generals.histogram.required')
 
 	def parse_get_attributes(self, args):
 
@@ -102,18 +120,19 @@ class InputParser(object):
 
 	def __getattr__(self, item):
 
-		if self.extraction_settings.get(item) is not None:
+		if self.extraction_settings.get(item, None) is not None:
 			return self.extraction_settings.get(item)
 
-		if self.recognition_settings.get(item) is not None:
+		if self.recognition_settings.get(item, None) is not None:
 			return self.recognition_settings.get(item)
 
 		return None
 
+
 class ResponseParser:
 	__instance = None
 
-	process_codes = ['extraction','db_save','recognition']
+	process_codes = ['extraction', 'db_save', 'recognition']
 
 	response_data = {}
 
@@ -131,3 +150,22 @@ class ResponseParser:
 		self.response_data[code] = data
 
 
+class ErrorParser:
+	__instance = None
+
+	_errors = {}
+
+	def __new__(cls):
+		if not hasattr(cls, 'instance'):
+			cls.instance = super(ErrorParser, cls).__new__(cls)
+
+		return cls.instance
+
+	def is_empty(self):
+		return not bool(self._errors)
+
+	def add_error(self, code, message):
+		self._errors[code] = message
+
+	def get_errors(self):
+		return self._errors
