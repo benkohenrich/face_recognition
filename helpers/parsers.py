@@ -4,6 +4,7 @@ import os
 import singleton as singleton
 from flask import json
 from flask import jsonify
+from flask import url_for
 from singleton.singleton import Singleton
 
 
@@ -136,6 +137,10 @@ class ResponseParser:
 
 	response_data = {}
 
+	extraction_images = {}
+	recognition_images = {}
+
+
 	def __new__(self):
 		if not hasattr(self, 'instance'):
 			self.instance = super(ResponseParser, self).__new__(self)
@@ -149,6 +154,28 @@ class ResponseParser:
 
 		self.response_data[code] = data
 
+	def add_image(self, type, code, image_id):
+
+		url = url_for('get_image', image_id=image_id)
+
+		if type == 'extraction':
+			self.extraction_images[code] = url
+		else:
+			self.recognition_images[code] = url
+
+	def get_response_data(self):
+
+		try:
+			self.response_data['extraction']['images'] = self.extraction_images
+		except KeyError:
+			print('no extracton')
+
+		try:
+			self.response_data['recognition']['images'] = self.recognition_images
+		except KeyError:
+			print('no extracton')
+
+		return self.response_data
 
 class ErrorParser:
 	__instance = None

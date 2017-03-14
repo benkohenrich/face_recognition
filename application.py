@@ -4,19 +4,19 @@ import sys
 
 import flask
 from flask import Flask, abort
-from flask import g
-from flask import json, jsonify
-from flask import request, url_for
+from flask import g, json, jsonify, request, url_for
 # from flask_restful import Api
 from requests import auth
 # from requests.auth import HTTPBasicAuth
 from flask_httpauth import HTTPBasicAuth
 
-from helpers.response import ResponseHelper
 from models.base import db
 from models.user import User
 from resources.lbp import LBPHistogram
+
+from helpers.response import ResponseHelper
 from helpers.parsers import InputParser, ErrorParser
+from helpers.processhelper import Process
 
 from resources.eigenfaces import Eigenfaces
 
@@ -45,6 +45,10 @@ def create_app():
 	@auth.login_required
 	def lbp_face():
 
+		#CREATE NEW PROCESS
+		Process().create_new_process(g.user.id, 'lbp')
+
+		#PARSE INPUTS
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings'}
 		inputs.set_attributes(request)
@@ -55,9 +59,10 @@ def create_app():
 			return ResponseHelper.create_response(), 400
 
 		if request.method == 'POST':
+
 			LBPHistogram.save_histogram()
 
-			return ResponseHelper.create_response() , 201
+			return ResponseHelper.create_response(), 201
 		else:
 			return ResponseHelper.create_response(message), 200
 
@@ -93,7 +98,20 @@ def create_app():
 	@app.route('/api/eigen/', methods=['POST'])
 	# @auth.login_required
 	def eigenfaces():
-		Eigenfaces.test()
+
+		inputs = InputParser()
+		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
+		inputs.set_attributes(request)
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		Eigenfaces.recognize_face()
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		return ResponseHelper.create_response(message), 200
 
 
 	# Authorization Routers
@@ -129,6 +147,11 @@ def create_app():
 		db.session.add(user)
 		db.session.commit()
 		return jsonify({'username': user.username}), 201
+
+	@app.route("/images/<image_id>/", methods=['GET'])
+	def get_image(image_id):
+		return image_id
+
 
 	@app.route("/")
 	def hello():

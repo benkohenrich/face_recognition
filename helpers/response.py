@@ -3,6 +3,7 @@ import os
 from flask import json
 from flask import jsonify
 from helpers.parsers import ResponseParser, ErrorParser
+from helpers.processhelper import Process
 
 
 class ResponseHelper(object):
@@ -18,7 +19,8 @@ class ResponseHelper(object):
 		if not errors.is_empty():
 			response['errors'] = errors.get_errors()
 		else:
-			response['process'] = ResponseParser().response_data
+			response['process'] = ResponseParser().get_response_data()
+			response['process']['uuid'] = Process().process.process_hash
 
 		print(response)
 		return jsonify(response)

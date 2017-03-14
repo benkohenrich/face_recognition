@@ -12,9 +12,19 @@ class Image(Base):
 	)
 
 	user_id = db.Column(db.Integer, nullable=True)
+	process_id = db.Column(db.Integer, nullable=True)
 	image = db.Column(db.BLOB, nullable=False)
+	in_storage = db.Column(db.BOOLEAN, nullable=False, default=0)
 
 	def save(self):
 		db.session.add(self)
 		db.session.commit()
 		db.session.flush()
+
+
+	@staticmethod
+	def get_all_to_extraction():
+		all_image = Image.query \
+			.filter(Image.type == 'face').filter(Image.in_storage == 0).all()
+
+		return all_image

@@ -39,24 +39,15 @@ class LBPRecognizer:
 		func()
 
 
-
-
-# display the image and the prediction
-# cv2.imshow("Image", image)
-# cv2.waitKey(0)
-#
-# print("end of calculating......")
-
 	def svm_recognize(self):
 		print("Linear Support Vector Machine ")
 
 		data = []
 		labels = []
 
-		all_image = Image.query\
-			.filter(Image.type != 'greyscale').all()
+		all_image = Image.get_all_to_extraction()
 
-		total_image = Image.query.count()
+		total_image = all_image.count()
 
 		print("########## START RECOGNITION #########")
 		for image in all_image:

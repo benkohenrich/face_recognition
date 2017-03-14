@@ -16,18 +16,51 @@ from gzip import GzipFile
 import numpy as np
 import pylab as pl
 
-# from scikits.learn.grid_search import GridSearchCV
-# from scikits.learn.metrics import classification_report
-# from scikits.learn.metrics import confusion_matrix
-# from scikits.learn.pca import RandomizedPCA
-# from scikits.learn.svm import SVC
+from helpers.imagehelper import ImageHelper
+from recognizers.eigenfaces import EigenfacesRecognizer
+from helpers.eigenfaceshelper import EigenfacesHelper
+
+from helpers.parsers import InputParser, ErrorParser
 
 class Eigenfaces(Resource):
 	@staticmethod
-	def test():
-		model = cv2.face.createEigenFaceRecognizer()
-		name = model.name
+	def recognize_face():
 
-		print(name)
+		Eigenfaces.validate_attributes('recognition')
+		if not ErrorParser().is_empty():
+			return
+
+		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+
+		face_eigenfaces = EigenfacesHelper.create_base64_to_eigenface(face)
+
+		recognizer = EigenfacesRecognizer(face_eigenfaces, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
+		recognizer.recognize()
+
+	@staticmethod
+	def validate_attributes(type='normal'):
+
+		errors = ErrorParser()
+
+		if InputParser().__getattr__('number_eigenfaces') is None:
+			errors.add_error('number_eigenfaces', 'extraction.number_eigenfaces.required')
+
+		if InputParser().__getattr__('method') is None:
+			errors.add_error('method', 'extraction.method.required')
+		else:
+			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized'}:
+				errors.add_error('method_allowed', 'extraction.method.not_allowed')
+
+		if type == 'recognition':
+			# todo add more clasification algorithm
+			if InputParser().__getattr__('algorithm') is None:
+				errors.add_error('algorithm', 'recognition.algorithm.required')
+
+			print(InputParser().__getattr__('algorithm'))
+			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian'}:
+				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
+
+		return errors
+
 
 

@@ -21,6 +21,9 @@ class BaseConfig(object):
 	LOGS_FOLDER = os.path.join(root, "logs")
 	SERVER_HOST = '0.0.0.0'
 	TEMP_PATH = 'public/data/temp/'
+	FACE_HEIGHT = 100
+	FACE_WIDTH = 100
+	BASE_WIDTH = 100
 
 class TestConfig(BaseConfig):
 	DEBUG = True

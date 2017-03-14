@@ -13,7 +13,7 @@ class User(Base):
 	name = db.Column(db.String(100), index=True)
 	password = db.Column(db.String(128))
 	username = db.Column(db.String(100), nullable=False, unique=True)
-	# password_hash = db.Column(db.String(255), nullable=False)
+	original_image_id = db.Column(db.INTEGER, index=True, nullable=True)
 
 	def hash_password(self, password):
 		self.password = pwd_context.encrypt(password)

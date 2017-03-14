@@ -1,4 +1,6 @@
 import base64
+import io
+
 from PIL import Image
 import cv2
 from flask import g
@@ -20,23 +22,27 @@ from matplotlib import pyplot as plt
 
 class HistogramMaker(object):
 	@staticmethod
-	def create_histogram_from_image(image_path):
+	def create_histogram_from_image(image):
 
 		options = InputParser().extraction_settings
 
-		if type(image_path).__module__ == np.__name__:
-			im = cv2.imdecode(image_path, 1)
+		if type(image).__module__ == np.__name__:
+			im = cv2.imdecode(image, 1)
 		else:
-			im = cv2.imread(image_path)
+			im = cv2.imread(image)
 
 		im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
+		#GRAYSCALE IMAGE
 		gray_image = cv2.imencode('.jpg', im_gray)[1].tostring()
-		#todo save histogram somehow
-		# print(gray_image)
-		# hist = plt.hist(im_gray.ravel(), 256, [0, 256])
-		# hist = cv2.calcHist([im_gray], [0], None, [256], [0, 256])
-		# plt.plot(hist)
+		face_grey_id = ImageHelper.save_image(gray_image, 'face_grey', g.user.id)
+
+		equ = cv2.equalizeHist(im_gray)
+		face_equalized_id = ImageHelper.save_numpy_image(equ, 'face_equalized', g.user.id)
+
+		plt.hist(equ.ravel(), 256, [0, 256])
+		histogram_graph_id = ImageHelper.save_plot_image(plt, 'histogram_graph', g.user.id)
+
 		# img_str = cv2.imencode('.jpg', plt)[1].tostring()
 		# print(im_gray.ravel())
 
@@ -74,7 +80,6 @@ class HistogramMaker(object):
 			'points': no_points,
 			'histogram': hist,
 			'method': method,
-			'gray_image_id': ImageHelper.save_image(gray_image, 'greyscale', g.user.id)
 		}
 
 		result_response = {
@@ -89,27 +94,19 @@ class HistogramMaker(object):
 			"messages" : {
 
 			},
-			"images" : {
-
-			},
 			"metadata" : {
 
 			}
 		}
 
 		ResponseParser().add_process('extraction', process)
+		ResponseParser().add_image('extraction', 'face_grey', face_grey_id)
+		ResponseParser().add_image('extraction', 'face_equalized', face_equalized_id)
+		ResponseParser().add_image('extraction', 'histogram_graph', histogram_graph_id)
 
 		return result
 
 	@staticmethod
 	def create_histogram_from_b64(base64_string):
 
-		base64_string = ImageHelper.encode_base64(base64_string)
-
-		base64_string = str(base64_string, 'utf-8')
-
-		decoded = base64.b64decode(base64_string)
-
-		npimg = np.fromstring(decoded, dtype=np.uint8)
-
-		return HistogramMaker.create_histogram_from_image(npimg)
+		return HistogramMaker.create_histogram_from_image(ImageHelper.convert_base64_to_numpy(base64_string))

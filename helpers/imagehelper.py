@@ -1,13 +1,17 @@
 import os
-
-from flask import Flask
-from flask import current_app
-from flask import jsonify
 import base64
 import PIL
-from PIL import Image
-from models.image import Image as ModelImage
+import cv2
+import numpy as np
 
+from flask import current_app
+from PIL import Image
+from flask import g
+
+from helpers.detectionhelper import DetectionHelper
+from helpers.parsers import ResponseParser
+from helpers.processhelper import Process
+from models.image import Image as ModelImage
 
 class ImageHelper(object):
 	crop_string = {
@@ -40,7 +44,14 @@ class ImageHelper(object):
 		return base64.b64decode(img_string)
 
 	@staticmethod
-	def encode_base64_from_path(image_path, ):
+	def crop_type_base64(base64_string):
+		for crop in ImageHelper.crop_string:
+			base64_string = base64_string.replace(crop, "")
+
+		return base64_string
+
+	@staticmethod
+	def encode_base64_from_path(image_path):
 		encoded_string = ""
 
 		with open(image_path, "rb") as image_file:
@@ -54,8 +65,11 @@ class ImageHelper(object):
 
 	@staticmethod
 	def minimalize(image_path):
-		print('minimalize')
-		basewidth = 100
+
+		# print('minimalize')
+
+		basewidth = current_app.config.get('BASE_WIDTH')
+
 		img = Image.open(image_path)
 
 		width_percent = (basewidth / float(img.size[0]))
@@ -63,6 +77,7 @@ class ImageHelper(object):
 		height_size = int((float(img.size[1]) * float(width_percent)))
 
 		img = img.resize((basewidth, height_size), PIL.Image.ANTIALIAS)
+
 		img.save(image_path)
 
 	@staticmethod
@@ -70,11 +85,26 @@ class ImageHelper(object):
 		os.unlink(path)
 
 	@staticmethod
-	def prepare_face(face):
+	def prepare_face(face, face_type='face'):
+
 		image_path = ImageHelper.decode_base64_to_filename(face)
-		ImageHelper.minimalize(image_path)
+
+		if face_type in ['face', 'face_grey']:
+			img = cv2.imread(image_path)
+			height, width, channels = img.shape
+
+			if height != current_app.config.get('FACE_HEIGHT') or width != current_app.config.get('FACE_WIDTH'):
+				ImageHelper.minimalize(image_path)
+
+		elif face_type in ['full', 'full_grey']:
+			full_id = ImageHelper.save_image(ImageHelper.decode_base64(face), 'full', g.user.id)
+			ResponseParser().add_image('extraction', 'full', full_id)
+			image_path = DetectionHelper.haar_cascade_detect(image_path)
+			ImageHelper.minimalize(image_path)
+
 		face = ImageHelper.encode_base64_from_path(image_path)
 		face = ImageHelper.decode_base64(face.decode())
+
 		ImageHelper.delete_image(image_path)
 
 		return face
@@ -82,7 +112,52 @@ class ImageHelper(object):
 	@staticmethod
 	def save_image(image, image_type, user_id):
 
-		image = ModelImage(user_id=user_id, image=image, type=image_type)
+		image = ModelImage(user_id=user_id, image=image, type=image_type, process_id=Process().process_id)
 		image.save()
 
 		return image.id
+
+	@staticmethod
+	def save_numpy_image(np_image, image_type, user_id):
+
+		path = current_app.config['TEMP_PATH'] + 'tmp.png'
+
+		cv2.imwrite(path, np_image)
+
+		face = ImageHelper.encode_base64_from_path(path)
+		face = ImageHelper.decode_base64(face.decode())
+
+		image = ModelImage(user_id=user_id, image=face, type=image_type, process_id=Process().process_id)
+		image.save()
+
+		ImageHelper.delete_image(path)
+
+		return image.id
+
+	@staticmethod
+	def save_plot_image(plt, image_type, user_id):
+
+		path = current_app.config['TEMP_PATH'] + 'tmp.png'
+
+		plt.savefig(path)
+
+		face = ImageHelper.encode_base64_from_path(path)
+		face = ImageHelper.decode_base64(face.decode())
+
+		image = ModelImage(user_id=user_id, image=face, type=image_type, process_id=Process().process_id)
+		image.save()
+
+		ImageHelper.delete_image(path)
+
+		return image.id
+
+
+	@staticmethod
+	def convert_base64_to_numpy(base64face):
+		base64_string = str(ImageHelper.encode_base64(base64face), 'utf-8')
+
+		decoded = base64.b64decode(base64_string)
+
+		npimg = np.fromstring(decoded, dtype=np.uint8)
+
+		return npimg

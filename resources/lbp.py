@@ -49,41 +49,50 @@ class LBPHistogram(Resource):
 		face = InputParser().face
 		histogram = InputParser().histogram
 
+		# Validate parameters
+		errors = LBPHistogram.validate_attributes()
+		if not errors.is_empty():
+			return
+
 		if face is not None:
 
-			image = ImageHelper.prepare_face(face)
+			image = ImageHelper.prepare_face(face, InputParser().face_type)
 
 			# Save image to DB
-			image = Image(user_id=g.user.id, image=image, type=InputParser().face_type)
-			image.save()
+			image_id = ImageHelper.save_image(image, 'face', g.user.id)
+			ResponseParser().add_image('extraction', 'face', image_id)
 
-			#Validate parameters
-			errors = LBPHistogram.validate_attributes()
-
-			if not errors.is_empty():
-				return
-
-			histogram_results = HistogramMaker.create_histogram_from_b64(image.image)
+			# Create histogram
+			histogram_results = HistogramMaker.create_histogram_from_b64(image)
 
 			histogram_json = json.dumps(histogram_results['histogram'].tolist())
-
 			histogram_results['histogram'] = histogram_json
 
 			# Save generated histogram to DB
-			histogram_model = Histogram(image_id=image.id,
-										user_id=g.user.id,
-										histogram=histogram_json,
-										number_points=histogram_results['points'],
-										radius=histogram_results['radius'],
-										method=histogram_results['method'],
-										gray_image_id=histogram_results['gray_image_id']
-										)
+			histogram_model = Histogram(
+				image_id=image_id,
+				user_id=g.user.id,
+				histogram=histogram_json,
+				number_points=histogram_results['points'],
+				radius=histogram_results['radius'],
+				method=histogram_results['method'],
+			)
+
 			histogram_model.save()
 
 			return histogram_model.id
 
 		elif histogram is not None:
-			print("save histogram")
+			histogram_model = Histogram(
+										user_id=g.user.id,
+										histogram=histogram,
+										number_points=InputParser().__getattr__('points'),
+										radius=InputParser().__getattr__('radius'),
+										method=InputParser().__getattr__('method'),
+										)
+			histogram_model.save()
+
+			return histogram_model.id
 
 	@staticmethod
 	def validate_attributes(type='normal'):

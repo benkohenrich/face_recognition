@@ -1,3 +1,6 @@
+cv2
+scipy
+numpy
 singleton
 requests
 flask
