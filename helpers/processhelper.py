@@ -1,13 +1,19 @@
 import uuid
 
+from flask import json, jsonify
+
+from helpers.parsers import ErrorParser, InputParser, ResponseParser
 from models.process import Process as ProcessModel
 from models.algorithm_type import AlgorithmType as AlgorithmTypeModel
+from models.process_detail import ProcessDetail
+
 
 class Process(object):
 	__instance = None
 
 	process_id = None
 	process = None
+	code = None
 
 	def __new__(self):
 		if not hasattr(self, 'instance'):
@@ -31,4 +37,40 @@ class Process(object):
 
 		self.process_id = process.id
 		self.process = process
+
+	def set_code(self, code):
+		self.code = code
+
+	def generate(self):
+
+		if not ErrorParser().is_empty():
+			detail = ProcessDetail(
+				process_id=self.process_id,
+				code='errors',
+				errors=jsonify(ErrorParser().get_errors()),
+				# inputs=InputParser().get_inputs()
+			)
+
+			detail.save()
+
+		else:
+
+			# print(jsonify(ResponseParser().get_response_data()))
+			detail = ProcessDetail(
+				process_id=self.process_id,
+				code=self.code,
+				# inputs=InputParser().get_inputs()
+				responses=json.dumps((ResponseParser().get_response_data()))
+			)
+			if self.code == 'extraction':
+				detail.extraction_settings = json.dumps((ResponseParser().get_response_data()['extraction']))
+			elif self.code == 'recognition':
+				try:
+					detail.extraction_settings = jsonify(ResponseParser().get_response_data()['extraction'])
+				except:
+					detail.extraction_settings = None
+
+				detail.recognition_settings = jsonify(ResponseParser().get_response_data()['recognition'])
+
+			detail.save()
 

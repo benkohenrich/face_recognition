@@ -20,22 +20,63 @@ from models.image import Image
 from models.histogram import Histogram
 
 from recognizers.localbinarypattern import LBPRecognizer
+import numpy as np
+
+CLASSIFICATION_ALGORITHM = {
+	"svm",
+	"correlation",
+	"chi-squared",
+	"intersection",
+	"hellinger",
+	"euclidean",
+	"manhattan",
+	"chebysev",
+	"cosine",
+	"braycurtis",
+}
 
 
 class LBPHistogram(Resource):
 	@staticmethod
 	def recognize_face():
 		i_parser = InputParser()
+		i_parser.is_recognize = True
 		face = i_parser.face
+		histogram = i_parser.histogram
+
+		# Validate parameters
+		errors = LBPHistogram.validate_attributes()
+
+		if not errors.is_empty():
+			return
 
 		if face is not None:
 
-			face = ImageHelper.prepare_face(face)
+			face = ImageHelper.prepare_face(face, i_parser.face_type)
+			# Save image to DB
+			# image_id = ImageHelper.save_image(face, 'face', g.user.id)
+			# ResponseParser().add_image('extraction', 'face', image_id)
 
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
 			recognizer = LBPRecognizer(
 				histogram_id.get('histogram'),
+				i_parser.__getattr__('points'),
+				i_parser.__getattr__('radius'),
+				i_parser.__getattr__('method')
+			)
+			# exit()
+			recognizer.recognize()
+		elif histogram is not None:
+			try:
+				histogram = np.asarray(json.loads(histogram))
+
+			except:
+				ErrorParser().add_error('histogram_format', 'recognize.histogram.invalid_format')
+				return
+
+			recognizer = LBPRecognizer(
+				histogram,
 				i_parser.__getattr__('points'),
 				i_parser.__getattr__('radius'),
 				i_parser.__getattr__('method')
@@ -51,6 +92,7 @@ class LBPHistogram(Resource):
 
 		# Validate parameters
 		errors = LBPHistogram.validate_attributes()
+
 		if not errors.is_empty():
 			return
 
@@ -84,12 +126,13 @@ class LBPHistogram(Resource):
 
 		elif histogram is not None:
 			histogram_model = Histogram(
-										user_id=g.user.id,
-										histogram=histogram,
-										number_points=InputParser().__getattr__('points'),
-										radius=InputParser().__getattr__('radius'),
-										method=InputParser().__getattr__('method'),
-										)
+				user_id=g.user.id,
+				histogram=histogram,
+				number_points=InputParser().__getattr__('points'),
+				radius=InputParser().__getattr__('radius'),
+				method=InputParser().__getattr__('method'),
+			)
+
 			histogram_model.save()
 
 			return histogram_model.id
@@ -116,7 +159,7 @@ class LBPHistogram(Resource):
 			if InputParser().__getattr__('algorithm') is None:
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 
-			if InputParser().__getattr__('algorithm') not in {'svm'}:
+			if InputParser().__getattr__('algorithm') not in CLASSIFICATION_ALGORITHM:
 				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
 
 		return errors

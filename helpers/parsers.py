@@ -48,6 +48,8 @@ class InputParser(object):
 
 	allowed_face_types = ["full", "full_grey", "face", "face_grey", "histogram"]
 
+	is_recognize = False
+
 	def __new__(self):
 		if not hasattr(self, 'instance'):
 			self.instance = super(InputParser, self).__new__(self)
@@ -77,12 +79,22 @@ class InputParser(object):
 		else:
 			errors.add_error('face_type', 'generals.face_type.required')
 
-		if data.get('face', None) is not None and (
-						data.get('face_type', None) is not 'histogram' or data.get('face_type', None) is not None):
-			self.face = data.get('face')
-		else:
-			if data.get('face_type', None) is not 'histogram':
+		if data.get('face_type', None) != "histogram" and data.get('face_type', None) is not None:
+			if data.get('face', None) is not None:
+				self.face = data.get('face')
+			else:
 				errors.add_error('face', 'generals.face.required')
+		elif data.get('face_type', None) == 'histogram' and data.get('face_type', None) is not None:
+			if data.get('histogram', None) is not None:
+				self.histogram = data.get('histogram')
+			else:
+				errors.add_error('face', 'generals.histogram.required')
+		# if data.get('face', None) is not None and (
+		# 				data.get('face_type', None) is not 'histogram' or data.get('face_type', None) is not None):
+		# 	self.face = data.get('face')
+		# else:
+		# 	if data.get('face_type', None) is not 'histogram':
+		# 		errors.add_error('face', 'generals.face.required')
 
 		if 'extraction_settings' in self.validate_attributes:
 			if data.get('extraction_settings', None) is not None:

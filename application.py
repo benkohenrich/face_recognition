@@ -47,6 +47,7 @@ def create_app():
 
 		#CREATE NEW PROCESS
 		Process().create_new_process(g.user.id, 'lbp')
+		Process().set_code('extraction')
 
 		#PARSE INPUTS
 		inputs = InputParser()
@@ -54,6 +55,7 @@ def create_app():
 		inputs.set_attributes(request)
 
 		error_parser = ErrorParser()
+
 
 		if not error_parser.is_empty():
 			return ResponseHelper.create_response(), 400
@@ -69,10 +71,18 @@ def create_app():
 	@app.route('/api/lbp/', methods=['POST'])
 	@auth.login_required
 	def lbp():
+		# CREATE NEW PROCESS
+		Process().create_new_process(g.user.id, 'lbp')
+		Process().set_code('recognition')
 
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
 		inputs.set_attributes(request)
+
+		error_parser = ErrorParser()
+
+		if not error_parser.is_empty():
+			return ResponseHelper.create_response(), 400
 
 		LBPHistogram.recognize_face()
 
@@ -96,8 +106,12 @@ def create_app():
 	# 		return ResponseHelper.create_response(message), 200
 
 	@app.route('/api/eigen/', methods=['POST'])
-	# @auth.login_required
+	@auth.login_required
 	def eigenfaces():
+
+		# CREATE NEW PROCESS
+		Process().create_new_process(g.user.id, 'eigenfaces')
+		Process().set_code('recognition')
 
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}

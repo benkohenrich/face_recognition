@@ -1,60 +1,58 @@
 # from matplotlib.mlab import PCA
 from PIL import Image
+from flask import json
 from scipy import ndimage, misc
+from sklearn.svm import SVC
+
+from helpers.imagehelper import ImageHelper
 
 try:
 	from StringIO import StringIO
 except ImportError:
 	from io import StringIO
 
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, pca
 import numpy as np
 import glob
 import cv2
 import math
 import os.path
 import string
-from helpers.parsers import InputParser
+from helpers.parsers import InputParser, ErrorParser, ResponseParser
+from helpers.eigenfaceshelper import EigenfacesHelper
 from models.image import Image as ImageModel
+from scipy.spatial import distance as dist
+from sklearn.grid_search import GridSearchCV
 
 
 class EigenfacesRecognizer:
-	IMG_RES = 100 * 100  # img resolution
+
+	SCIPY_METHODS = {
+		"manhattan": dist.cityblock,
+		"chebysev": dist.chebyshev,
+		"cosine": dist.cosine,
+		"braycurtis": dist.braycurtis,
+	}
 
 	def __init__(self, EIGENFACE, NUM_EIGENFACES=24, METHOD='randomized'):
 		# self.points = int(num_points)
-		self.METHOD = METHOD
-		self.NUM_EIGENFACES = NUM_EIGENFACES
+		self.method = METHOD
+		self.num_eigenfaces = NUM_EIGENFACES
 		self.input_parser = InputParser()
 		self.COMPARING_EIGENFACE = EIGENFACE
 
-	@staticmethod
-	def prepare_image(file_bytes):
-
-		# 	sbuf = StringIO()
-		# 	sbuf.write(str(filename))
-		# 	img_color = Image.open(sbuf)
-		# 	print(file_bytes)
-		# 	print(type(file_bytes))
-
-		nparr = np.fromstring(file_bytes, np.uint8)
-
-		img_color = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-		# img_color = cv2.imread(file_bytes)
-		# img_color = misc.imresize(img_color, (100, 120))
-		# img_color.append(image_resized)
-		img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-		img_gray = cv2.equalizeHist(img_gray)
-		print(img_gray.flat)
-
-		return img_gray.flat
+		self.algorithm = "none"
 
 	def recognize(self):
 		argument = self.input_parser.__getattr__('algorithm')
-
+		self.algorithm = argument
 		switcher = {
 			'svm': self.svm_recognize,
-			'euclidian': self.euclidian_recognize
+			'euclidian': self.euclidian_recognize,
+			"manhattan":self.scipy_recognize_method,
+			"chebysev":self.scipy_recognize_method,
+			"cosine":self.scipy_recognize_method,
+			"braycurtis":self.scipy_recognize_method
 		}
 
 		# Get the function from switcher dictionary
@@ -66,43 +64,171 @@ class EigenfacesRecognizer:
 	def svm_recognize(self):
 		print("NO SVM FOR NOW")
 
+		model, X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
+
+		npimg = ImageHelper.convert_base64_image_to_numpy(self.COMPARING_EIGENFACE)
+
+		img_color = cv2.imdecode(npimg, 1)
+
+		img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+		img_gray = cv2.equalizeHist(img_gray)
+
+		# ImageHelper.save_numpy_image(img_gray, 'test', g.user.id)
+		# X = np.zeros([1, 100 * 100], dtype='int8')
+
+		test = img_gray.flat
+
+		test = model.transform(test)
+
+		################################################################################
+		# Train a SVM classification model
+
+		print("Fitting the classifier to the training set")
+		param_grid = {
+			'C': [1, 5, 10, 50, 100],
+			'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
+		}
+
+		clf = GridSearchCV(SVC(kernel='rbf'), param_grid, n_jobs=1)
+		clf = clf.fit(X_pca, y)
+
+		y_pred = clf.predict(test)
+		print(y_pred)
+
+		process = {
+			"parameters": {
+				'num_eigenfaces': self.num_eigenfaces,
+				'method': self.method,
+				"algorithm": self.algorithm,
+				"recognize_eigenfaces": json.dumps(test[0].tolist()),
+				"total_compared_histograms": total_image,
+				"predict_user": {
+					"id": int(y_pred[0]),
+					"name": "",
+					"main_image": ""
+				},
+			},
+			"messages": {
+
+			},
+			"metadata": {
+
+			}
+		}
+
+		ResponseParser().add_process('recognition', process)
+
+	def scipy_recognize_method(self):
+
+		if self.SCIPY_METHODS[self.algorithm] is None:
+			ErrorParser().add_error('algorithm','')
+			return
+		else:
+			method = self.SCIPY_METHODS[self.algorithm]
+
+
+		model, X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
+
+		npimg = ImageHelper.convert_base64_image_to_numpy(self.COMPARING_EIGENFACE)
+
+		img_color = cv2.imdecode(npimg, 1)
+
+		img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+		img_gray = cv2.equalizeHist(img_gray)
+
+		# ImageHelper.save_numpy_image(img_gray, 'test', g.user.id)
+		# X = np.zeros([1, 100 * 100], dtype='int8')
+
+		test = img_gray.flat
+		# print(test)
+		test = model.transform(test)
+		# exit()
+		distances = []
+		distance = None
+		# run through test images (usually one)
+		for j, ref_pca in enumerate(X_pca):
+			dist = method(ref_pca, test[0])
+			distances.append((dist, y[j]))
+
+
+		found_ID = min(distances)[1]
+		distance = min(distances)[0]
+		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
+
+		# print(test)
+		process = {
+			"parameters": {
+				'num_eigenfaces': self.num_eigenfaces,
+				'method': self.method,
+				"algorithm": self.algorithm,
+				"recognize_eigenfaces": json.dumps(test[0].tolist()),
+				"total_compared_histograms": total_image,
+				'distance': str(distance),
+				"predict_user": {
+					"id": int(found_ID),
+					"name": "",
+					"main_image": ""
+				},
+			},
+			"messages": {
+
+			},
+			"metadata": {
+
+			}
+		}
+
+		ResponseParser().add_process('recognition', process)
+
 	def euclidian_recognize(self):
-		all_image = ImageModel.get_all_to_extraction()
-		total_image = ImageModel.query.count()
 
-		# Create an array with flattened images X
-		# and an array with ID of the people on each image y
-		X = np.zeros([total_image, self.IMG_RES], dtype='int8')
-		# X = []
-		y = []
+		model , X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
 
-		# Populate training array with flattened imags from subfolders of train_faces and names
-		c = 0
-		for image in all_image:
-			# print(c)
-			# X.append(self.prepare_image(image.image))
-			X[c, :] = self.prepare_image(image.image)
-			y.append(image.user_id)
-			c += 1
+		npimg = ImageHelper.convert_base64_image_to_numpy(self.COMPARING_EIGENFACE)
 
-		print(type(X))
-		# print(type(X2))
-		# X = np.array(X)
-		pca = PCA(n_components=self.NUM_EIGENFACES, whiten=True, svd_solver=self.METHOD).fit(X)
-		# print(X.shape)
-		X_pca = pca.transform(X)
+		img_color = cv2.imdecode(npimg, 1)
 
-		print(X_pca)
-		# X = np.zeros([len(test_faces), self.IMG_RES], dtype='int8')
-		# for i, face in enumerate(test_faces):
-		# 	X[i, :] = self.prepare_image(face)
+		img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+		img_gray = cv2.equalizeHist(img_gray)
+
+		# ImageHelper.save_numpy_image(img_gray, 'test', g.user.id)
+		# X = np.zeros([1, 100 * 100], dtype='int8')
+
+		test = img_gray.flat
+
+		test = model.transform(test)
+
 		distances = []
 		# run through test images (usually one)
 		for j, ref_pca in enumerate(X_pca):
-			print(ref_pca)
-			print(self.COMPARING_EIGENFACE)
-			dist = math.sqrt(sum([diff ** 2 for diff in (ref_pca - self.COMPARING_EIGENFACE)]))
+			print(test)
+			dist = math.sqrt(sum([diff ** 2 for diff in (ref_pca - test[0])]))
 			distances.append((dist, y[j]))
 
 		found_ID = min(distances)[1]
-		print("Identified (result: " + str(found_ID) + " - dist - " + str(min(distances)[0]) + ")")
+		distance = min(distances)[0]
+		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
+
+		process = {
+			"parameters": {
+				'num_eigenfaces': self.num_eigenfaces,
+				'method': self.method,
+				"algorithm": self.algorithm,
+				"recognize_eigenfaces": json.dumps(test[0].tolist()),
+				"total_compared_histograms": total_image,
+				'distance': str(distance),
+				"predict_user": {
+					"id": int(found_ID),
+					"name": "",
+					"main_image": ""
+				},
+			},
+			"messages": {
+
+			},
+			"metadata": {
+
+			}
+		}
+
+		ResponseParser().add_process('recognition', process)

@@ -9,7 +9,7 @@ from PIL import Image
 from flask import g
 
 from helpers.detectionhelper import DetectionHelper
-from helpers.parsers import ResponseParser
+from helpers.parsers import ResponseParser, InputParser
 from helpers.processhelper import Process
 from models.image import Image as ModelImage
 
@@ -66,7 +66,7 @@ class ImageHelper(object):
 	@staticmethod
 	def minimalize(image_path):
 
-		# print('minimalize')
+		print('minimalize full face')
 
 		basewidth = current_app.config.get('BASE_WIDTH')
 
@@ -76,6 +76,20 @@ class ImageHelper(object):
 
 		height_size = int((float(img.size[1]) * float(width_percent)))
 
+		# height_size = current_app.config.get('BASE_WIDTH')
+		img = img.resize((basewidth, height_size), PIL.Image.ANTIALIAS)
+
+		img.save(image_path)
+
+	def minimalize_face(image_path):
+
+		# print('minimalize')
+
+		basewidth = current_app.config.get('BASE_WIDTH')
+
+		img = Image.open(image_path)
+
+		height_size = current_app.config.get('BASE_WIDTH')
 		img = img.resize((basewidth, height_size), PIL.Image.ANTIALIAS)
 
 		img.save(image_path)
@@ -88,24 +102,33 @@ class ImageHelper(object):
 	def prepare_face(face, face_type='face'):
 
 		image_path = ImageHelper.decode_base64_to_filename(face)
+		image_path_big = ImageHelper.decode_base64_to_filename(face, 'big.png')
 
 		if face_type in ['face', 'face_grey']:
 			img = cv2.imread(image_path)
 			height, width, channels = img.shape
 
 			if height != current_app.config.get('FACE_HEIGHT') or width != current_app.config.get('FACE_WIDTH'):
-				ImageHelper.minimalize(image_path)
+				ImageHelper.minimalize_face(image_path)
 
 		elif face_type in ['full', 'full_grey']:
-			full_id = ImageHelper.save_image(ImageHelper.decode_base64(face), 'full', g.user.id)
-			ResponseParser().add_image('extraction', 'full', full_id)
+
+			ImageHelper.minimalize(image_path_big)
+			big = ImageHelper.encode_base64_from_path(image_path_big)
+			big = ImageHelper.decode_base64(big.decode())
+
+			if not InputParser().is_recognize:
+				full_id = ImageHelper.save_image(big, 'full', g.user.id)
+				ResponseParser().add_image('extraction', 'full', full_id)
+
 			image_path = DetectionHelper.haar_cascade_detect(image_path)
-			ImageHelper.minimalize(image_path)
+			ImageHelper.minimalize_face(image_path)
 
 		face = ImageHelper.encode_base64_from_path(image_path)
 		face = ImageHelper.decode_base64(face.decode())
 
 		ImageHelper.delete_image(image_path)
+		ImageHelper.delete_image(image_path_big)
 
 		return face
 
@@ -154,10 +177,21 @@ class ImageHelper(object):
 
 	@staticmethod
 	def convert_base64_to_numpy(base64face):
-		base64_string = str(ImageHelper.encode_base64(base64face), 'utf-8')
+		base64face = str(ImageHelper.encode_base64(base64face), 'utf-8')
 
-		decoded = base64.b64decode(base64_string)
+		print(base64face)
+		decoded = base64.b64decode(base64face)
 
 		npimg = np.fromstring(decoded, dtype=np.uint8)
 
 		return npimg
+
+	@staticmethod
+	def convert_base64_image_to_numpy(base64face):
+
+		decoded = base64.b64decode(base64face)
+
+		npimg = np.fromstring(decoded, dtype=np.uint8)
+
+		return npimg
+

@@ -1,6 +1,7 @@
 import os
 
 import cv2
+from flask import g
 from flask_restful import Resource
 
 from sklearn.decomposition import RandomizedPCA
@@ -20,7 +21,8 @@ from helpers.imagehelper import ImageHelper
 from recognizers.eigenfaces import EigenfacesRecognizer
 from helpers.eigenfaceshelper import EigenfacesHelper
 
-from helpers.parsers import InputParser, ErrorParser
+from helpers.parsers import InputParser, ErrorParser, ResponseParser
+
 
 class Eigenfaces(Resource):
 	@staticmethod
@@ -31,11 +33,14 @@ class Eigenfaces(Resource):
 			return
 
 		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		image_id = ImageHelper.save_image(face, 'face', g.user.id)
+		ResponseParser().add_image('extraction', 'face', image_id)
 
-		face_eigenfaces = EigenfacesHelper.create_base64_to_eigenface(face)
-
-		recognizer = EigenfacesRecognizer(face_eigenfaces, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
+		# exit()
+		face = ImageHelper.encode_base64(face)
+		recognizer = EigenfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
 		recognizer.recognize()
+
 
 	@staticmethod
 	def validate_attributes(type='normal'):
@@ -57,7 +62,7 @@ class Eigenfaces(Resource):
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 
 			print(InputParser().__getattr__('algorithm'))
-			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian'}:
+			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian' , "manhattan", "chebysev", "cosine", "braycurtis" }:
 				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
 
 		return errors

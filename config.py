@@ -12,7 +12,7 @@ class BaseConfig(object):
 	DEBUG = True
 	TESTING = True
 	BASE_DIR = root
-	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_2'
+	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_v3'
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	DATABASE_CONNECT_OPTIONS = {}
 	THREADS_PER_PAGE = 1
@@ -24,6 +24,7 @@ class BaseConfig(object):
 	FACE_HEIGHT = 100
 	FACE_WIDTH = 100
 	BASE_WIDTH = 100
+	IMG_RES = 100 * 100
 
 class TestConfig(BaseConfig):
 	DEBUG = True

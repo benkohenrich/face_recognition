@@ -1,0 +1,37 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list />
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://0.0.0.0:5000" />
+  <option name="urlPath" value="api/lbp/" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-Type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Basic ZXlKcFlYUWlPakUwT0RrM05EUTRNVEVzSW1WNGNDSTZNVFE0T1Rnd05EZ3hNU3dpWVd4bklqb2lTRk15TlRZaWZRLmV5SnBaQ0k2TVgwLlVZd2c2TlNYRWFWRkltOFlCUm05R1B2eUFHUXNVVEFFWWlWLVZxWGV3cXM6" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{ &#9;  &quot;face_type&quot;: &quot;histogram&quot;, &#9;  &quot;extraction_settings&quot;: { &#9;    &quot;radius&quot;: &quot;4&quot;, &#9;    &quot;points&quot;: &quot;2&quot;, &#9;    &quot;method&quot;: &quot;uniform&quot; &#9;  }, &#9;  &quot;recognition_settings&quot;: {    &quot;algorithm&quot;: &quot;cosine&quot; &#9;  }, &quot;histogram&quot; : &quot;[0.0493, 0.0729, 0.0834, 0.1364, 0.1954, 0.107, 0.0525, 0.0669, 0.0443, 0.1919]&quot; &#9;  }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

@@ -25,6 +25,6 @@ class Image(Base):
 	@staticmethod
 	def get_all_to_extraction():
 		all_image = Image.query \
-			.filter(Image.type == 'face').filter(Image.in_storage == 0).all()
+			.filter(Image.type == 'face').filter(Image.in_storage == 1).all()
 
 		return all_image
