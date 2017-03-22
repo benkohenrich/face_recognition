@@ -1,23 +1,14 @@
-import base64
-
-import LDA as LDA
-from PIL import Image
 import cv2
 # from dask.tests.test_base import np
 from flask import current_app
-from flask import g
-from flask import json
 from sklearn.decomposition import PCA
 import numpy as np
-from helpers.imagehelper import ImageHelper
 
 try:
 	from StringIO import StringIO
 except ImportError:
 	from io import StringIO
 
-from helpers.parsers import InputParser
-from helpers.parsers import ResponseParser
 from models.image import Image as ImageModel
 
 
@@ -52,89 +43,3 @@ class EigenfacesHelper(object):
 		X_pca = pca.transform(X)
 
 		return pca, X_pca, y, total_image
-
-	@staticmethod
-	def create_base64_to_eigenface(base64face):
-		options = InputParser()
-
-	#
-	# num_eigenfaces = options.__getattr__('number_eigenfaces')
-	# svd_solver = options.__getattr__('method')
-	#
-	# # print(base64face)
-	# npimg = ImageHelper.convert_base64_image_to_numpy(base64face)
-	#
-	# img_color = cv2.imdecode(npimg, 1)
-	#
-	# img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-	# img_gray = cv2.equalizeHist(img_gray)
-	#
-	# # ImageHelper.save_numpy_image(img_gray, 'test', g.user.id)
-	# X = np.zeros([5, 100*100], dtype='int8')
-	# #
-	# X[0, :] = img_gray.flat
-	# X[1, :] = img_gray.flat
-	# X[2, :] = img_gray.flat
-	# X[3, :] = img_gray.flat
-	# X[4, :] = img_gray.flat
-	#
-	# # print(X)
-	# #
-	# # print(X)
-	# pca = PCA(n_components=24, whiten=True, svd_solver='randomized').fit(X)
-	# # print(pca)
-	# # X_pca = pca.transform(X)
-	# print("################")
-	# print(pca)
-
-	# print(base64face)
-	# options = InputParser()
-	#
-	# num_eigenfaces = options.__getattr__('number_eigenfaces')
-	# svd_solver = options.__getattr__('method')
-	#
-	# #
-	#
-	# with open('tmp.png', 'wb') as f:
-	# 	f.write(base64face)
-	#
-	# img_color = cv2.imread('tmp.png')
-	# # img_color = cv2.imdecode('tmp.png', 1)
-	#
-	# img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-	# img_gray = cv2.equalizeHist(img_gray)
-	#
-	# X = img_gray.flat
-	#
-	# print("********EXTRACTION FLAT**********")
-	# print(X)
-	# print("*********************************")
-	# pca = PCA(n_components=int(num_eigenfaces), whiten=True, svd_solver=svd_solver).fit(X)
-	# # exit()
-	# X_pca = pca.transform(X)
-	#
-	# print(type(X_pca))
-	# print(X_pca)
-	# print("###############################")
-	# result_response = {
-	# 	'number_eigenfaces': num_eigenfaces,
-	# 	'method': svd_solver,
-	# 	'X_pca': json.dumps(X_pca.tolist()),
-	# }
-	#
-	# process = {
-	# 	"parameters": result_response,
-	# 	"messages": {
-	#
-	# 	},
-	# 	"images": {
-	#
-	# 	},
-	# 	"metadata": {
-	#
-	# 	}
-	# }
-	#
-	# ResponseParser().add_process('extraction', process)
-	#
-	# return X_pca
