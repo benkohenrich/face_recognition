@@ -9,7 +9,6 @@ flask-script
 mysqlclient
 uuid
 gunicorn
-StringIO
 enums
 sklearn
 flask_httpauth
