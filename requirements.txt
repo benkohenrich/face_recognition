@@ -14,3 +14,7 @@ sklearn
 flask_httpauth
 passlib
 scikit-learn
+scikit-image
+imutils
+
+
