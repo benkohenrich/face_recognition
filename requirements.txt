@@ -13,3 +13,4 @@ enums
 sklearn
 flask_httpauth
 passlib
+scikit-learn
