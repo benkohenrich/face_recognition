@@ -191,7 +191,7 @@ def create_app():
 
 	@app.route("/")
 	def hello():
-		return "Hello World!"
+		return "Hello World! Jakub funguje to"
 	# api.add_resource(LBPHistogram, '/lbph/histogram/', 'post')
 	# api.add_resource(LBPHistogram, '/lbph/', methods=['GET', 'POST'])
 	# api.add_resource(LBPHistogram, '/xml/', endpoint='xml', strict_slashes=False)
