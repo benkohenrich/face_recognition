@@ -20,9 +20,19 @@ import numpy as np
 from scipy.spatial import distance as dist
 from scipy.spatial import distance as dist
 
+from models.user import User
 
 
 class LBPRecognizer:
+
+	OPENCV_METHODS = {
+			"correlation": cv2.HISTCMP_CORREL,
+			"chi-squared": cv2.HISTCMP_CHISQR,
+			"intersection": cv2.HISTCMP_INTERSECT,
+			"bhattacharyya": cv2.HISTCMP_BHATTACHARYYA,
+			"none" : None
+		}
+
 	SCIPY_METHODS = {
 		"euclidean": dist.euclidean,
 		"manhattan": dist.cityblock,
@@ -49,7 +59,7 @@ class LBPRecognizer:
 			"correlation": self.recognize_method,
 			"chi-squared": self.recognize_method,
 			"intersection":self.recognize_method,
-			"hellinger": self.recognize_method,
+			# "hellinger": self.recognize_method,
 			"euclidean": self.scipy_recognize_method,
 			"manhattan": self.scipy_recognize_method,
 			"chebysev": self.scipy_recognize_method,
@@ -71,21 +81,27 @@ class LBPRecognizer:
 		else:
 			method = self.SCIPY_METHODS[self.algorithm]
 
+		print("METHOD UTILIZING SCIPY")
+		print("initialize the scipy methods to compaute distances")
+		print("Method: ", self.algorithm)
 
-		print(method)
-		data, labels, total_image = self.separation()
+		data, labels, total_image, image_id = self.separation()
 
 		distances = []
 
+		print("#### Start computing distances ####")
 		for j, hist_train in enumerate(data):
 			dist = method(self.np_hist_to_cv(hist_train), self.np_hist_to_cv(self.comparing_histogram))
-			distances.append((dist, labels[j]))
+			distances.append((dist, labels[j], image_id[j]))
 
-		# print(distances)
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
+		image_ID = min(distances)[2]
+		Utils.calculate_percentage_from_distances(distances, distance)
 
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
+
+		predict_user = User.query.filter(User.id == found_ID).first()
 
 		process = {
 			"parameters": {
@@ -98,47 +114,39 @@ class LBPRecognizer:
 				'distance': str(distance),
 				"predict_user": {
 					"id": int(found_ID),
-					"name": "",
+					"name": predict_user.name,
+					"email": predict_user.username,
 					"main_image": ""
 				},
 			},
-			"messages": {
 
-			},
 			"metadata": {
 
 			}
 		}
 
 		ResponseParser().add_process('recognition', process)
-
+		ResponseParser().add_image('recognition', 'predict_image', image_ID)
 
 	def recognize_method(self):
-		print("Classification method : " , self.algorithm)
-
-		OPENCV_METHODS = {
-			"correlation": cv2.HISTCMP_CORREL,
-			"chi-squared": cv2.HISTCMP_CHISQR,
-			"intersection": cv2.HISTCMP_INTERSECT,
-			"hellinger": cv2.HISTCMP_HELLINGER,
-			"none" : None
-		}
 
 		reverse = False
-
 		# if we are using the correlation or intersection
 		# method, then sort the results in reverse order
 		if self.algorithm in ("correlation", "intersection", 'hellinger'):
 			reverse = True
 
-
-		if OPENCV_METHODS[self.algorithm] is None:
+		if self.OPENCV_METHODS[self.algorithm] is None:
 			ErrorParser().add_error('algorithm','')
 			return
 		else:
-			method = OPENCV_METHODS[self.algorithm]
+			method = self.OPENCV_METHODS[self.algorithm]
 
-		data, labels, total_image = self.separation()
+		print("METHOD UTILIZING SCIPY")
+		print("initialize the scipy methods to compaute distances")
+		print("Method: ", method)
+
+		data, labels, total_image, image_id = self.separation()
 
 		distances = []
 
@@ -151,9 +159,11 @@ class LBPRecognizer:
 		if not reverse:
 			found_ID = min(distances)[1]
 			distance = min(distances)[0]
+			Utils.calculate_percentage_from_distances(distances, distance)
 		else:
 			found_ID = max(distances)[1]
 			distance = max(distances)[0]
+			Utils.calculate_percentage_from_distances(distances, distance, True)
 
 
 		print("Identified "+ self.algorithm + "(result: " + str(found_ID) + " - dist - " + str(distance) + ")")
@@ -182,8 +192,6 @@ class LBPRecognizer:
 		}
 
 		ResponseParser().add_process('recognition', process)
-
-
 
 	def svm_recognize(self):
 		print("Linear Support Vector Machine ")
@@ -237,16 +245,16 @@ class LBPRecognizer:
 		ResponseParser().add_process('recognition', process)
 		print("########## END #########")
 
-
 	def separation(self):
+
+		print("#### Start cross validating ####")
 		data = []
 		labels = []
+		image_id = []
 
 		all_image = Image.get_all_to_extraction()
-		print(type(all_image))
 		total_image = len(all_image)
 
-		print("########## START RECOGNITION #########")
 		for image in all_image:
 			histogram_model = Histogram.get_by_image_params(image.id, self.points, self.range, self.method)
 
@@ -256,21 +264,20 @@ class LBPRecognizer:
 				histogram_json = json.dumps(histogram_results['histogram'].tolist())
 
 				histogram_model = Histogram(image_id=image.id,
-											user_id=image.user_id,
-											histogram=histogram_json,
-											number_points=histogram_results['points'],
-											radius=histogram_results['radius'],
-											method=histogram_results['method'],
-											# gray_image_id=histogram_results['gray_image_id']
-											)
+					user_id=image.user_id,
+					histogram=histogram_json,
+					number_points=histogram_results['points'],
+					radius=histogram_results['radius'],
+					method=histogram_results['method'],
+				)
+
 				histogram_model.save()
 
+			image_id.append(histogram_model.id)
 			labels.append(histogram_model.user_id)
 			data.append(np.asarray(json.loads(histogram_model.histogram)))
 
-		return data, labels, total_image
-	# def chi_squared_recognize(self):
-	# 	print("CHI SQUARED RECOGNIZE ")
+		return data, labels, total_image, image_id
 
 	def np_hist_to_cv(self, np_histogram_output):
 		counts = np_histogram_output

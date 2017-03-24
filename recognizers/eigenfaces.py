@@ -1,7 +1,6 @@
 # from matplotlib.mlab import PCA
 from PIL import Image
 from flask import json
-from scipy import ndimage, misc
 from sklearn.svm import SVC
 
 from helpers.imagehelper import ImageHelper
@@ -11,13 +10,8 @@ try:
 except ImportError:
 	from io import StringIO
 
-from sklearn.decomposition import PCA, pca
-import numpy as np
-import glob
 import cv2
 import math
-import os.path
-import string
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
 from helpers.eigenfaceshelper import EigenfacesHelper
 from models.image import Image as ImageModel
@@ -148,6 +142,7 @@ class EigenfacesRecognizer:
 		# run through test images (usually one)
 		for j, ref_pca in enumerate(X_pca):
 			dist = method(ref_pca, test[0])
+			print("Scipy Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
 			distances.append((dist, y[j]))
 
 
@@ -196,13 +191,17 @@ class EigenfacesRecognizer:
 
 		test = img_gray.flat
 
+		print("After flat: " , test)
 		test = model.transform(test)
 
 		distances = []
 		# run through test images (usually one)
 		for j, ref_pca in enumerate(X_pca):
-			print(test)
+			print("TEST VECtOR: ", test[0])
+			print("TRAIN VECtOR: ", ref_pca)
+
 			dist = math.sqrt(sum([diff ** 2 for diff in (ref_pca - test[0])]))
+			print("Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
 			distances.append((dist, y[j]))
 
 		found_ID = min(distances)[1]

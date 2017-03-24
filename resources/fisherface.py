@@ -1,34 +1,17 @@
-import os
-
-import cv2
 from flask import g
 from flask_restful import Resource
-
-from sklearn.decomposition import RandomizedPCA
-import numpy as np
-import glob
-import cv2
-import math
-import os.path
-import string
-
-from gzip import GzipFile
-
-import numpy as np
-import pylab as pl
-
 from helpers.imagehelper import ImageHelper
 from recognizers.eigenfaces import EigenfacesRecognizer
-from helpers.eigenfaceshelper import EigenfacesHelper
 
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
+from recognizers.fisherfaces import FisherfacesRecognizer
 
 
-class Eigenfaces(Resource):
+class Fisherfaces(Resource):
 	@staticmethod
 	def recognize_face():
 
-		Eigenfaces.validate_attributes('recognition')
+		Fisherfaces.validate_attributes('recognition')
 		if not ErrorParser().is_empty():
 			return
 
@@ -37,7 +20,7 @@ class Eigenfaces(Resource):
 		ResponseParser().add_image('extraction', 'face', image_id)
 
 		face = ImageHelper.encode_base64(face)
-		recognizer = EigenfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
+		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
 		recognizer.recognize()
 
 

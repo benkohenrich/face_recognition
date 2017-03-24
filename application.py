@@ -12,6 +12,7 @@ from flask_httpauth import HTTPBasicAuth
 
 from models.base import db
 from models.user import User
+from resources.fisherface import Fisherfaces
 from resources.lbp import LBPHistogram
 
 from helpers.response import ResponseHelper
@@ -127,6 +128,27 @@ def create_app():
 
 		return ResponseHelper.create_response(message), 200
 
+	@app.route('/api/fisher/', methods=['POST'])
+	@auth.login_required
+	def fisherfaces():
+
+		# CREATE NEW PROCESS
+		# Process().create_new_process(g.user.id, 'eigenfaces')
+		# Process().set_code('recognition')
+
+		inputs = InputParser()
+		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
+		inputs.set_attributes(request)
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		Fisherfaces.recognize_face()
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		return ResponseHelper.create_response(message), 200
 
 	# Authorization Routers
 	@app.route('/api/token/', methods=['GET'])
