@@ -16,5 +16,6 @@ passlib
 scikit-learn
 scikit-image
 imutils
+matplotlib
 
 
