@@ -37,9 +37,10 @@ def create_app():
 	message = []
 
 	# Router
-	@app.route("/heno/")
+	@app.route("/tomi/")
+	@auth.login_required
 	def heno():
-		return "Hello Heno!"
+		return "Hello Holgye!"
 
 	# Local Binary Pattern routers
 	@app.route('/api/lbp/face/', methods=['GET', 'POST'])
