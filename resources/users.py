@@ -47,10 +47,10 @@ class Users(Resource):
 			# Save image to DB
 			image_id = ImageHelper.save_image(image, 'face', g.user.id)
 
-			if current_app.config['SERVER_NAME'] is None:
+			if current_app.config['URL_NAME'] is None:
 				url = "http://0.0.0.0:5000" + url_for('get_image', image_id=image_id)
 			else:
-				url = current_app.config['SERVER_NAME'] + url_for('get_image', image_id=image_id)
+				url = current_app.config['URL_NAME'] + url_for('get_image', image_id=image_id)
 
 			return url
 		except:

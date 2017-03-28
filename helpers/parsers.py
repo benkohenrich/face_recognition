@@ -130,10 +130,10 @@ class ResponseParser:
 
 	def add_image(self, type, code, image_id):
 
-		if current_app.config['SERVER_NAME'] is None:
+		if current_app.config['URL_NAME'] is None:
 			url = url_for('get_image', image_id=image_id)
 		else:
-			url = current_app.config['SERVER_NAME'] + url_for('get_image', image_id=image_id)
+			url = current_app.config['URL_NAME'] + url_for('get_image', image_id=image_id)
 
 		if type == 'extraction':
 			self.extraction_images[code] = url

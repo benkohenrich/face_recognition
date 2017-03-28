@@ -55,9 +55,9 @@ class Image(Base):
 		url = ''
 
 		if avatar is not None:
-			if current_app.config['SERVER_NAME'] is None:
+			if current_app.config['URL_NAME'] is None:
 				url = url_for('get_image', image_id=avatar.id)
 			else:
-				url = current_app.config['SERVER_NAME'] + url_for('get_image', image_id=avatar.id)
+				url = current_app.config['URL_NAME'] + url_for('get_image', image_id=avatar.id)
 
 		return url
