@@ -5,6 +5,7 @@ from flask import g, jsonify, request
 from flask import make_response
 from flask_httpauth import HTTPBasicAuth
 
+from helpers.imagehelper import ImageHelper
 from models.base import db
 from models.image import Image
 from models.user import User
@@ -148,6 +149,22 @@ def create_app():
 				return False
 		g.user = user
 		return True
+
+	@app.route('/api/users/face/', methods=['POST'])
+	@auth.login_required
+	def save_image_for_user():
+
+		inputs = InputParser()
+		inputs.set_attributes(request)
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		url = Users.save_face_image()
+
+		return jsonify({
+			'image_face': url
+		}), 201
 
 	@app.route('/api/users/', methods=['POST'])
 	def new_user():

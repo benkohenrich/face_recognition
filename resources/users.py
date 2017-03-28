@@ -1,9 +1,10 @@
 import traceback
 
-from flask import request
+from flask import request, g, current_app, url_for
 from flask_restful import Resource, abort
 
 from helpers.imagehelper import ImageHelper
+from helpers.parsers import InputParser
 from models.base import db
 from models.user import User
 
@@ -34,6 +35,24 @@ class Users(Resource):
 				full_id = ImageHelper.save_image(avatar, 'avatar', user.id)
 
 			return user.username
+		except:
+			traceback.print_exc()
+			db.session.rollback()
+			abort(500)
+
+	@staticmethod
+	def save_face_image():
+		try:
+			image = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+			# Save image to DB
+			image_id = ImageHelper.save_image(image, 'face', g.user.id)
+
+			if current_app.config['SERVER_NAME'] is None:
+				url = "http://0.0.0.0:5000" + url_for('get_image', image_id=image_id)
+			else:
+				url = current_app.config['SERVER_NAME'] + url_for('get_image', image_id=image_id)
+
+			return url
 		except:
 			traceback.print_exc()
 			db.session.rollback()

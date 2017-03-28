@@ -65,9 +65,9 @@ class ImageHelper(object):
 		return base64.b64encode(image_path)
 
 	@staticmethod
-	def minimalize(image_path, basewidth=None):
+	def minimalize(image_path, basewidth=0):
 
-		if basewidth is None:
+		if basewidth == 0:
 			basewidth = current_app.config.get('BASE_WIDTH')
 
 		img = Image.open(image_path)
@@ -76,7 +76,6 @@ class ImageHelper(object):
 
 		height_size = int((float(img.size[1]) * float(width_percent)))
 
-		# height_size = current_app.config.get('BASE_WIDTH')
 		img = img.resize((basewidth, height_size), PIL.Image.ANTIALIAS)
 
 		img.save(image_path)
