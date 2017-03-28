@@ -92,12 +92,11 @@ class LBPHistogram(Resource):
 
 		# Validate parameters
 		errors = LBPHistogram.validate_attributes()
-
 		if not errors.is_empty():
 			return
 
+		# Save histogram from face
 		if face is not None:
-
 			image = ImageHelper.prepare_face(face, InputParser().face_type)
 
 			# Save image to DB
@@ -125,6 +124,7 @@ class LBPHistogram(Resource):
 			return histogram_model.id
 
 		elif histogram is not None:
+			# Save histogram from histogram
 			histogram_model = Histogram(
 				user_id=g.user.id,
 				histogram=histogram,

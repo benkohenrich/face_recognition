@@ -4,14 +4,15 @@ import PIL
 import cv2
 import numpy as np
 
-from flask import current_app
+from flask import current_app, g
 from PIL import Image
-from flask import g
 
 from helpers.detectionhelper import DetectionHelper
 from helpers.parsers import ResponseParser, InputParser
 from helpers.processhelper import Process
+
 from models.image import Image as ModelImage
+
 
 class ImageHelper(object):
 	crop_string = {
@@ -64,11 +65,10 @@ class ImageHelper(object):
 		return base64.b64encode(image_path)
 
 	@staticmethod
-	def minimalize(image_path):
+	def minimalize(image_path, basewidth=None):
 
-		print('minimalize full face')
-
-		basewidth = current_app.config.get('BASE_WIDTH')
+		if basewidth is None:
+			basewidth = current_app.config.get('BASE_WIDTH')
 
 		img = Image.open(image_path)
 
@@ -82,8 +82,6 @@ class ImageHelper(object):
 		img.save(image_path)
 
 	def minimalize_face(image_path):
-
-		# print('minimalize')
 
 		basewidth = current_app.config.get('BASE_WIDTH')
 
@@ -113,7 +111,7 @@ class ImageHelper(object):
 
 		elif face_type in ['full', 'full_grey']:
 
-			ImageHelper.minimalize(image_path_big)
+			ImageHelper.minimalize(image_path_big, 200)
 			big = ImageHelper.encode_base64_from_path(image_path_big)
 			big = ImageHelper.decode_base64(big.decode())
 
@@ -174,7 +172,6 @@ class ImageHelper(object):
 
 		return image.id
 
-
 	@staticmethod
 	def convert_base64_to_numpy(base64face):
 		base64face = str(ImageHelper.encode_base64(base64face), 'utf-8')
@@ -194,4 +191,3 @@ class ImageHelper(object):
 		npimg = np.fromstring(decoded, dtype=np.uint8)
 
 		return npimg
-

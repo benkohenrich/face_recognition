@@ -1,14 +1,6 @@
-import base64
-
-from PIL import Image
 import cv2
-# from dask.tests.test_base import np
 from flask import current_app
-from flask import g
-from flask import json
-from sklearn.decomposition import PCA
 import numpy as np
-from helpers.imagehelper import ImageHelper
 
 try:
 	from StringIO import StringIO

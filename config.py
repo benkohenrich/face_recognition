@@ -20,11 +20,13 @@ class BaseConfig(object):
 	UPLOAD_FOLDER = os.path.join(root, "static/uploads")
 	LOGS_FOLDER = os.path.join(root, "logs")
 	SERVER_HOST = '0.0.0.0'
+	SERVER_NAME = 'http://diplserver.zbytocnosti.sk'
 	TEMP_PATH = 'public/data/temp/'
 	FACE_HEIGHT = 100
 	FACE_WIDTH = 100
 	BASE_WIDTH = 100
 	IMG_RES = 100 * 100
+	PREPARE_PER_USER_IMAGES = 10
 
 class TestConfig(BaseConfig):
 	DEBUG = True

@@ -24,8 +24,10 @@ class HistogramMaker(object):
 	@staticmethod
 	def create_histogram_from_image(image):
 
+		# GET SETTINGS
 		options = InputParser().extraction_settings
 
+		# OPEN IMAGE
 		if type(image).__module__ == np.__name__:
 			im = cv2.imdecode(image, 1)
 		else:
@@ -33,7 +35,7 @@ class HistogramMaker(object):
 
 		im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
-		#GRAYSCALE IMAGE
+		# GRAYSCALE IMAGE
 		gray_image = cv2.imencode('.jpg', im_gray)[1].tostring()
 
 		if not InputParser().is_recognize:
@@ -48,11 +50,6 @@ class HistogramMaker(object):
 
 		if not InputParser().is_recognize:
 			histogram_graph_id = ImageHelper.save_plot_image(plt, 'histogram_graph', g.user.id)
-
-		# img_str = cv2.imencode('.jpg', plt)[1].tostring()
-		# print(im_gray.ravel())
-
-		# ImageHelper.save_image(img_str, 'histogram_graph', g.user.id)
 
 		try:
 			radius = int(options['radius'])
@@ -73,9 +70,6 @@ class HistogramMaker(object):
 		# Uniform LBP is used
 		lbp = local_binary_pattern(im_gray, no_points, radius, method=method)
 
-		# Calculate the histogram
-		# print(plt.hist(im.ravel(), 256, [0, 256]))
-		# plt.show()
 		x = itemfreq(lbp.ravel())
 
 		# Normalize the histogram
@@ -91,20 +85,15 @@ class HistogramMaker(object):
 		result_response = {
 			'radius': radius,
 			'points': no_points,
-			'histogram':  json.dumps(hist.tolist()),
+			'histogram': json.dumps(hist.tolist()),
 			'method': method
 		}
 
 		process = {
-			"parameters" : result_response,
-			"messages" : {
-
-			},
-			"metadata" : {
-
-			}
+			"parameters": result_response,
+			"messages": {},
+			"metadata": {}
 		}
-
 
 		ResponseParser().add_process('extraction', process)
 

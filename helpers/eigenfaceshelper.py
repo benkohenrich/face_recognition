@@ -1,5 +1,4 @@
 import cv2
-# from dask.tests.test_base import np
 from flask import current_app
 from sklearn.decomposition import PCA
 import numpy as np

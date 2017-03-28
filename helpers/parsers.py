@@ -1,35 +1,4 @@
-import os
-
-# from flask import request
-import singleton as singleton
-from flask import json
-from flask import jsonify
-from flask import url_for
-from singleton.singleton import Singleton
-
-
-# class Singleton:
-# 	def __init__(self, decorated):
-# 		self._decorated = decorated
-#
-# 	def Instance(self):
-# 		"""
-#         Returns the singleton instance. Upon its first call, it creates a
-#         new instance of the decorated class and calls its `__init__` method.
-#         On all subsequent calls, the already created instance is returned.
-#
-#         """
-# 		try:
-# 			return self._instance
-# 		except AttributeError:
-# 			self._instance = self._decorated()
-# 			return self._instance
-#
-# 	def __call__(self):
-# 		raise TypeError('Singletons must be accessed through `Instance()`.')
-#
-# 	def __instancecheck__(self, inst):
-# 		return isinstance(inst, self._decorated)
+from flask import json, current_app, url_for
 
 
 # @Singleton
@@ -89,12 +58,6 @@ class InputParser(object):
 				self.histogram = data.get('histogram')
 			else:
 				errors.add_error('face', 'generals.histogram.required')
-		# if data.get('face', None) is not None and (
-		# 				data.get('face_type', None) is not 'histogram' or data.get('face_type', None) is not None):
-		# 	self.face = data.get('face')
-		# else:
-		# 	if data.get('face_type', None) is not 'histogram':
-		# 		errors.add_error('face', 'generals.face.required')
 
 		if 'extraction_settings' in self.validate_attributes:
 			if data.get('extraction_settings', None) is not None:
@@ -152,7 +115,6 @@ class ResponseParser:
 	extraction_images = {}
 	recognition_images = {}
 
-
 	def __new__(self):
 		if not hasattr(self, 'instance'):
 			self.instance = super(ResponseParser, self).__new__(self)
@@ -168,7 +130,10 @@ class ResponseParser:
 
 	def add_image(self, type, code, image_id):
 
-		url = url_for('get_image', image_id=image_id)
+		if current_app.config['SERVER_NAME'] is None:
+			url = url_for('get_image', image_id=image_id)
+		else:
+			url = current_app.config['SERVER_NAME'] + url_for('get_image', image_id=image_id)
 
 		if type == 'extraction':
 			self.extraction_images[code] = url
@@ -180,14 +145,15 @@ class ResponseParser:
 		try:
 			self.response_data['extraction']['images'] = self.extraction_images
 		except KeyError:
-			print('no extracton')
+			print('no extraction')
 
 		try:
 			self.response_data['recognition']['images'] = self.recognition_images
 		except KeyError:
-			print('no extracton')
+			print('no extraction')
 
 		return self.response_data
+
 
 class ErrorParser:
 	__instance = None

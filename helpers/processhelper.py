@@ -44,6 +44,7 @@ class Process(object):
 	def generate(self):
 
 		if not ErrorParser().is_empty():
+
 			detail = ProcessDetail(
 				process_id=self.process_id,
 				code='errors',
@@ -55,13 +56,13 @@ class Process(object):
 
 		else:
 
-			# print(jsonify(ResponseParser().get_response_data()))
 			detail = ProcessDetail(
 				process_id=self.process_id,
 				code=self.code,
 				# inputs=InputParser().get_inputs()
 				responses=json.dumps((ResponseParser().get_response_data()))
 			)
+
 			if self.code == 'extraction':
 				detail.extraction_settings = json.dumps((ResponseParser().get_response_data()['extraction']))
 			elif self.code == 'recognition':
