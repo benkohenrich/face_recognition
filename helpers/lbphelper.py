@@ -1,6 +1,7 @@
 import base64
 import io
 
+import matplotlib
 from PIL import Image
 import cv2
 from flask import g
@@ -21,9 +22,11 @@ from matplotlib import pyplot as plt
 
 
 class HistogramMaker(object):
+
+
 	@staticmethod
 	def create_histogram_from_image(image):
-
+		matplotlib.use('Agg')
 		# GET SETTINGS
 		options = InputParser().extraction_settings
 
