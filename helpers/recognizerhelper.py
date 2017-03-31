@@ -14,7 +14,7 @@ class RecognizeHelper(object):
 
 			if method_model.worst < 0:
 				distance = distance + abs(method_model.worst)
-				
+
 			percentage = (distance / per100) * 100
 
 			print("(", distance, "/", per100, ") * 100")
