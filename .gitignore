@@ -5,3 +5,6 @@
 *.pyc
 static/
 templates/
+XML_methods/user_image_save
+XML_methods/user_registration.xml
+!public/data
