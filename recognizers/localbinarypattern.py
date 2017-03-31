@@ -109,16 +109,17 @@ class LBPRecognizer:
 				"recognize_histogram": json.dumps(self.comparing_histogram.tolist()),
 				"total_compared_histograms": total_image,
 				'distance': str(distance),
+				'similarity_percentage': percentage,
 				"predict_user": {
 					"id": int(found_ID),
 					"name": predict_user.name,
 					"email": predict_user.username,
-					"main_image": ""
+					"main_image": Image.avatar_path(predict_user.id)
 				},
 			},
-
 			"metadata": {
-
+				'process_time' : '',
+				'process_mem_use' : ''
 			}
 		}
 
@@ -153,15 +154,15 @@ class LBPRecognizer:
 			found_ID = min(distances)[1]
 			distance = min(distances)[0]
 			image_ID = min(distances)[2]
-			Utils.calculate_percentage_from_distances(distances, distance)
+			#Utils.calculate_percentage_from_distances(distances, distance)
 		else:
 			found_ID = max(distances)[1]
 			distance = max(distances)[0]
 			image_ID = max(distances)[2]
-			Utils.calculate_percentage_from_distances(distances, distance, True)
 
+		print(distance)
 		percentage = RecognizeHelper.calculate_percentage_for_opencv_methods(self.algorithm, distance, reverse)
-		print("Identified " + self.algorithm + "(result: " + str(found_ID) + " - dist - " + str(distance) + ") -  Percentage: ", percentage, "%")
+		print("Identified " + self.algorithm + "(result: " + str(found_ID) + " - dist - " + repr(distance) + ") -  Percentage: ", percentage, "%")
 
 		process = {
 			"parameters": {
@@ -171,18 +172,17 @@ class LBPRecognizer:
 				"algorithm": self.algorithm,
 				"recognize_histogram": json.dumps(self.comparing_histogram.tolist()),
 				"total_compared_histograms": total_image,
-				'distance': str(distance),
+				'distance': repr(distance),
+				'similarity_percentage': percentage,
 				"predict_user": {
 					"id": int(found_ID),
 					"name": "",
 					"main_image": ""
 				},
 			},
-			"messages": {
-
-			},
 			"metadata": {
-
+				'process_time': '',
+				'process_mem_use': ''
 			}
 		}
 
