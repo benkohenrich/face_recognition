@@ -27,7 +27,7 @@ CLASSIFICATION_ALGORITHM = {
 	"correlation",
 	"chi-squared",
 	"intersection",
-	"hellinger",
+	"bhattacharyya",
 	"euclidean",
 	"manhattan",
 	"chebysev",
@@ -65,12 +65,11 @@ class LBPHistogram(Resource):
 				i_parser.__getattr__('radius'),
 				i_parser.__getattr__('method')
 			)
-			# exit()
+
 			recognizer.recognize()
 		elif histogram is not None:
 			try:
 				histogram = np.asarray(json.loads(histogram))
-
 			except:
 				ErrorParser().add_error('histogram_format', 'recognize.histogram.invalid_format')
 				return
@@ -155,7 +154,6 @@ class LBPHistogram(Resource):
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':
-			# todo add more clasification algorithm
 			if InputParser().__getattr__('algorithm') is None:
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 

@@ -1,6 +1,6 @@
 import uuid
 
-from flask import json, jsonify
+from flask import json, jsonify, request
 
 from helpers.parsers import ErrorParser, InputParser, ResponseParser
 from models.process import Process as ProcessModel
@@ -27,13 +27,26 @@ class Process(object):
 			AlgorithmTypeModel.code==algorithm
 		).first()
 
-		process = ProcessModel(
-			user_id=user_id,
-			algorithm_type_id=type.id,
-			process_hash=uuid.uuid4()
-		)
+		try:
+			header_uuid = request.headers['process-uuid']
+		except:
+			header_uuid = None
 
-		process.save()
+		make_new = True
+
+		if header_uuid is not None:
+			process = ProcessModel.query().filter(ProcessModel.uuid == header_uuid).first()
+			if process is not None:
+				make_new = False
+
+		if make_new:
+			process = ProcessModel(
+				user_id=user_id,
+				algorithm_type_id=type.id,
+				uuid=uuid.uuid4()
+			)
+
+			process.save()
 
 		self.process_id = process.id
 		self.process = process

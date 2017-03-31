@@ -6,7 +6,7 @@ class Process(Base):
 
 	user_id = db.Column(db.Integer, index=True)
 	algorithm_type_id = db.Column(db.Integer, index=True)
-	process_hash = db.Column(db.String(255), nullable=False, unique=True)
+	uuid = db.Column(db.String(255), nullable=False, unique=True)
 
 	def save(self):
 		db.session.add(self)

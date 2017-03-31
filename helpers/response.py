@@ -20,7 +20,7 @@ class ResponseHelper(object):
 			response['errors'] = errors.get_errors()
 		else:
 			response['process'] = ResponseParser().get_response_data()
-			response['process']['uuid'] = Process().process.process_hash
+			response['process']['uuid'] = Process().process.uuid
 
 		Process().generate()
 		return jsonify(response)
