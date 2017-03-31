@@ -18,6 +18,8 @@ from scipy.stats import itemfreq
 from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser
 from helpers.parsers import ResponseParser
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 
@@ -26,7 +28,7 @@ class HistogramMaker(object):
 
 	@staticmethod
 	def create_histogram_from_image(image):
-		matplotlib.use('Agg')
+	
 		# GET SETTINGS
 		options = InputParser().extraction_settings
 
