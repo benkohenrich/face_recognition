@@ -84,7 +84,5 @@ class Process(object):
 				except:
 					detail.extraction_settings = None
 
-				detail.recognition_settings = jsonify(ResponseParser().get_response_data()['recognition'])
-
 			detail.save()
 

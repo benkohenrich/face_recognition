@@ -28,7 +28,7 @@ class HistogramMaker(object):
 
 	@staticmethod
 	def create_histogram_from_image(image):
-	
+
 		# GET SETTINGS
 		options = InputParser().extraction_settings
 

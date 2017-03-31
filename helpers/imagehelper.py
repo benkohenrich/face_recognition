@@ -175,7 +175,6 @@ class ImageHelper(object):
 	def convert_base64_to_numpy(base64face):
 		base64face = str(ImageHelper.encode_base64(base64face), 'utf-8')
 
-		print(base64face)
 		decoded = base64.b64decode(base64face)
 
 		npimg = np.fromstring(decoded, dtype=np.uint8)
