@@ -45,6 +45,9 @@ class Users(Resource):
 		try:
 			image = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
 			# Save image to DB
+			if image is None:
+				return
+
 			image_id = ImageHelper.save_image(image, 'face', g.user.id)
 
 			if current_app.config['URL_NAME'] is None:

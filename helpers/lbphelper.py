@@ -72,7 +72,6 @@ class HistogramMaker(object):
 		except KeyError:
 			method = 'uniform'
 
-		# Uniform LBP is used
 		lbp = local_binary_pattern(im_gray, no_points, radius, method=method)
 
 		x = itemfreq(lbp.ravel())

@@ -33,6 +33,8 @@ class Eigenfaces(Resource):
 			return
 
 		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		if face is None:
+			return
 		image_id = ImageHelper.save_image(face, 'face', g.user.id)
 		ResponseParser().add_image('extraction', 'face', image_id)
 

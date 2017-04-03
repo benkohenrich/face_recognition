@@ -119,6 +119,14 @@ class ImageHelper(object):
 				ResponseParser().add_image('extraction', 'full', full_id)
 
 			image_path = DetectionHelper.haar_cascade_detect(image_path)
+			print(image_path)
+			if image_path is None:
+				try:
+					ModelImage.remove(full_id)
+				except:
+					return
+				return
+
 			ImageHelper.minimalize_face(image_path)
 
 		face = ImageHelper.encode_base64_from_path(image_path)

@@ -16,6 +16,9 @@ class Fisherfaces(Resource):
 			return
 
 		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		if face is None:
+			return
+
 		image_id = ImageHelper.save_image(face, 'face', g.user.id)
 		ResponseParser().add_image('extraction', 'face', image_id)
 
@@ -39,7 +42,6 @@ class Fisherfaces(Resource):
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':
-			# todo add more clasification algorithm
 			if InputParser().__getattr__('algorithm') is None:
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 

@@ -1,9 +1,8 @@
-# from matplotlib.mlab import PCA
-from PIL import Image
 from flask import json
 from sklearn.svm import SVC
 
-from helpers.imagehelper import ImageHelper
+from models.image import Image
+from models.user import User
 
 try:
 	from StringIO import StringIO
@@ -12,15 +11,16 @@ except ImportError:
 
 import cv2
 import math
+
+from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
 from helpers.eigenfaceshelper import EigenfacesHelper
-from models.image import Image as ImageModel
+
 from scipy.spatial import distance as dist
 from sklearn.grid_search import GridSearchCV
 
 
 class EigenfacesRecognizer:
-
 	SCIPY_METHODS = {
 		"manhattan": dist.cityblock,
 		"chebysev": dist.chebyshev,
@@ -43,10 +43,10 @@ class EigenfacesRecognizer:
 		switcher = {
 			'svm': self.svm_recognize,
 			'euclidian': self.euclidian_recognize,
-			"manhattan":self.scipy_recognize_method,
-			"chebysev":self.scipy_recognize_method,
-			"cosine":self.scipy_recognize_method,
-			"braycurtis":self.scipy_recognize_method
+			"manhattan": self.scipy_recognize_method,
+			"chebysev": self.scipy_recognize_method,
+			"cosine": self.scipy_recognize_method,
+			"braycurtis": self.scipy_recognize_method
 		}
 
 		# Get the function from switcher dictionary
@@ -87,7 +87,10 @@ class EigenfacesRecognizer:
 		clf = clf.fit(X_pca, y)
 
 		y_pred = clf.predict(test)
-		print(y_pred)
+
+		predict_user_id = int(y_pred[0])
+
+		predict_user = User.query.filter(User.id == predict_user_id).first()
 
 		process = {
 			"parameters": {
@@ -95,18 +98,17 @@ class EigenfacesRecognizer:
 				'method': self.method,
 				"algorithm": self.algorithm,
 				"recognize_eigenfaces": json.dumps(test[0].tolist()),
-				"total_compared_histograms": total_image,
+				"total_compared_faces": total_image,
 				"predict_user": {
-					"id": int(y_pred[0]),
-					"name": "",
-					"main_image": ""
+					"id": predict_user_id,
+					"name": predict_user.name,
+					"email": predict_user.username,
+					"main_image": Image.avatar_path(predict_user.id)
 				},
 			},
-			"messages": {
-
-			},
 			"metadata": {
-
+				'process_time': '',
+				'process_mem_use': ''
 			}
 		}
 
@@ -115,11 +117,10 @@ class EigenfacesRecognizer:
 	def scipy_recognize_method(self):
 
 		if self.SCIPY_METHODS[self.algorithm] is None:
-			ErrorParser().add_error('algorithm','')
+			ErrorParser().add_error('algorithm', '')
 			return
 		else:
 			method = self.SCIPY_METHODS[self.algorithm]
-
 
 		model, X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
 
@@ -145,12 +146,12 @@ class EigenfacesRecognizer:
 			print("Scipy Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
 			distances.append((dist, y[j]))
 
-
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
 
-		# print(test)
+		predict_user_id = int(found_ID)
+		predict_user = User.query.filter(User.id == found_ID).first()
 		process = {
 			"parameters": {
 				'num_eigenfaces': self.num_eigenfaces,
@@ -160,16 +161,15 @@ class EigenfacesRecognizer:
 				"total_compared_histograms": total_image,
 				'distance': str(distance),
 				"predict_user": {
-					"id": int(found_ID),
-					"name": "",
-					"main_image": ""
+					"id": predict_user_id,
+					"name": predict_user.name,
+					"email": predict_user.username,
+					"main_image": Image.avatar_path(predict_user.id)
 				},
 			},
-			"messages": {
-
-			},
 			"metadata": {
-
+				'process_time': '',
+				'process_mem_use': ''
 			}
 		}
 
@@ -177,7 +177,7 @@ class EigenfacesRecognizer:
 
 	def euclidian_recognize(self):
 
-		model , X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
+		model, X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)
 
 		npimg = ImageHelper.convert_base64_image_to_numpy(self.COMPARING_EIGENFACE)
 
@@ -191,22 +191,23 @@ class EigenfacesRecognizer:
 
 		test = img_gray.flat
 
-		print("After flat: " , test)
+		print("After flat: ", test)
 		test = model.transform(test)
 
 		distances = []
 		# run through test images (usually one)
 		for j, ref_pca in enumerate(X_pca):
-			print("TEST VECtOR: ", test[0])
-			print("TRAIN VECtOR: ", ref_pca)
 
 			dist = math.sqrt(sum([diff ** 2 for diff in (ref_pca - test[0])]))
-			print("Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
+			# print("Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
 			distances.append((dist, y[j]))
 
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
+
+		predict_user_id = int(found_ID)
+		predict_user = User.query.filter(User.id == found_ID).first()
 
 		process = {
 			"parameters": {
@@ -217,16 +218,15 @@ class EigenfacesRecognizer:
 				"total_compared_histograms": total_image,
 				'distance': str(distance),
 				"predict_user": {
-					"id": int(found_ID),
-					"name": "",
-					"main_image": ""
+					"id": predict_user_id,
+					"name": predict_user.name,
+					"email": predict_user.username,
+					"main_image": Image.avatar_path(predict_user.id)
 				},
 			},
-			"messages": {
-
-			},
 			"metadata": {
-
+				'process_time': '',
+				'process_mem_use': ''
 			}
 		}
 

@@ -53,6 +53,8 @@ class LBPHistogram(Resource):
 		if face is not None:
 
 			face = ImageHelper.prepare_face(face, i_parser.face_type)
+			if face is None:
+				return
 			# Save image to DB
 			# image_id = ImageHelper.save_image(face, 'face', g.user.id)
 			# ResponseParser().add_image('extraction', 'face', image_id)
@@ -97,7 +99,8 @@ class LBPHistogram(Resource):
 		# Save histogram from face
 		if face is not None:
 			image = ImageHelper.prepare_face(face, InputParser().face_type)
-
+			if image is None:
+				return
 			# Save image to DB
 			image_id = ImageHelper.save_image(image, 'face', g.user.id)
 			ResponseParser().add_image('extraction', 'face', image_id)
@@ -150,6 +153,7 @@ class LBPHistogram(Resource):
 		if InputParser().__getattr__('method') is None:
 			errors.add_error('method', 'extraction.method.required')
 		else:
+			print(InputParser().__getattr__('method'))
 			if InputParser().__getattr__('method') not in {'default', 'ror', 'uniform', 'nri_uniform', 'var'}:
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 

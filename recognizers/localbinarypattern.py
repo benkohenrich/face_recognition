@@ -118,8 +118,8 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time' : '',
-				'process_mem_use' : ''
+				'process_time': '',
+				'process_mem_use': ''
 			}
 		}
 
@@ -150,19 +150,22 @@ class LBPRecognizer:
 			dist = cv2.compareHist(self.np_hist_to_cv(hist_train), self.np_hist_to_cv(self.comparing_histogram), method)
 			distances.append((dist, labels[j], image_id[j]))
 
+		#print(distances)
 		if not reverse:
 			found_ID = min(distances)[1]
 			distance = min(distances)[0]
 			image_ID = min(distances)[2]
-			#Utils.calculate_percentage_from_distances(distances, distance)
+			#print(min(distances))
+		# Utils.calculate_percentage_from_distances(distances, distance)
 		else:
 			found_ID = max(distances)[1]
 			distance = max(distances)[0]
 			image_ID = max(distances)[2]
+			print(max(distances))
 
-		print(distance)
 		percentage = RecognizeHelper.calculate_percentage_for_opencv_methods(self.algorithm, distance, reverse)
-		print("Identified " + self.algorithm + "(result: " + str(found_ID) + " - dist - " + repr(distance) + ") -  Percentage: ", percentage, "%")
+		print("Identified " + self.algorithm + "(result: " + str(found_ID) + " - dist - " + repr(
+			distance) + ") -  Percentage: ", percentage, "%")
 
 		predict_user = User.query.filter(User.id == found_ID).first()
 
@@ -197,17 +200,20 @@ class LBPRecognizer:
 
 		data, labels, total_image, image_id = self.separation()
 
-		# print(data)
-		print(labels)
 		set = Utils.remove_duplicates(labels)
 
 		hist = self.comparing_histogram
 
 		if len(set) == 1:
 			prediction = set[0]
-			# image_ID = image_id[0]
+		# image_ID = image_id[0]
 		else:
 			model = LinearSVC(C=1.0, random_state=42)
+
+		#	print(labels.__len__())
+
+			# for d in data:
+			# 	print(d.__len__())
 
 			print("########## FIT MODEL #########")
 			model.fit(data, labels)
@@ -262,9 +268,15 @@ class LBPRecognizer:
 
 				histogram_model.save()
 
-			image_id.append(histogram_model.id)
+			image_id.append(image.id)
 			labels.append(histogram_model.user_id)
 			data.append(np.asarray(json.loads(histogram_model.histogram)))
+
+		# DATA size check
+		data = self.resize_data(data)
+
+		# for d in data:
+		# 	print(len(d))
 
 		return data, labels, total_image, image_id
 
@@ -272,3 +284,27 @@ class LBPRecognizer:
 		counts = np_histogram_output
 		return_value = counts.ravel().astype('float32')
 		return return_value
+
+	def resize_data(self, data):
+
+		max_array_size = 0
+		#print(type(data))
+		for d in data:
+			if max_array_size < len(d):
+				max_array_size = len(d)
+
+		if len(self.comparing_histogram) > max_array_size:
+			max_array_size = len(self.comparing_histogram)
+		elif len(self.comparing_histogram) < max_array_size:
+			while len(self.comparing_histogram) != max_array_size:
+				self.comparing_histogram = np.hstack((self.comparing_histogram, self.comparing_histogram.mean()))
+
+		# print("Max array size: ", max_array_size)
+		for idx, d in enumerate(data):
+			while len(d) != max_array_size:
+				#print("Before: ", len(d))
+				d = np.hstack((d, d.mean()))
+				# print("After:", len(d))
+				data[idx] = d
+
+		return data

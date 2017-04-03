@@ -162,6 +162,10 @@ def create_app():
 
 		url = Users.save_face_image()
 
+		if not ErrorParser().is_empty():
+			db.session.rollback()
+			return ResponseHelper.create_response(), 400
+
 		return jsonify({
 			'image_face': url
 		}), 201

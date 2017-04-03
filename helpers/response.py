@@ -21,8 +21,8 @@ class ResponseHelper(object):
 		else:
 			response['process'] = ResponseParser().get_response_data()
 			response['process']['uuid'] = Process().process.uuid
+			Process().generate()
 
-		Process().generate()
 		return jsonify(response)
 
 		# image_content = face_file.read()

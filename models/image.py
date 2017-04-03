@@ -34,20 +34,21 @@ class Image(Base):
 
 		for user in users:
 			images = Image.query \
-				.filter(Image.type == 'face')\
-				.filter(Image.user_id == user.id)\
-				.filter()\
-				.order_by(func.rand())\
-				.limit(current_app.config.get('PREPARE_PER_USER_IMAGES'))\
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.filter() \
+				.order_by(func.rand()) \
+				.limit(current_app.config.get('PREPARE_PER_USER_IMAGES')) \
 				.all()
 
 			all_image += images
 
-		# print("Face Images type : ", type(all_image))
-		# for i in all_image:
-		# 	print("ImageID:", i.id)
-
 		return all_image
+
+	@staticmethod
+	def remove(id):
+		Image.query.filter(Image.id == id).delete()
+		db.session.commit()
 
 	@staticmethod
 	def avatar_path(user_id):
