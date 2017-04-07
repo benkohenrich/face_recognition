@@ -27,7 +27,7 @@ class BaseConfig(object):
 	FACE_WIDTH = 100
 	BASE_WIDTH = 100
 	IMG_RES = 100 * 100
-	PREPARE_PER_USER_IMAGES = 10
+	PREPARE_PER_USER_IMAGES = 20
 
 class TestConfig(BaseConfig):
 	DEBUG = True

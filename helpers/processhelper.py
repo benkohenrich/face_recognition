@@ -15,11 +15,14 @@ class Process(object):
 	process = None
 	code = None
 
-	def __new__(self):
-		if not hasattr(self, 'instance'):
-			self.instance = super(Process, self).__new__(self)
+	is_new = True
+	face_image_id = None
 
-		return self.instance
+	def __new__(cls):
+		if not hasattr(cls, 'instance'):
+			cls.instance = super(Process, cls).__new__(cls)
+
+		return cls.instance
 
 	def create_new_process(self, user_id, algorithm):
 
@@ -36,8 +39,10 @@ class Process(object):
 
 		if header_uuid is not None:
 			process = ProcessModel.query().filter(ProcessModel.uuid == header_uuid).first()
+
 			if process is not None:
 				make_new = False
+				is_new = False
 
 		if make_new:
 			process = ProcessModel(

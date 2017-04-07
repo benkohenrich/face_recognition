@@ -1,6 +1,7 @@
 from flask import g
 from flask_restful import Resource
 from helpers.imagehelper import ImageHelper
+from helpers.processhelper import Process
 from recognizers.eigenfaces import EigenfacesRecognizer
 
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
@@ -19,8 +20,9 @@ class Fisherfaces(Resource):
 		if face is None:
 			return
 
-		image_id = ImageHelper.save_image(face, 'face', g.user.id)
-		ResponseParser().add_image('extraction', 'face', image_id)
+		if Process().is_new:
+			image_id = ImageHelper.save_image(face, 'face', g.user.id)
+			ResponseParser().add_image('extraction', 'face', image_id)
 
 		face = ImageHelper.encode_base64(face)
 		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))

@@ -114,8 +114,8 @@ def create_app():
 	def fisherfaces():
 
 		# CREATE NEW PROCESS
-		# Process().create_new_process(g.user.id, 'eigenfaces')
-		# Process().set_code('recognition')
+		Process().create_new_process(g.user.id, 'eigenfaces')
+		Process().set_code('recognition')
 
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}

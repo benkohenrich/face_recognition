@@ -33,10 +33,19 @@ class DetectionHelper(object):
 			return None
 
 		for (x, y, w, h) in faces:
-			x -= 20
-			y -= 20
-			h += 20
-			w += 20
+
+			distance = 25
+
+			if x < distance:
+				distance = x
+			if y < distance:
+				distance = y
+
+			x -= distance
+			y -= distance
+
+			h += distance
+			w += distance
 			crop_img = img[y:(y + h), x:(x + w)]
 			cv2.imwrite(filepath, crop_img)
 

@@ -38,6 +38,16 @@ class ImageHelper(object):
 		return path
 
 	@staticmethod
+	def image_bytes_to_filename(image_bytes, filename="tmp.jpg"):
+		path = current_app.config['TEMP_PATH'] + filename
+
+		with open(path, 'wb') as f:
+			f.write(image_bytes)
+			f.close()
+
+		return path
+
+	@staticmethod
 	def decode_base64(img_string):
 		for crop in ImageHelper.crop_string:
 			img_string = img_string.replace(crop, "")
@@ -110,16 +120,16 @@ class ImageHelper(object):
 
 		elif face_type in ['full', 'full_grey']:
 
-			ImageHelper.minimalize(image_path_big, 200)
+			ImageHelper.minimalize(image_path_big, 250)
 			big = ImageHelper.encode_base64_from_path(image_path_big)
 			big = ImageHelper.decode_base64(big.decode())
 
-			if not InputParser().is_recognize:
-				full_id = ImageHelper.save_image(big, 'full', g.user.id)
+			if Process().is_new:
+				full_id = ImageHelper.save_image(big, 'full', 10)
 				ResponseParser().add_image('extraction', 'full', full_id)
 
 			image_path = DetectionHelper.haar_cascade_detect(image_path)
-			print(image_path)
+
 			if image_path is None:
 				try:
 					ModelImage.remove(full_id)
@@ -139,7 +149,6 @@ class ImageHelper(object):
 
 	@staticmethod
 	def save_image(image, image_type, user_id):
-
 		image = ModelImage(user_id=user_id, image=image, type=image_type, process_id=Process().process_id)
 		image.save()
 
@@ -197,3 +206,14 @@ class ImageHelper(object):
 		npimg = np.fromstring(decoded, dtype=np.uint8)
 
 		return npimg
+
+	@staticmethod
+	def adjust_gamma(image, gamma=1.0):
+		# build a lookup table mapping the pixel values [0, 255] to
+		# their adjusted gamma values
+		invGamma = 1.0 / gamma
+		table = np.array([((i / 255.0) ** invGamma) * 255
+						  for i in np.arange(0, 256)]).astype("uint8")
+
+		# apply gamma correction using the lookup table
+		return cv2.LUT(image, table)

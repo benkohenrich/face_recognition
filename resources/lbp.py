@@ -6,6 +6,7 @@ from flask_restful import Resource, abort
 from flask import request
 
 # from requests import api
+from helpers.processhelper import Process
 from packages.lbph1.pyimagesearch.localbinarypatterns import LocalBinaryPatterns
 from sklearn.svm import LinearSVC
 from imutils import paths
@@ -56,8 +57,9 @@ class LBPHistogram(Resource):
 			if face is None:
 				return
 			# Save image to DB
-			# image_id = ImageHelper.save_image(face, 'face', g.user.id)
-			# ResponseParser().add_image('extraction', 'face', image_id)
+			if Process().is_new:
+				image_id = ImageHelper.save_image(face, 'face', g.user.id)
+				ResponseParser().add_image('extraction', 'face', image_id)
 
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
@@ -101,6 +103,7 @@ class LBPHistogram(Resource):
 			image = ImageHelper.prepare_face(face, InputParser().face_type)
 			if image is None:
 				return
+
 			# Save image to DB
 			image_id = ImageHelper.save_image(image, 'face', g.user.id)
 			ResponseParser().add_image('extraction', 'face', image_id)

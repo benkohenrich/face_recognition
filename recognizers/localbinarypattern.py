@@ -254,6 +254,7 @@ class LBPRecognizer:
 			histogram_model = Histogram.get_by_image_params(image.id, self.points, self.range, self.method)
 
 			if histogram_model is None:
+
 				histogram_results = HistogramMaker.create_histogram_from_b64(image.image)
 
 				histogram_json = json.dumps(histogram_results['histogram'].tolist())
@@ -288,7 +289,6 @@ class LBPRecognizer:
 	def resize_data(self, data):
 
 		max_array_size = 0
-		#print(type(data))
 		for d in data:
 			if max_array_size < len(d):
 				max_array_size = len(d)
@@ -299,12 +299,9 @@ class LBPRecognizer:
 			while len(self.comparing_histogram) != max_array_size:
 				self.comparing_histogram = np.hstack((self.comparing_histogram, self.comparing_histogram.mean()))
 
-		# print("Max array size: ", max_array_size)
 		for idx, d in enumerate(data):
 			while len(d) != max_array_size:
-				#print("Before: ", len(d))
 				d = np.hstack((d, d.mean()))
-				# print("After:", len(d))
 				data[idx] = d
 
 		return data

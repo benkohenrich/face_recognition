@@ -7,6 +7,8 @@ import cv2
 from flask import g
 from flask import json
 
+from helpers.processhelper import Process
+
 try:
 	from StringIO import StringIO
 except ImportError:
@@ -43,17 +45,17 @@ class HistogramMaker(object):
 		# GRAYSCALE IMAGE
 		gray_image = cv2.imencode('.jpg', im_gray)[1].tostring()
 
-		if not InputParser().is_recognize:
+		if Process().is_new:
 			face_grey_id = ImageHelper.save_image(gray_image, 'face_grey', g.user.id)
 
 		equ = cv2.equalizeHist(im_gray)
 
-		if not InputParser().is_recognize:
+		if Process().is_new:
 			face_equalized_id = ImageHelper.save_numpy_image(equ, 'face_equalized', g.user.id)
 
 		plt.hist(equ.ravel(), 256, [0, 256])
 
-		if not InputParser().is_recognize:
+		if Process().is_new:
 			histogram_graph_id = ImageHelper.save_plot_image(plt, 'histogram_graph', g.user.id)
 
 		try:
@@ -101,7 +103,7 @@ class HistogramMaker(object):
 
 		ResponseParser().add_process('extraction', process)
 
-		if not InputParser().is_recognize:
+		if Process().is_new:
 			ResponseParser().add_image('extraction', 'face_grey', face_grey_id)
 			ResponseParser().add_image('extraction', 'face_equalized', face_equalized_id)
 			ResponseParser().add_image('extraction', 'histogram_graph', histogram_graph_id)

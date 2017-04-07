@@ -1,3 +1,5 @@
+from sklearn import preprocessing
+
 from models.opencv_method_distance import OpencvMethodDistance
 import numpy as np
 
@@ -68,5 +70,15 @@ class RecognizeHelper(object):
 		# print("DISTANCE / MAX: ",percentage , "%")
 
 		return percentage
+
+
+	@staticmethod
+	def normalize_data(X_train, X_test):
+		print("Normalize data sets")
+		std_scale = preprocessing.Normalizer(norm="max").fit(X_train)
+		X_pca = std_scale.transform(X_train)
+		X_test = std_scale.transform(X_test)
+
+		return X_pca, X_test
 
 
