@@ -104,6 +104,9 @@ class InputParser(object):
 
 		return None
 
+	def reset(self):
+		self.__instance = None
+
 
 class ResponseParser:
 	__instance = None
@@ -154,6 +157,9 @@ class ResponseParser:
 
 		return self.response_data
 
+	def reset(self):
+		self.__instance = None
+
 
 class ErrorParser:
 	__instance = None
@@ -174,3 +180,6 @@ class ErrorParser:
 
 	def get_errors(self):
 		return self._errors
+
+	def reset(self):
+		self.__instance = None

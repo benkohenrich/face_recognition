@@ -16,7 +16,7 @@ from resources.eigenfaces import Eigenfaces
 from resources.users import Users
 
 from helpers.response import ResponseHelper
-from helpers.parsers import InputParser, ErrorParser
+from helpers.parsers import InputParser, ErrorParser, ResponseParser
 from helpers.processhelper import Process
 
 
@@ -33,6 +33,9 @@ def create_app():
 	response = []
 	message = []
 
+	ErrorParser().reset()
+	InputParser().reset()
+	ResponseParser().reset()
 	# Router
 	@app.route("/tomi/")
 	@auth.login_required
