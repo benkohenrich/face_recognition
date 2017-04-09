@@ -2,7 +2,7 @@ from flask import json, current_app, url_for
 
 
 class Test(object):
-
+	__instance = None
 	attr = "empty"
 
 	def __new__(cls):
@@ -11,6 +11,8 @@ class Test(object):
 
 		return cls.instance
 
+	def reset(self):
+		self.__instance = None
 
 # @Singleton
 class InputParser(object):

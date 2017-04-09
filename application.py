@@ -198,7 +198,10 @@ def create_app():
 		print("Request: ", attr, " Set: ", Test().attr)
 		time.sleep(int(seconds))
 		print("Request: ", attr, " After wait: ", Test().attr)
-		return "Singleton test: " + Test().attr
+
+		f = Test().attr
+		Test().reset()
+		return "Singleton test: " + f
 
 
 	@app.route("/api/hidden/image/save/")
