@@ -1,6 +1,17 @@
 from flask import json, current_app, url_for
 
 
+class Test(object):
+
+	attr = "empty"
+
+	def __new__(cls):
+		if not hasattr(cls, 'instance'):
+			cls.instance = super(Test, cls).__new__(cls)
+
+		return cls.instance
+
+
 # @Singleton
 class InputParser(object):
 	__instance = None

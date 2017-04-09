@@ -1,4 +1,5 @@
 import flask
+import time
 from flask import Flask
 from flask import abort
 from flask import g, jsonify, request
@@ -16,7 +17,7 @@ from resources.eigenfaces import Eigenfaces
 from resources.users import Users
 
 from helpers.response import ResponseHelper
-from helpers.parsers import InputParser, ErrorParser, ResponseParser
+from helpers.parsers import InputParser, ErrorParser, ResponseParser, Test
 from helpers.processhelper import Process
 
 
@@ -188,6 +189,30 @@ def create_app():
 		response = make_response(image.image)
 		response.headers['Content-Type'] = 'image/jpeg'
 		return response
+
+	@app.route("/api/singleton/<attr>/<seconds>/")
+	def test(attr,seconds):
+		print("Request: ", attr, " No set: ", Test().attr)
+
+		Test().attr = attr
+		print("Request: ", attr, " Set: ", Test().attr)
+		time.sleep(int(seconds))
+		print("Request: ", attr, " After wait: ", Test().attr)
+		return "Singleton test: " + Test().attr
+
+
+	@app.route("/api/hidden/image/save/")
+	def hidden():
+		ID = '10'
+		import glob
+		for filename in glob.glob('static/faces/' + ID + '/*.jpg'):
+			base64 = ImageHelper.encode_base64_from_path(filename)
+
+			face = ImageHelper.prepare_face(base64.decode("utf-8"), 'full')
+			# print(face)
+			image_id = ImageHelper.save_image(face, 'face', 10)
+
+		return "Done"
 
 	@app.route("/")
 	def hello():
