@@ -57,7 +57,7 @@ class InputParser(object):
 			if data.get('face_type', None) in self.allowed_face_types:
 				self.face_type = data.get('face_type', None)
 			else:
-				errors.add_error('face_type', 'generals.face_type.not_allowed')
+				errors.add_error('face_type', 'generals.face_type.not_allowed' + data.get('face_type', None))
 		else:
 			errors.add_error('face_type', 'generals.face_type.required')
 
