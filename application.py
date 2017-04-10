@@ -7,6 +7,7 @@ from flask import make_response
 from flask_httpauth import HTTPBasicAuth
 
 from helpers.imagehelper import ImageHelper
+from helpers.utilshelper import Utils
 from models.base import db
 from models.image import Image
 from models.user import User
@@ -34,9 +35,6 @@ def create_app():
 	response = []
 	message = []
 
-	ErrorParser().reset()
-	InputParser().reset()
-	ResponseParser().reset()
 	# Router
 	@app.route("/tomi/")
 	@auth.login_required
@@ -47,7 +45,7 @@ def create_app():
 	@app.route('/api/lbp/face/', methods=['GET', 'POST'])
 	@auth.login_required
 	def lbp_face():
-
+		Utils.reset_singletons()
 		# CREATE NEW PROCESS
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('extraction')
@@ -73,7 +71,7 @@ def create_app():
 	@app.route('/api/lbp/', methods=['POST'])
 	@auth.login_required
 	def lbp():
-
+		Utils.reset_singletons()
 		# CREATE NEW PROCESS
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('recognition')
@@ -94,7 +92,7 @@ def create_app():
 	@app.route('/api/eigen/', methods=['POST'])
 	@auth.login_required
 	def eigenfaces():
-
+		Utils.reset_singletons()
 		# CREATE NEW PROCESS
 		Process().create_new_process(g.user.id, 'eigenfaces')
 		Process().set_code('recognition')
@@ -116,7 +114,7 @@ def create_app():
 	@app.route('/api/fisher/', methods=['POST'])
 	@auth.login_required
 	def fisherfaces():
-
+		Utils.reset_singletons()
 		# CREATE NEW PROCESS
 		Process().create_new_process(g.user.id, 'eigenfaces')
 		Process().set_code('recognition')
@@ -139,6 +137,7 @@ def create_app():
 	@app.route('/api/token/', methods=['GET'])
 	@auth.login_required
 	def get_auth_token():
+		Utils.reset_singletons()
 		token = g.user.generate_auth_token()
 		return flask.jsonify({'token': token.decode('ascii')})
 
@@ -157,7 +156,7 @@ def create_app():
 	@app.route('/api/users/face/', methods=['POST'])
 	@auth.login_required
 	def save_image_for_user():
-
+		Utils.reset_singletons()
 		inputs = InputParser()
 		inputs.set_attributes(request)
 
@@ -176,11 +175,13 @@ def create_app():
 
 	@app.route('/api/users/', methods=['POST'])
 	def new_user():
+		Utils.reset_singletons()
 		username = Users.registration()
 		return jsonify({'username': username}), 201
 
 	@app.route("/images/<image_id>/", methods=['GET'])
 	def get_image(image_id):
+		Utils.reset_singletons()
 		image = Image.get_by_id(image_id)
 
 		if image is None:
@@ -192,6 +193,10 @@ def create_app():
 
 	@app.route("/api/singleton/<attr>/<seconds>/")
 	def test(attr,seconds):
+		Utils.reset_singletons()
+		if not ErrorParser().is_empty():
+			exit(400)
+
 		print("Request: ", attr, " No set: ", Test().attr)
 
 		Test().attr = attr

@@ -14,10 +14,9 @@ class Test(object):
 	def reset(self):
 		self.__instance = None
 
+
 # @Singleton
 class InputParser(object):
-	__instance = None
-
 	http_method = None
 
 	face = None
@@ -118,16 +117,21 @@ class InputParser(object):
 		return None
 
 	def reset(self):
-		self.__instance = None
+		self.http_method = None
+
+		self.face = None
+		self.face_type = None
+		self.extraction_settings = {}
+		self.recognition_settings = {}
+		self.histogram = None
+		self.validate_attributes = {}
+		self.is_recognize = False
 
 
 class ResponseParser:
-	__instance = None
-
 	process_codes = ['extraction', 'db_save', 'recognition']
 
 	response_data = {}
-
 	extraction_images = {}
 	recognition_images = {}
 
@@ -171,12 +175,12 @@ class ResponseParser:
 		return self.response_data
 
 	def reset(self):
-		self.__instance = None
+		self.response_data = {}
+		self.extraction_images = {}
+		self.recognition_images = {}
 
 
 class ErrorParser:
-	__instance = None
-
 	_errors = {}
 
 	def __new__(cls):
@@ -195,4 +199,4 @@ class ErrorParser:
 		return self._errors
 
 	def reset(self):
-		self.__instance = None
+		self._errors = {}
