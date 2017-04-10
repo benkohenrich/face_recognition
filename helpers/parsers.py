@@ -186,7 +186,7 @@ class ErrorParser:
 		return cls.instance
 
 	def is_empty(self):
-		return not bool(self._errors)
+		return len(self._errors) == 0
 
 	def add_error(self, code, message):
 		self._errors[code] = message
