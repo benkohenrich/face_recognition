@@ -177,7 +177,7 @@ def create_app():
 	def new_user():
 		Utils.reset_singletons()
 		username = Users.registration()
-		return jsonify({'username': username}), 201
+		return jsonify({ 'username': username }), 201
 
 	@app.route("/images/<image_id>/", methods=['GET'])
 	def get_image(image_id):
@@ -217,7 +217,6 @@ def create_app():
 			base64 = ImageHelper.encode_base64_from_path(filename)
 
 			face = ImageHelper.prepare_face(base64.decode("utf-8"), 'full')
-			# print(face)
 			image_id = ImageHelper.save_image(face, 'face', 10)
 
 		return "Done"

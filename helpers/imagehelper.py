@@ -3,6 +3,7 @@ import base64
 import PIL
 import cv2
 import numpy as np
+import time
 
 from flask import current_app, g
 from PIL import Image
@@ -29,7 +30,7 @@ class ImageHelper(object):
 
 		imgdata = base64.b64decode(img_string)
 
-		path = current_app.config['TEMP_PATH'] + filename
+		path = current_app.config['TEMP_PATH'] + str(time.time()) + filename
 
 		with open(path, 'wb') as f:
 			f.write(imgdata)
@@ -39,7 +40,7 @@ class ImageHelper(object):
 
 	@staticmethod
 	def image_bytes_to_filename(image_bytes, filename="tmp.jpg"):
-		path = current_app.config['TEMP_PATH'] + filename
+		path = current_app.config['TEMP_PATH'] + str(time.time()) + filename
 
 		with open(path, 'wb') as f:
 			f.write(image_bytes)
@@ -157,7 +158,7 @@ class ImageHelper(object):
 	@staticmethod
 	def save_numpy_image(np_image, image_type, user_id):
 
-		path = current_app.config['TEMP_PATH'] + 'tmp.png'
+		path = current_app.config['TEMP_PATH'] + str(time.time()) + 'tmp.png'
 
 		cv2.imwrite(path, np_image)
 
@@ -174,7 +175,7 @@ class ImageHelper(object):
 	@staticmethod
 	def save_plot_image(plt, image_type, user_id):
 
-		path = current_app.config['TEMP_PATH'] + 'tmp.png'
+		path = current_app.config['TEMP_PATH'] + str(time.time()) + 'tmp.png'
 
 		plt.savefig(path)
 
