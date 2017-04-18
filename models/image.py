@@ -12,6 +12,7 @@ class Image(Base):
 		db.String(64),
 		default=str('histogram')
 	)
+	parent_id = db.Column(db.Integer, nullable=True)
 	user_id = db.Column(db.Integer, nullable=True)
 	process_id = db.Column(db.Integer, nullable=True)
 	image = db.Column(db.BLOB, nullable=False)
@@ -62,3 +63,63 @@ class Image(Base):
 				url = current_app.config['URL_NAME'] + url_for('get_image', image_id=avatar.id)
 
 		return url
+
+	@staticmethod
+	def get_train_data():
+		all_image = []
+
+		users = User.query.all()
+
+		for user in users:
+
+			total_image = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.count()
+
+			if total_image < 10:
+				continue
+
+			images = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.filter() \
+				.order_by(func.rand()) \
+				.limit(10) \
+				.all()
+
+			all_image += images
+
+		return all_image
+
+	@staticmethod
+	def get_test_data(train_images):
+		all_image = []
+		used_image_id = []
+
+		for im in train_images:
+			used_image_id.append(im.id)
+
+		users = User.query.all()
+
+		for user in users:
+			print("Model user id: ", user.id)
+			total_image = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.count()
+
+			if total_image < 10:
+				continue
+
+			images = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.filter(Image.id.notin_(used_image_id)) \
+				.order_by(func.rand()) \
+				.limit(2) \
+				.all()
+
+			all_image += images
+
+		return all_image

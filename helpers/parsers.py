@@ -24,6 +24,7 @@ class InputParser(object):
 	extraction_settings = {}
 	recognition_settings = {}
 	histogram = None
+	stats_type = None
 
 	validate_attributes = {}
 
@@ -52,24 +53,25 @@ class InputParser(object):
 		data = attributes
 		errors = ErrorParser()
 
-		if data.get('face_type', None) is not None:
-			if data.get('face_type', None) in self.allowed_face_types:
-				self.face_type = data.get('face_type', None)
+		if 'stats' not in self.validate_attributes:
+			if data.get('face_type', None) is not None:
+				if data.get('face_type', None) in self.allowed_face_types:
+					self.face_type = data.get('face_type', None)
+				else:
+					errors.add_error('face_type', 'generals.face_type.not_allowed' + data.get('face_type', None))
 			else:
-				errors.add_error('face_type', 'generals.face_type.not_allowed' + data.get('face_type', None))
-		else:
-			errors.add_error('face_type', 'generals.face_type.required')
+				errors.add_error('face_type', 'generals.face_type.required')
 
-		if data.get('face_type', None) != "histogram" and data.get('face_type', None) is not None:
-			if data.get('face', None) is not None:
-				self.face = data.get('face')
-			else:
-				errors.add_error('face', 'generals.face.required')
-		elif data.get('face_type', None) == 'histogram' and data.get('face_type', None) is not None:
-			if data.get('histogram', None) is not None:
-				self.histogram = data.get('histogram')
-			else:
-				errors.add_error('face', 'generals.histogram.required')
+			if data.get('face_type', None) != "histogram" and data.get('face_type', None) is not None:
+				if data.get('face', None) is not None:
+					self.face = data.get('face')
+				else:
+					errors.add_error('face', 'generals.face.required')
+			elif data.get('face_type', None) == 'histogram' and data.get('face_type', None) is not None:
+				if data.get('histogram', None) is not None:
+					self.histogram = data.get('histogram')
+				else:
+					errors.add_error('face', 'generals.histogram.required')
 
 		if 'extraction_settings' in self.validate_attributes:
 			if data.get('extraction_settings', None) is not None:
@@ -87,6 +89,9 @@ class InputParser(object):
 			self.histogram = data.get('histogram')
 		elif self.face_type == 'histogram':
 			errors.add_error('histogram', 'generals.histogram.required')
+
+		if data.get('stats_type') is not None:
+			self.stats_type = data.get('stats_type')
 
 	def parse_get_attributes(self, args):
 

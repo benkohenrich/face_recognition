@@ -15,6 +15,7 @@ from models.user import User
 from resources.fisherface import Fisherfaces
 from resources.lbp import LBPHistogram
 from resources.eigenfaces import Eigenfaces
+from resources.stats import Stats
 from resources.users import Users
 
 from helpers.response import ResponseHelper
@@ -46,11 +47,11 @@ def create_app():
 	@auth.login_required
 	def lbp_face():
 		Utils.reset_singletons()
-		# CREATE NEW PROCESS
+		# Create a new process
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('extraction')
 
-		# PARSE INPUTS
+		# Parse inputs to helper
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings'}
 		inputs.set_attributes(request)
@@ -72,7 +73,8 @@ def create_app():
 	@auth.login_required
 	def lbp():
 		Utils.reset_singletons()
-		# CREATE NEW PROCESS
+
+		# Create a new process
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('recognition')
 
@@ -133,6 +135,24 @@ def create_app():
 
 		return ResponseHelper.create_response(message), 200
 
+	# Generate System Success Routers
+	@app.route('/api/stats/', methods=['POST'])
+	def stats():
+		Utils.reset_singletons()
+
+		inputs = InputParser()
+		inputs.validate_attributes = {'extraction_settings', 'recognition_settings', 'stats'}
+		inputs.set_attributes(request)
+
+		Process().is_new = False
+
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(), 400
+
+		Stats.get_stats()
+
+		return ResponseHelper.create_response(message), 200
+
 	# Authorization Routers
 	@app.route('/api/token/', methods=['GET'])
 	@auth.login_required
@@ -153,6 +173,7 @@ def create_app():
 		g.user = user
 		return True
 
+	# User Routers
 	@app.route('/api/users/face/', methods=['POST'])
 	@auth.login_required
 	def save_image_for_user():

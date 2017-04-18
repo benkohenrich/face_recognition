@@ -3,7 +3,6 @@ import cv2
 # Flask
 import json
 from flask import g
-from flask import request
 # OpenCv
 from sklearn.svm import LinearSVC
 import numpy as np

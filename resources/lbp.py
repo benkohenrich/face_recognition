@@ -44,6 +44,7 @@ class LBPHistogram(Resource):
 		i_parser.is_recognize = True
 		face = i_parser.face
 		histogram = i_parser.histogram
+		is_new_process = Process().is_new
 
 		# Validate parameters
 		errors = LBPHistogram.validate_attributes()
@@ -70,6 +71,7 @@ class LBPHistogram(Resource):
 				i_parser.__getattr__('method')
 			)
 
+			Process().is_new = False
 			recognizer.recognize()
 		elif histogram is not None:
 			try:
@@ -85,7 +87,10 @@ class LBPHistogram(Resource):
 				i_parser.__getattr__('method')
 			)
 
+			Process().is_new = False
 			recognizer.recognize()
+
+		Process().is_new = is_new_process
 
 	@staticmethod
 	def save_histogram():

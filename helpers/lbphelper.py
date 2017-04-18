@@ -114,3 +114,9 @@ class HistogramMaker(object):
 	def create_histogram_from_b64(base64_string):
 
 		return HistogramMaker.create_histogram_from_image(ImageHelper.convert_base64_to_numpy(base64_string))
+
+	@staticmethod
+	def np_hist_to_cv(np_histogram_output):
+		counts = np_histogram_output
+		return_value = counts.ravel().astype('float32')
+		return return_value
