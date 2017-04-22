@@ -40,7 +40,7 @@ class EigenfacesHelper(object):
 
 		# Create an array with flattened images X
 		# and an array with ID of the people on each image y
-		X = np.zeros([total_image, current_app.config['IMG_RES']], dtype='int8')
+		X = np.zeros([total_image, current_app.config['IMG_RES']], dtype='float64')
 		y = []
 		images = []
 
@@ -59,14 +59,14 @@ class EigenfacesHelper(object):
 		return pca, X_pca, y, images, total_image
 
 	@staticmethod
-	def prepare_data_fisher(n_components=100, method="svd"):
+	def prepare_data_fisher(n_components=100, tolerance=0.0001):
 
 		all_image = ImageModel.get_all_to_extraction()
 		total_image = len(all_image)
 
 		# Create an array with flattened images X
 		# and an array with ID of the people on each image y
-		X = np.zeros([total_image, current_app.config['IMG_RES']], dtype='int8')
+		X = np.zeros([total_image, current_app.config['IMG_RES']], dtype='float64')
 		y = []
 		images = []
 
@@ -79,8 +79,9 @@ class EigenfacesHelper(object):
 			c += 1
 
 		# Train data with LDA
-		lda = LinearDiscriminantAnalysis(n_components=n_components, solver=method)
-		X_pca = lda.fit_transform(X)
+		print("Fisherfaces LDA with tolerance ", tolerance)
+		lda = LinearDiscriminantAnalysis(n_components=n_components, tol=float(tolerance))
+		X_pca = lda.fit_transform(X, y)
 
 		return lda, X_pca, y, images, total_image
 

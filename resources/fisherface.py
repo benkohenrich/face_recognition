@@ -28,9 +28,8 @@ class Fisherfaces(Resource):
 			Process().face_image_id = image_id
 
 		face = ImageHelper.encode_base64(face)
-		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
+		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_components')), InputParser().__getattr__('tolerance'))
 		recognizer.recognize()
-
 
 	@staticmethod
 	def validate_attributes(type='normal'):
@@ -40,21 +39,16 @@ class Fisherfaces(Resource):
 		if InputParser().__getattr__('number_components') is None:
 			errors.add_error('number_components', 'extraction.number_components.required')
 
-		if InputParser().__getattr__('method') is None:
-			errors.add_error('method', 'extraction.method.required')
-		else:
-			if InputParser().__getattr__('method') not in {'svd', 'lsqr', 'eigen' }:
-				errors.add_error('method_allowed', 'extraction.method.not_allowed')
+		if InputParser().__getattr__('tolerance') is None:
+			errors.add_error('method', 'extraction.tolerance.required')
 
 		if type == 'recognition':
 			if InputParser().__getattr__('algorithm') is None:
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 
 			print(InputParser().__getattr__('algorithm'))
-			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian' , "manhattan", "chebysev", "cosine", "braycurtis" }:
+			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian', "manhattan", "chebysev", "cosine",
+															  "braycurtis"}:
 				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
 
 		return errors
-
-
-

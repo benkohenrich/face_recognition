@@ -18,10 +18,10 @@ class DetectionHelper(object):
 		for scale in [float(i) / 10 for i in range(11, 15)]:
 			for neighbors in range(2, 5):
 				rects = face_cascade.detectMultiScale(gray, scaleFactor=scale, minNeighbors=neighbors)
-				print(len(rects))
+				# print(len(rects))
 				if len(rects) == 1:
 					found_face = rects
-					print(rects)
+					# print(rects)
 
 		faces = found_face
 
