@@ -36,16 +36,18 @@ class LBPRecognizer:
 		"braycurtis": dist.braycurtis,
 	}
 
-	def __init__(self, histogram_id, num_points=24, range=8, method='uniform'):
+	def __init__(self, histogram_id, num_points=24, range=8, method='uniform', actual_face_id=None):
 		self.points = int(num_points)
 		self.range = int(range)
 		self.method = str(method)
 		self.input_parser = InputParser()
 		self.comparing_histogram = histogram_id
 		self.algorithm = "none"
+		self.actual_face_id = actual_face_id
 
 	def recognize(self):
-
+		""" 
+		"""
 		argument = self.input_parser.__getattr__('algorithm')
 		self.algorithm = argument
 
@@ -149,13 +151,11 @@ class LBPRecognizer:
 			dist = cv2.compareHist(self.np_hist_to_cv(hist_train), self.np_hist_to_cv(self.comparing_histogram), method)
 			distances.append((dist, labels[j], image_id[j]))
 
-		#print(distances)
+		# Prediction values for methods may be reserved ...
 		if not reverse:
 			found_ID = min(distances)[1]
 			distance = min(distances)[0]
 			image_ID = min(distances)[2]
-			#print(min(distances))
-		# Utils.calculate_percentage_from_distances(distances, distance)
 		else:
 			found_ID = max(distances)[1]
 			distance = max(distances)[0]
@@ -205,14 +205,8 @@ class LBPRecognizer:
 
 		if len(set) == 1:
 			prediction = set[0]
-		# image_ID = image_id[0]
 		else:
 			model = LinearSVC(C=1.0, random_state=42)
-
-		#	print(labels.__len__())
-
-			# for d in data:
-			# 	print(d.__len__())
 
 			print("########## FIT MODEL #########")
 			model.fit(data, labels)
@@ -237,7 +231,7 @@ class LBPRecognizer:
 		}
 
 		ResponseParser().add_process('recognition', process)
-		# ResponseParser().add_image('recognition', 'predict_image', image_ID)
+		ResponseParser().add_image('recognition', 'predict_image', Image.avatar_id(predict_user.id))
 		print("########## END #########")
 
 	def separation(self):
@@ -246,14 +240,13 @@ class LBPRecognizer:
 		labels = []
 		image_id = []
 
-		all_image = Image.get_all_to_extraction()
+		all_image = Image.get_all_to_extraction(self.actual_face_id)
 		total_image = len(all_image)
 
 		for image in all_image:
 			histogram_model = Histogram.get_by_image_params(image.id, self.points, self.range, self.method)
 
 			if histogram_model is None:
-
 				histogram_results = HistogramMaker.create_histogram_from_b64(image.image)
 
 				histogram_json = json.dumps(histogram_results['histogram'].tolist())
@@ -274,9 +267,6 @@ class LBPRecognizer:
 
 		# DATA size check
 		data = self.resize_data(data)
-
-		# for d in data:
-		# 	print(len(d))
 
 		return data, labels, total_image, image_id
 

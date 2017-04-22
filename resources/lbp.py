@@ -1,27 +1,15 @@
-import cv2
-
+import numpy as np
 from flask import g
 from flask import json
-from flask_restful import Resource, abort
-from flask import request
-
-# from requests import api
-from helpers.processhelper import Process
-from packages.lbph1.pyimagesearch.localbinarypatterns import LocalBinaryPatterns
-from sklearn.svm import LinearSVC
-from imutils import paths
+from flask_restful import Resource
 
 from helpers.imagehelper import ImageHelper
-from helpers.parsers import InputParser, ResponseParser, ErrorParser
 from helpers.lbphelper import HistogramMaker
-from helpers.response import ResponseHelper
-
-from models.base import db
-from models.image import Image
+from helpers.parsers import InputParser, ResponseParser, ErrorParser
+from helpers.processhelper import Process
+from helpers.processhelper import Process as ProcessHelper
 from models.histogram import Histogram
-
 from recognizers.localbinarypattern import LBPRecognizer
-import numpy as np
 
 CLASSIFICATION_ALGORITHM = {
 	"svm",
@@ -40,35 +28,41 @@ CLASSIFICATION_ALGORITHM = {
 class LBPHistogram(Resource):
 	@staticmethod
 	def recognize_face():
+		# Initialize
 		i_parser = InputParser()
 		i_parser.is_recognize = True
 		face = i_parser.face
 		histogram = i_parser.histogram
 		is_new_process = Process().is_new
+		image_id = None
 
 		# Validate parameters
 		errors = LBPHistogram.validate_attributes()
-
 		if not errors.is_empty():
 			return
 
 		if face is not None:
 
-			face = ImageHelper.prepare_face(face, i_parser.face_type)
+			face, full_image_id = ImageHelper.prepare_face_new(face, i_parser.face_type)
+
 			if face is None:
 				return
+
 			# Save image to DB
 			if Process().is_new:
-				image_id = ImageHelper.save_image(face, 'face', g.user.id)
+				image_id = ImageHelper.save_image(face, 'face', g.user.id, full_image_id)
 				ResponseParser().add_image('extraction', 'face', image_id)
+				ProcessHelper().face_image_id = image_id
 
+			# Create a histogram from image
 			histogram_id = HistogramMaker.create_histogram_from_b64(face)
 
 			recognizer = LBPRecognizer(
 				histogram_id.get('histogram'),
 				i_parser.__getattr__('points'),
 				i_parser.__getattr__('radius'),
-				i_parser.__getattr__('method')
+				i_parser.__getattr__('method'),
+				image_id
 			)
 
 			Process().is_new = False
@@ -105,17 +99,17 @@ class LBPHistogram(Resource):
 
 		# Save histogram from face
 		if face is not None:
-			image = ImageHelper.prepare_face(face, InputParser().face_type)
+			image, full_image_id = ImageHelper.prepare_face_new(face, InputParser().face_type)
 			if image is None:
 				return
 
 			# Save image to DB
-			image_id = ImageHelper.save_image(image, 'face', g.user.id)
+			image_id = ImageHelper.save_image(image, 'face', g.user.id, full_image_id)
 			ResponseParser().add_image('extraction', 'face', image_id)
+			ProcessHelper().face_image_id = image_id
 
 			# Create histogram
 			histogram_results = HistogramMaker.create_histogram_from_b64(image)
-
 			histogram_json = json.dumps(histogram_results['histogram'].tolist())
 			histogram_results['histogram'] = histogram_json
 

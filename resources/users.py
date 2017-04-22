@@ -6,6 +6,7 @@ from flask_restful import Resource, abort
 from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser
 from models.base import db
+from models.image import Image
 from models.user import User
 
 
@@ -64,6 +65,19 @@ class Users(Resource):
 			db.session.rollback()
 			abort(500)
 
+	@staticmethod
+	def me():
+		try:
+			user_id = g.user.id
+
+			user = User.query.filter(User.id == user_id).first()
+			user = user.summary()
+			user['images'] = Image.summary_for_user(user_id)
+			user['main_photo'] = Image.avatar_path(user_id)
+
+			return user
+		except:
+			return False
 
 
 

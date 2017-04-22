@@ -109,6 +109,8 @@ class ImageHelper(object):
 	@staticmethod
 	def prepare_face(face, face_type='face'):
 
+		full_id = None
+
 		image_path = ImageHelper.decode_base64_to_filename(face)
 		image_path_big = ImageHelper.decode_base64_to_filename(face, 'big.png')
 
@@ -122,22 +124,20 @@ class ImageHelper(object):
 		elif face_type in ['full', 'full_grey']:
 
 			ImageHelper.minimalize(image_path_big, 250)
+
 			big = ImageHelper.encode_base64_from_path(image_path_big)
 			big = ImageHelper.decode_base64(big.decode())
 
-			if Process().is_new:
-				full_id = ImageHelper.save_image(big, 'full', 10)
-				ResponseParser().add_image('extraction', 'full', full_id)
-
+			# Detection
 			image_path = DetectionHelper.haar_cascade_detect(image_path)
+			ImageHelper.minimalize_face(image_path)
 
 			if image_path is None:
-				try:
-					ModelImage.remove(full_id)
-				except:
-					return
 				return
 
+			if Process().is_new:
+				full_image_id = ImageHelper.save_image(big, 'full', g.user.id)
+				ResponseParser().add_image('extraction', 'full', full_image_id)
 			ImageHelper.minimalize_face(image_path)
 
 		face = ImageHelper.encode_base64_from_path(image_path)
@@ -146,17 +146,68 @@ class ImageHelper(object):
 		ImageHelper.delete_image(image_path)
 		ImageHelper.delete_image(image_path_big)
 
-		return face
+		return face, full_id
 
 	@staticmethod
-	def save_image(image, image_type, user_id):
-		image = ModelImage(user_id=user_id, image=image, type=image_type, process_id=Process().process_id)
+	def prepare_face_new(face, face_type='face'):
+		# Initialize
+		full_image_id = None
+
+		# Image path for face detection
+		image_path = ImageHelper.decode_base64_to_filename(face)
+
+		# Image path for full image creation
+		image_path_big = ImageHelper.decode_base64_to_filename(face, 'big.png')
+
+		if face_type in ['full', 'full_grey']:
+			# Minimize full image
+			ImageHelper.minimalize(image_path_big, 250)
+
+			# Create bytes from path
+			big = ImageHelper.encode_base64_from_path(image_path_big)
+			big = ImageHelper.decode_base64(big.decode())
+
+			# Detection
+			image_path = DetectionHelper.haar_cascade_detect(image_path)
+			ImageHelper.minimalize_face(image_path)
+
+			if image_path is None:
+				return
+
+			if Process().is_new:
+				full_image_id = ImageHelper.save_image(big, 'full', g.user.id)
+				ResponseParser().add_image('extraction', 'full', full_image_id)
+
+		if face_type in ['face', 'face_grey']:
+			img = cv2.imread(image_path)
+			height, width, channels = img.shape
+
+			if height != current_app.config.get('FACE_HEIGHT') or width != current_app.config.get('FACE_WIDTH'):
+				ImageHelper.minimalize_face(image_path)
+
+		face = ImageHelper.encode_base64_from_path(image_path)
+		face = ImageHelper.decode_base64(face.decode())
+
+		ImageHelper.delete_image(image_path)
+		ImageHelper.delete_image(image_path_big)
+
+		return face, full_image_id
+
+	@staticmethod
+	def save_image(image, image_type, user_id, parent_id=None):
+		image = ModelImage(
+			user_id=user_id,
+			image=image,
+			type=image_type,
+			process_id=Process().process_id,
+			parent_id=parent_id
+		)
 		image.save()
 
 		return image.id
 
 	@staticmethod
-	def save_numpy_image(np_image, image_type, user_id):
+	def save_numpy_image(np_image, image_type, user_id, parent_id=None):
 
 		path = current_app.config['TEMP_PATH'] + str(time.time()) + 'tmp.png'
 
@@ -165,7 +216,13 @@ class ImageHelper(object):
 		face = ImageHelper.encode_base64_from_path(path)
 		face = ImageHelper.decode_base64(face.decode())
 
-		image = ModelImage(user_id=user_id, image=face, type=image_type, process_id=Process().process_id)
+		image = ModelImage(
+			user_id=user_id,
+			image=face,
+			type=image_type,
+			process_id=Process().process_id,
+			parent_id=parent_id
+		)
 		image.save()
 
 		ImageHelper.delete_image(path)
@@ -173,7 +230,7 @@ class ImageHelper(object):
 		return image.id
 
 	@staticmethod
-	def save_plot_image(plt, image_type, user_id):
+	def save_plot_image(plt, image_type, user_id, parent_id=None):
 
 		path = current_app.config['TEMP_PATH'] + str(time.time()) + 'tmp.png'
 
@@ -182,7 +239,13 @@ class ImageHelper(object):
 		face = ImageHelper.encode_base64_from_path(path)
 		face = ImageHelper.decode_base64(face.decode())
 
-		image = ModelImage(user_id=user_id, image=face, type=image_type, process_id=Process().process_id)
+		image = ModelImage(
+			user_id=user_id,
+			image=face,
+			type=image_type,
+			process_id=Process().process_id,
+			parent_id=parent_id
+		)
 		image.save()
 
 		ImageHelper.delete_image(path)

@@ -15,7 +15,6 @@ class Test(object):
 		self.__instance = None
 
 
-# @Singleton
 class InputParser(object):
 	http_method = None
 
@@ -120,6 +119,18 @@ class InputParser(object):
 			return self.recognition_settings.get(item)
 
 		return None
+
+	def get_inputs(self):
+		result = {
+			'face': self.face,
+			'face_type': self.face_type,
+			'extraction_settings': self.extraction_settings,
+			'recognition_settings': self.recognition_settings,
+			'histogram': self.histogram,
+			'stats_type': self.stats_type
+		}
+
+		return result
 
 	def reset(self):
 		self.http_method = None

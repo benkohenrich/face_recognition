@@ -28,7 +28,7 @@ class Image(Base):
 		return Image.query.filter(Image.id == image_id).first()
 
 	@staticmethod
-	def get_all_to_extraction():
+	def get_all_to_extraction(actual_face_id=None):
 		all_image = []
 
 		users = User.query.all()
@@ -37,7 +37,7 @@ class Image(Base):
 			images = Image.query \
 				.filter(Image.type == 'face') \
 				.filter(Image.user_id == user.id) \
-				.filter() \
+				.filter(Image.id != actual_face_id) \
 				.order_by(func.rand()) \
 				.limit(current_app.config.get('PREPARE_PER_USER_IMAGES')) \
 				.all()
@@ -65,6 +65,12 @@ class Image(Base):
 		return url
 
 	@staticmethod
+	def avatar_id(user_id):
+		avatar = Image.query.filter(Image.user_id == user_id).filter(Image.type == 'avatar').first()
+
+		return avatar.id
+
+	@staticmethod
 	def get_train_data():
 		all_image = []
 
@@ -85,7 +91,7 @@ class Image(Base):
 				.filter(Image.user_id == user.id) \
 				.filter() \
 				.order_by(func.rand()) \
-				.limit(10) \
+				.limit(8) \
 				.all()
 
 			all_image += images
@@ -123,3 +129,23 @@ class Image(Base):
 			all_image += images
 
 		return all_image
+
+	@staticmethod
+	def summary_for_user(user_id):
+
+		result = []
+
+		images = Image.query.filter(Image.user_id == user_id).filter(Image.type == 'face').all()
+
+		for image in images:
+			if current_app.config['URL_NAME'] is None:
+				url = url_for('get_image', image_id=image.id)
+			else:
+				url = current_app.config['URL_NAME'] + url_for('get_image', image_id=image.id)
+
+			result.append({
+				'id': image.id,
+				'url': url
+			})
+
+		return result

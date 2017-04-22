@@ -62,22 +62,18 @@ class Process(object):
 	def generate(self):
 
 		if not ErrorParser().is_empty():
-
 			detail = ProcessDetail(
 				process_id=self.process_id,
 				code='errors',
 				errors=jsonify(ErrorParser().get_errors()),
 				# inputs=InputParser().get_inputs()
 			)
-
 			detail.save()
-
 		else:
-
 			detail = ProcessDetail(
 				process_id=self.process_id,
 				code=self.code,
-				# inputs=InputParser().get_inputs()
+				inputs=json.dumps(InputParser().get_inputs()),
 				responses=json.dumps((ResponseParser().get_response_data()))
 			)
 
@@ -85,9 +81,14 @@ class Process(object):
 				detail.extraction_settings = json.dumps((ResponseParser().get_response_data()['extraction']))
 			elif self.code == 'recognition':
 				try:
-					detail.extraction_settings = jsonify(ResponseParser().get_response_data()['extraction'])
+					detail.extraction_settings = json.dumps((ResponseParser().get_response_data()['extraction']))
 				except:
 					detail.extraction_settings = None
+
+				try:
+					detail.recognition_settings = json.dumps((ResponseParser().get_response_data()['recognition']))
+				except:
+					detail.recognition_settings = None
 
 			detail.save()
 

@@ -36,12 +36,6 @@ def create_app():
 	response = []
 	message = []
 
-	# Router
-	@app.route("/tomi/")
-	@auth.login_required
-	def heno():
-		return "Hello Holgye!"
-
 	# Local Binary Pattern routers
 	@app.route('/api/lbp/face/', methods=['GET', 'POST'])
 	@auth.login_required
@@ -194,11 +188,30 @@ def create_app():
 			'image_face': url
 		}), 201
 
+	# TODO user me
+	@app.route("/api/users/me/", methods=['GET'])
+	@auth.login_required
+	def get_user():
+		# Get user detail
+		result = Users.me()
+
+		if result:
+			return jsonify(result), 200
+		else:
+			return jsonify({
+				"errors": {
+					"users": "user not found"
+				}
+			})
+
+	# TODO user update
+	# TODO user logs
+
 	@app.route('/api/users/', methods=['POST'])
 	def new_user():
 		Utils.reset_singletons()
 		username = Users.registration()
-		return jsonify({ 'username': username }), 201
+		return jsonify({'username': username}), 201
 
 	@app.route("/images/<image_id>/", methods=['GET'])
 	def get_image(image_id):
@@ -228,7 +241,6 @@ def create_app():
 		f = Test().attr
 		Test().reset()
 		return "Singleton test: " + f
-
 
 	@app.route("/api/hidden/image/save/")
 	def hidden():

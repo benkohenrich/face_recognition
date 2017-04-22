@@ -12,17 +12,20 @@ class Fisherfaces(Resource):
 	@staticmethod
 	def recognize_face():
 
+		print("Fisherfaces recognizer")
 		Fisherfaces.validate_attributes('recognition')
 		if not ErrorParser().is_empty():
 			return
 
-		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		# face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		face, parent_id = ImageHelper.prepare_face_new(InputParser().face, InputParser().face_type)
 		if face is None:
 			return
 
 		if Process().is_new:
-			image_id = ImageHelper.save_image(face, 'face', g.user.id)
+			image_id = ImageHelper.save_image(face, 'face', g.user.id, parent_id)
 			ResponseParser().add_image('extraction', 'face', image_id)
+			Process().face_image_id = image_id
 
 		face = ImageHelper.encode_base64(face)
 		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')) , InputParser().__getattr__('method'))
@@ -34,13 +37,13 @@ class Fisherfaces(Resource):
 
 		errors = ErrorParser()
 
-		if InputParser().__getattr__('number_eigenfaces') is None:
-			errors.add_error('number_eigenfaces', 'extraction.number_eigenfaces.required')
+		if InputParser().__getattr__('number_components') is None:
+			errors.add_error('number_components', 'extraction.number_components.required')
 
 		if InputParser().__getattr__('method') is None:
 			errors.add_error('method', 'extraction.method.required')
 		else:
-			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized'}:
+			if InputParser().__getattr__('method') not in {'svd', 'lsqr', 'eigen' }:
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':

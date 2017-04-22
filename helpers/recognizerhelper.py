@@ -42,7 +42,7 @@ class RecognizeHelper(object):
 	@staticmethod
 	def normalize_data(X_train, X_test):
 		print("Normalize data sets")
-		std_scale = preprocessing.Normalizer(norm="max").fit(X_train)
+		std_scale = preprocessing.Normalizer(norm="l2").fit(X_train)
 		X_pca = std_scale.transform(X_train)
 		X_test = std_scale.transform(X_test)
 

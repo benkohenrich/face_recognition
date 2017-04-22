@@ -1,28 +1,20 @@
 # from matplotlib.mlab import PCA
 from PIL import Image
 from flask import json
-from scipy import ndimage, misc
-from sklearn.svm import SVC
 
-from helpers.imagehelper import ImageHelper
+from helpers.recognizerhelper import RecognizeHelper
+from models.user import User
+from models.image import Image as ImageModel
 
 try:
 	from StringIO import StringIO
 except ImportError:
 	from io import StringIO
 
-from sklearn.decomposition import PCA, pca
-import numpy as np
-import glob
-import cv2
-import math
-import os.path
-import string
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
+from helpers.processhelper import Process as ProcessHelper
 from helpers.eigenfaceshelper import EigenfacesHelper
-from models.image import Image as ImageModel
 from scipy.spatial import distance as dist
-from sklearn.grid_search import GridSearchCV
 
 
 class FisherfacesRecognizer:
@@ -41,13 +33,12 @@ class FisherfacesRecognizer:
 		self.input_parser = InputParser()
 		self.compare_face = recognize_face
 		self.algorithm = "none"
-		self.algorithm = "none"
 
 	def recognize(self):
 		argument = self.input_parser.__getattr__('algorithm')
 		self.algorithm = argument
 		switcher = {
-			# 'svm': self.svm_recognize,
+			'svm': self.svm_recognize,
 			'euclidian': self.scipy_recognize_method,
 			"manhattan":self.scipy_recognize_method,
 			"chebysev":self.scipy_recognize_method,
@@ -71,7 +62,7 @@ class FisherfacesRecognizer:
 
 		model, X_pca, y, images, total_image = EigenfacesHelper.prepare_data(self.number_components, self.method)
 
-		test = EigenfacesHelper.prepare_image(self.comparing_face, 'test')
+		test = EigenfacesHelper.prepare_image(self.compare_face, 'test')
 		test = model.transform(test)
 
 		distances = []
@@ -105,7 +96,7 @@ class FisherfacesRecognizer:
 					"id": predict_user_id,
 					"name": predict_user.name,
 					"email": predict_user.username,
-					"main_image": Image.avatar_path(predict_user.id)
+					"main_image": ImageModel.avatar_path(predict_user.id)
 				},
 			},
 			"metadata": {
@@ -116,6 +107,7 @@ class FisherfacesRecognizer:
 
 		ResponseParser().add_process('recognition', process)
 		ResponseParser().add_image('recognition', 'predict_image', found_image_ID)
+		ResponseParser().add_image('recognition', 'compared_image', ProcessHelper().face_image_id)
 	# def euclidian_recognize(self):
 	#
 	# 	model , X_pca, y, total_image = EigenfacesHelper.cross_validate(self.num_eigenfaces, self.method)

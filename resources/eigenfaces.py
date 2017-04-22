@@ -4,6 +4,7 @@ from flask_restful import Resource
 from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser, ErrorParser, ResponseParser
 from helpers.processhelper import Process
+
 from recognizers.eigenfaces import EigenfacesRecognizer
 
 
@@ -17,18 +18,19 @@ class Eigenfaces(Resource):
 			return
 
 		# Prepare face for recognize
-		face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
+		face, parent_id = ImageHelper.prepare_face_new(InputParser().face, InputParser().face_type)
 		if face is None:
 			return
 
 		#Save image face
 		if Process().is_new:
-			image_id = ImageHelper.save_image(face, 'face', g.user.id)
+			image_id = ImageHelper.save_image(face, 'face', g.user.id, parent_id)
 			ResponseParser().add_image('extraction', 'face', image_id)
+			Process().face_image_id = image_id
 
 		# Recognize
 		face = ImageHelper.encode_base64(face)
-		recognizer = EigenfacesRecognizer(face, int(InputParser().__getattr__('number_eigenfaces')), InputParser().__getattr__('method'))
+		recognizer = EigenfacesRecognizer(face, int(InputParser().__getattr__('number_components')), InputParser().__getattr__('method'))
 		recognizer.recognize()
 
 
@@ -37,13 +39,13 @@ class Eigenfaces(Resource):
 
 		errors = ErrorParser()
 
-		if InputParser().__getattr__('number_eigenfaces') is None:
-			errors.add_error('number_eigenfaces', 'extraction.number_eigenfaces.required')
+		if InputParser().__getattr__('number_components') is None:
+			errors.add_error('number_components', 'extraction.number_components.required')
 
 		if InputParser().__getattr__('method') is None:
 			errors.add_error('method', 'extraction.method.required')
 		else:
-			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized'}:
+			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized', 'arpack'}:
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':

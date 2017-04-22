@@ -1,6 +1,7 @@
-from flask import json
+from flask import json, g
 from sklearn.svm import SVC
 
+from helpers.processhelper import Process as ProcessHelper
 from helpers.recognizerhelper import RecognizeHelper
 from models.image import Image
 from models.user import User
@@ -18,21 +19,21 @@ from sklearn.grid_search import GridSearchCV
 
 
 class EigenfacesRecognizer:
-
 	SCIPY_METHODS = {
-		"euclidian" : dist.euclidean,
+		"euclidian": dist.euclidean,
 		"manhattan": dist.cityblock,
 		"chebysev": dist.chebyshev,
 		"cosine": dist.cosine,
 		"braycurtis": dist.braycurtis,
 	}
 
-	def __init__(self, recognize_face, number_components=24, method='randomized'):
+	def __init__(self, recognize_face, number_components=24, method='randomized', compared_face_id=None):
 		self.method = method
 		self.number_components = number_components
 		self.input_parser = InputParser()
 		self.compare_face = recognize_face
 		self.algorithm = "none"
+		self.compared_face_id = compared_face_id
 
 	def recognize(self):
 		argument = self.input_parser.__getattr__('algorithm')
@@ -60,11 +61,6 @@ class EigenfacesRecognizer:
 
 		# Prepare Image to recognize
 		test = EigenfacesHelper.prepare_image(self.compare_face, 'test')
-		# npimg = ImageHelper.convert_base64_image_to_numpy(self.compare_face)
-		# img_color = cv2.imdecode(npimg, 1)
-		# img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-		# img_gray = cv2.equalizeHist(img_gray)
-		# test = img_gray.flat
 		test_pca = model.transform(test)
 
 		################################################################################
@@ -75,8 +71,10 @@ class EigenfacesRecognizer:
 			'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
 		}
 
+		# Normalize data
 		X_train, X_test = RecognizeHelper.normalize_data(X_pca, test_pca)
-		clf = GridSearchCV(SVC(kernel='rbf'), param_grid, n_jobs=1)
+
+		clf = GridSearchCV(SVC(kernel='rbf'), param_grid, n_jobs=10)
 		clf = clf.fit(X_train, y)
 
 		Y_pred = clf.predict(X_test)
@@ -126,14 +124,13 @@ class EigenfacesRecognizer:
 		X_train, X_test = RecognizeHelper.normalize_data(X_pca, test)
 
 		for j, ref_pca in enumerate(X_train):
-			print(len(ref_pca), " = ", len(X_test[0]))
 			dist = method(ref_pca, X_test[0])
-			print("Scipy Distance: ", float("{0:.50f}".format(dist)), " UserID:", y[j] ," ImageID: ", images[j])
 			distances.append((dist, y[j], images[j]))
 
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
 		found_image_ID = min(distances)[2]
+		percentage = RecognizeHelper.calculate_percentage_for_distance_metric_methods(g.user.id, distance, distances)
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
 
 		predict_user_id = int(found_ID)
@@ -145,6 +142,7 @@ class EigenfacesRecognizer:
 				"algorithm": self.algorithm,
 				"recognize_eigenfaces": json.dumps(test[0].tolist()),
 				"total_compared_histograms": total_image,
+				'similarity_percentage': percentage,
 				'distance': str(distance),
 				"predict_user": {
 					"id": predict_user_id,
@@ -161,6 +159,7 @@ class EigenfacesRecognizer:
 
 		ResponseParser().add_process('recognition', process)
 		ResponseParser().add_image('recognition', 'predict_image', found_image_ID)
+		ResponseParser().add_image('recognition', 'compared_image', ProcessHelper().face_image_id)
 
 	# def euclidian_recognize(self):
 	#

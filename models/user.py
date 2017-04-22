@@ -13,6 +13,7 @@ class User(Base):
 	name = db.Column(db.String(100), index=True)
 	password = db.Column(db.String(128))
 	username = db.Column(db.String(100), nullable=False, unique=True)
+
 	# original_image_id = db.Column(db.INTEGER, index=True, nullable=True)
 
 	def hash_password(self, password):
@@ -24,6 +25,15 @@ class User(Base):
 	def generate_auth_token(self, expiration=60000):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
 		return s.dumps({'id': self.id})
+
+	def summary(self):
+		result = {
+			'id': self.id,
+			'username': self.username,
+			'name': self.name,
+		}
+
+		return result
 
 	@staticmethod
 	def verify_auth_token(token):

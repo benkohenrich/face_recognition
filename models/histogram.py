@@ -10,7 +10,6 @@ class Histogram(Base):
 	image_id = db.Column(db.Integer, nullable=False)
 	user_id = db.Column(db.Integer, nullable=True)
 	histogram = db.Column(db.Text, nullable=False)
-	# gray_image_id = db.Column(db.Integer, nullable=True)
 	number_points = db.Column(db.Integer, nullable=False, default=int(24))
 	radius = db.Column(db.Integer, nullable=False, default=int(3))
 	method = db.Column(db.String(64), nullable=True)
