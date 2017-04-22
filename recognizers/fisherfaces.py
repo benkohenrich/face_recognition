@@ -133,7 +133,7 @@ class FisherfacesRecognizer:
 		process = {
 			"parameters": {
 				'n_components': self.number_components,
-				'method': self.tolerance,
+				'tolerance': self.tolerance,
 				"algorithm": self.algorithm,
 				"recognize_fisherfaces": json.dumps(test[0].tolist()),
 				'similarity_percentage': percentage,

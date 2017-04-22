@@ -112,7 +112,7 @@ def create_app():
 	def fisherfaces():
 		Utils.reset_singletons()
 		# CREATE NEW PROCESS
-		Process().create_new_process(g.user.id, 'eigenfaces')
+		Process().create_new_process(g.user.id, 'fisherfaces')
 		Process().set_code('recognition')
 
 		inputs = InputParser()
@@ -225,8 +225,9 @@ def create_app():
 		response.headers['Content-Type'] = 'image/jpeg'
 		return response
 
+	# Testing Routers
 	@app.route("/api/singleton/<attr>/<seconds>/")
-	def test(attr,seconds):
+	def test(attr, seconds):
 		Utils.reset_singletons()
 		if not ErrorParser().is_empty():
 			exit(400)
