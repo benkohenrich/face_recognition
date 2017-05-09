@@ -1,0 +1,13 @@
+[Unit]
+Description=Flask API interface for face recognition
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/face_recognition
+Environment="PATH=/var/www/face_recognition/myenv/bin"
+ExecStart=/var/www/face_recognition/myenv/bin/gunicorn --timeout 3600 --workers 7 --bind 127.0.0.1:5000 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
