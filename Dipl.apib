@@ -1,0 +1,518 @@
+FORMAT: A1
+HOST: https://api.diplserver.zbytocnosti.dev/api
+
+# API na rozpoznávanie ludských tvár
+
+Táto technická dokumentacia opisuje jednotlivych metod v API.
+
+## Autentifikácia
+ - API používa basic token autorizáciu
+ - Token expires every 12 hours
+ - Token MUST be provided in `Authorization` HTTP header
+ - Token MUST be provided each request that requires authentication
+
+### Example header
+```
+Authorization: Base 6fe0f81c-3c8f-48bf-b620-006064d5e852
+```
+
+## Media Type
+API uses JSON format in requests and responses.
+
+## Representation of Date and Time
+
+All exchange of date and time-related data MUST be done according to ISO 8601 standard and stored in UTC.
+
+When returning date and time-related data `YYYY-MM-DDThh:mm:ssZ` format MUST be used.
+
+## Status Codes and Errors
+
+This API uses HTTP status codes to communicate with the API consumer.
+
++ `200 OK` - Response to a successful GET, PUT, PATCH or DELETE.
++ `201 Created` - Response to a POST that results in a creation.
++ `204 No Content` - When there is no content in response. Mostly used as response for successful DELETE request.
++ `400 Bad Request` - The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
++ `401 Unauthorized` - When no or invalid authentication details are provided.
++ `403 Forbidden` - The request was valid, but the server is refusing action. The user might not have the necessary permissions for a resource.
++ `404 Not Found` - When a non-existent resource is requested.
++ `405 Method Not Allowed` - Invalid HTTP method used in request.
++ `422 Unprocessable Entity` - When there is invalid input - validation error.
++ `500 Internal Server Error` - When API is unable to process request or there is another problem.
+
+### Basic error response example
+
+```json
+{
+	"code": 500,
+	"message": "Unable to find file in your request!"
+}
+```
+
+### Validation error response example
+
+```json
+{
+	"message": "Validation error",
+	"code": 422,
+	"errors": {
+		"password": "This value should not be blank."
+	}
+}
+```
+# Group Používatelia
+
+## Zoznam používateľov [/users/] [GET]
+
+Endpoint služi na vytiahnutie zoznamu vsetkych pouzivatelov
+Táto funkcia je dostupná iba pre admina
+
+## Photo detail [/photos/{photo_id}]
+
++ Parameters
+	+ photo_id: `24221b95-f689-4a18-a5ed-bf844c05b09e` (string, required) - ID of the photo UUID4
+
+### Upload a new photo [POST]
+
++ Request (multipart/form-data; boundary=---BOUNDARY)
+
+		-----BOUNDARY
+		Content-Disposition: form-data; name="image[file]"; filename="image.jpg"
+		Content-Type: image/jpeg
+		Content-Transfer-Encoding: base64
+
+		/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+		HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+		MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIA
+		AhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEB
+		AAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AL+AD//Z
+		-----BOUNDARY
+
++ Response 201 (application/json)
+
+### Download photo [GET]
+
++ Response 200 (image/png)
+
+### Delete photo [DELETE]
+
++ Response 204
+
+
+# Group Users
+
+## Initialize User
+
+Resgistrate user with avatar
+
+### Registration [POST] [/api/users/]
+
+**Endpoint information**
+
+|                         |     |
+|-------------------------|-----|
+| Requires authentication | No |
+
+**Error codes**
+
+|       |                                             |
+|-------| ------------------------------------------- |
+| `500` | Unable to upload file                       |
+| `500` | Unable to save user
+| `500` | Database error                              |
+| `400` | Missing attributes                          |
+
++ Request (multipart/form-data)
+	+ Headers
+			Content-Type: application/json
+
+	+ Attributes
+		+ username: `jakub.dubec@backbone.sk` (string, required) - User email address
+		+ password: `KeepCalmAndCarryATowel` (string, required) - User raw password
+		+ avatar: `data:image/jpeg;base64...` (string, optional) - User avatar photo in base64 encoded string
+
++ Response 200 (application/json)
+	+ Attributes
+		+ username: `jakub.dubec@backbone.sk` (string) - User email address
+
+**Example**
+
+{
+	"username" : "henrich.benko@backbone.sk",
+	"password" : "KeepCalmAndDrinkCoffee",
+	"name" : "King Henry",
+	"avatar" : "data:image/jpeg;base64..."
+}
+
+### Save user photo [POST] [/api/users/face/]
+
+Save user foto to DB and create a face with Haar function
+
+**Endpoint information**
+
+|                         |     |
+|-------------------------|-----|
+| Requires authentication | Yes |
+
+**Error codes**
+
+|       |                                             |
+|-------| ------------------------------------------- |
+| `500` | Unable to upload file                       |
+| `500` | Unable to save user
+| `500` | Database error                              |
+| `400` | Missing attributes                          |
+
++ Request (application/json)
+	+ Headers
+		Authorization: Basic <token>:
+
+	+ Attributes
+		+ face: `data:image/jpeg;base64...` (string, required) - User image
+		+ face_type: `full` (string, required) - Image type
+
++ Response 200 (application/json)
+	+ Attributes
+		+ image_face_url: `http://diplserver.zbytocnosti.sk` (string) - Url to image
+
+**Example**
+
+{
+	"face" : "data:image/jpeg;base64...",
+	"face_type" : "full",
+}
+
+## Login
+
+### Get token [GET] [/api/token]
+
+**Endpoint information**
+
+|                         |     |
+|-------------------------|-----|
+| Requires authentication | Yes |
+
+**Error codes**
+
+|       |                                             |
+|-------| ------------------------------------------- |
+| `500` | Database error                              |
+| `401` | Unauthorized request                        |
+
++ Request
+	+ Headers
+
+			Authorization: Basic <username>:<password>
+
++ Response 200 (application/json)
+	+ Attributes
+		+ token: `eyJleHAiOjE0OTA3Nzg5OT...` (string) - Token for authorization
+
+
+## User details [GET] [/api/users/me]
+
+Show user information and all images
+
+**Endpoint information**
+
+|                         |     |
+|-------------------------|-----|
+| Requires authentication | Yes |
+
++ Request (application/json)
+	+ Headers
+			Authorization: Basic <token>:
+
++ Response 200 (application/json)
+	+ Attributes
+
+
+
+
+# Group Local Binary Pattern
+
+## Create histogram and save face [POST] [/api/lbp/face/]
+
+User can generate histogram from picture
+
+**Endpoint information**
+
+|                         |     |
+|-------------------------|-----|
+| Requires authentication | Yes |
+
+**Error codes**
+
+|       |                                             |
+|-------| ------------------------------------------- |
+| `500` | Unable to upload file                       |
+| `500` | Unable to save user 						  |
+| `500` | Database error                              |
+| `400` | Missing attributes                          |
+| `403` | Unauthorized		                          |
+
++ Request (application/json)
+	+ Headers
+			Authorization: Basic <token>:
+
+	+ Attributes
+		+ face_type: `full` (string, required) - Sent image type. Allowed types [ 'full', 'face', 'full_grey', 'face_grey' ]
+		+ radius: `4` (integer, required) - Radius for calculating histogram
+		+ points: `2` (integer, required) - Number ponts for calculating histogram
+		+ method: `uniform` (string, required) - Method for calculating histogram. Allowed methods [ 'default', 'ror', 'uniform', 'nri_uniform', 'var' ]
+		+ face: `data:image/jpeg;base64...` (string, required) - Image ti save in base64 encoded string
+
++ Response 200 (application/json)
+	+ Attributes
+
+
+**Example**
+
+{
+	"face_type": "full",
+	"extraction_settings": {
+		"radius": "4",
+		"points": "2",
+		"method": "uniform"
+	},
+	"face" : "data:image/jpeg;base64..."
+}
+
+**Response Example**
+{
+  "metadata": {
+    "estimated_time": 0
+  },
+  "process": {
+    "extraction": {
+      "images": {
+        "face": "http://diplserver.zbytocnosti.sk/images/160/",
+        "face_equalized": "http://diplserver.zbytocnosti.sk/images/162/",
+        "face_grey": "http://diplserver.zbytocnosti.sk/images/161/",
+        "full": "http://diplserver.zbytocnosti.sk/images/159/",
+        "histogram_graph": "http://diplserver.zbytocnosti.sk/images/163/"
+      },
+      "metadata": {},
+      "parameters": {
+        "histogram": "[0.0511, 0.0731, 0.0631, 0.1219, 0.1831, 0.1382, 0.0561, 0.077, 0.0526, 0.1838]",
+        "method": "uniform",
+        "points": 8,
+        "radius": 4
+      }
+    },
+    "uuid": "501803d5-df8c-4f96-8071-e98c826187e1"
+  }
+}
+
+## Recognize person [POST] [/api/lbp/]
+
++ Request (application/json)
+	+ Headers
+			Authorization: Basic <token>:
+			(optional)Process-UUID: 501803d5-df8c-4f96-8071-e98c826187e1
+
+	+ Attributes
+		+ face_type: `full` (string, required) - Sent image type. Allowed types [ 'full', 'face', 'full_grey', 'face_grey' ]
+		+ radius: `4` (integer, required) - Radius for calculating histogram
+		+ points: `2` (integer, required) - Number ponts for calculating histogram
+		+ method: `uniform` (string, required) - Method for calculating histogram. Allowed methods [ 'default', 'ror', 'uniform', 'nri_uniform', 'var' ]
+		+ algorithm: `correlation` - recognize algorithm [ "svm", "correlation", "chi-squared", "intersection", "bhattacharyya", "euclidean"
+"manhattan", "chebysev", "cosine", "braycurtis" ]
+		+ face: `data:image/jpeg;base64...` (string, required) - Image ti save in base64 encoded string
+
++ Response 200 (application/json)
+	+ Attributes
+**Example**
+
+{
+  "face_type": "full",
+  "extraction_settings": {
+    "radius": "4",
+    "points": "2",
+    "method": "default"
+  },
+  "recognition_settings": {
+    "algorithm": "correlation"
+  },
+  "face": "data:image/jpeg;base64..."
+}
+
+**Response example**
+{
+  "metadata": {
+    "estimated_time": 0
+  },
+  "process": {
+    "extraction": {
+      "images": {},
+      "messages": {},
+      "metadata": {},
+      "parameters": {
+        "histogram": "[0.0511, 0.0187, 0.0074, 0.0123, 0.0128, 0.0029, 0.0091, 0.0267, 0.005, 0.0008, 0.0008, 0.003, 0.007, 0.0009, 0.0116, 0.0353, 0.0085, 0.0017, 0.0007, 0.0022, 0.001, 0.0003, 0.0017, 0.0027, 0.0066, 0.0004, 0.0006, 0.0009, 0.0085, 0.0072, 0.0057, 0.0007, 0.0092, 0.0056, 0.0047, 0.0117, 0.0526]",
+        "method": "default",
+        "points": 8,
+        "radius": 4
+      }
+    },
+    "recognition": {
+      "images": {
+        "predict_image": "http://diplserver.zbytocnosti.sk/images/160/"
+      },
+      "metadata": {
+        "process_mem_use": "20",
+        "process_time": "20"
+      },
+      "parameters": {
+        "algorithm": "correlation",
+        "distance": "1.0",
+        "method": "default",
+        "points": 2,
+        "predict_user": {
+          "email": "arrow",
+          "id": 9,
+          "main_image": "http://diplserver.zbytocnosti.sk/images/133/",
+          "name": "Stephen Amell"
+        },
+        "radius": 4,
+        "recognize_histogram": "[0.0511, 0.0187, 0.0074, 0.0123, 0.0128, 0.0029, 0.0091, 0.0267, 0.005, 0.0008, 0.0008, 0.003, 0.007, 0.0009, 0.0116, 0.0353, 0.0085, 0.0017, 0.0007, 0.0022, 0.001, 0.0003, 0.0017, 0.0027, 0.0066, 0.0004, 0.0006, 0.0009, 0.0085, 0.0072, 0.0057, 0.0007, 0.0092, 0.0056, 0.0047, 0.0117, 0.0526]",
+        "similarity_percentage": 100.0,
+        "total_compared_histograms": 58
+      }
+    },
+    "uuid": "8c025ee9-ff92-44d0-9d3b-8cd9cf400083"
+  }
+}
+
+
+
+# Group Eigenfaces
+
+## Recognize person [POST] [/api/eigen/]
+
++ Request (application/json)
+	+ Headers
+			Authorization: Basic <token>:
+			(optional)Process-UUID: 501803d5-df8c-4f96-8071-e98c826187e1
+
+	+ Attributes
+		+ face_type: `full` (string, required) - Sent image type. Allowed types [ 'full', 'face', 'full_grey', 'face_grey' ]
+		+ number_components: `25` (integer, required)
+		+ method: `uniform` (string, required) - Allowed methods [ 'auto', 'full', 'randomized', 'arpack' ]
+		+ algorithm: `correlation` - recognize algorithm [ "svm", "euclidean"
+"manhattan", "chebysev", "cosine", "braycurtis" ]
+		+ face: `data:image/jpeg;base64...` (string, required) - Image ti save in base64 encoded string
+
++ Response 200 (application/json)
+	+ Attributes
+**Example**
+{
+	"face_type": "full",
+	"extraction_settings": {
+		"number_components": "24",
+		"method": "auto"
+	},
+	"recognition_settings": {
+		"algorithm": "euclidean"
+	},
+	"face": "data:image/jpeg;base64..."
+}
+
+**Response Example **
+
+{
+  "metadata": {
+    "estimated_time": 0
+  },
+  "process": {
+    "recognition": {
+      "images": {},
+      "metadata": {
+        "process_mem_use": "",
+        "process_time": ""
+      },
+      "parameters": {
+        "algorithm": "euclidian",
+		"distance": "0.9532823078076793",
+        "method": "arpack",
+        "n_components": 24,
+		"similarity_percentage": 44.37227,
+        "predict_user": {
+          "email": "arrow",
+          "id": 9,
+          "main_image": "",
+          "name": "Stephen Amell"
+        },
+        "recognize_eigenfaces": "[-0.30850257799285086, -0.2639491386710936, 0.22973527521833192, 0.2822604857636422, -0.038857282292407765, 0.42281764434146835, 0.49684351841095076, 0.14566096498063758, -0.22022184783248522, 0.21872519615235844, -0.013599261577140045, -0.09452126570563474, -0.19680698493386994, -0.13977953628969833, 0.05142527462715275, -0.11158457338522464, 0.06607327930223439, 0.14278317419799672, 0.15346213536125386, 0.0028354520650632938, 0.06442446046315448, 0.02768441831474584, -0.13267965901869197, 0.06852524104509237]",
+        "total_compared_faces": 110
+      }
+    },
+    "uuid": "0c709495-9fe8-4008-aee2-380dbacad5e6"
+  }
+}
+
+
+
+# Group Fisherface
+
+## Recognize person [POST] [/api/fisher/]
+
++ Request (application/json)
+	+ Headers
+			Authorization: Basic <token>:
+			(optional)Process-UUID: 501803d5-df8c-4f96-8071-e98c826187e1
+
+	+ Attributes
+		+ face_type: `full` (string, required) - Sent image type. Allowed types [ 'full', 'face', 'full_grey', 'face_grey' ]
+		+ number_components: `25` (integer, required)
+		+ tolerance: `0.0001` (float, required)
+		+ algorithm: `correlation` - recognize algorithm [ "svm", "euclidean"
+"manhattan", "chebysev", "cosine", "braycurtis" ]
+		+ face: `data:image/jpeg;base64...` (string, required) - Image ti save in base64 encoded string
+
++ Response 200 (application/json)
+	+ Attributes
+**Example**
+{
+	"face_type": "full",
+	"extraction_settings": {
+		"number_components": "50",
+		"tolerance": "0.0001"
+	},
+	"recognition_settings": {
+		"algorithm": "euclidean"
+	},
+	"face": "data:image/jpeg;base64..."
+}
+
+**Response Example **
+
+{
+  "metadata": {
+    "estimated_time": 0
+  },
+  "process": {
+    "recognition": {
+      "images": {},
+      "metadata": {
+        "process_mem_use": "",
+        "process_time": ""
+      },
+      "parameters": {
+        "algorithm": "euclidian",
+		"distance": "0.9532823078076793",
+        "tolerance": "0.0001",
+        "n_components": 24,
+		"similarity_percentage": 44.37227,
+        "predict_user": {
+          "email": "arrow",
+          "id": 9,
+          "main_image": "",
+          "name": "Stephen Amell"
+        },
+        "recognize_fisherfaces": "[-0.30850257799285086, -0.2639491386710936, 0.22973527521833192, 0.2822604857636422, -0.038857282292407765, 0.42281764434146835, 0.49684351841095076, 0.14566096498063758, -0.22022184783248522, 0.21872519615235844, -0.013599261577140045, -0.09452126570563474, -0.19680698493386994, -0.13977953628969833, 0.05142527462715275, -0.11158457338522464, 0.06607327930223439, 0.14278317419799672, 0.15346213536125386, 0.0028354520650632938, 0.06442446046315448, 0.02768441831474584, -0.13267965901869197, 0.06852524104509237]",
+        "total_compared_faces": 110
+      }
+    },
+    "uuid": "0c709495-9fe8-4008-aee2-380dbacad5e6"
+  }
+}
