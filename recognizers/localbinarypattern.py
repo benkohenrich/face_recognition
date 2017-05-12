@@ -4,7 +4,7 @@ import cv2
 import json
 from flask import g
 # OpenCv
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 import numpy as np
 from scipy.spatial import distance as dist
 # Models
@@ -66,7 +66,6 @@ class LBPRecognizer:
 
 		# Get the function from switcher dictionary
 		func = switcher.get(argument, lambda: "nothing")
-
 		# Execute the function
 		func()
 
@@ -78,15 +77,14 @@ class LBPRecognizer:
 		else:
 			method = self.SCIPY_METHODS[self.algorithm]
 
-		print("METHOD UTILIZING SCIPY")
-		print("initialize the scipy methods to compaute distances")
+		print("Initialize the scipy methods to compaute distances")
 		print("Method: ", self.algorithm)
-
-		data, labels, total_image, image_id = self.separation()
 
 		distances = []
 
-		print("#### Start computing distances ####")
+		data, labels, total_image, image_id = self.separation()
+
+		print("Start computing distances")
 		for j, hist_train in enumerate(data):
 			dist = method(self.np_hist_to_cv(hist_train), self.np_hist_to_cv(self.comparing_histogram))
 			distances.append((dist, labels[j], image_id[j]))
@@ -94,7 +92,6 @@ class LBPRecognizer:
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
 		image_ID = min(distances)[2]
-
 		percentage = RecognizeHelper.calculate_percentage_for_distance_metric_methods(g.user.id, distance, distances)
 
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ") - ", percentage, "%")
@@ -107,6 +104,7 @@ class LBPRecognizer:
 				'points': self.points,
 				'method': self.method,
 				"algorithm": self.algorithm,
+
 				"recognize_histogram": json.dumps(self.comparing_histogram.tolist()),
 				"total_compared_histograms": total_image,
 				'distance': str(distance),
@@ -119,8 +117,8 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',
-				'process_mem_use': ''
+				'process_time': '', #TODO
+				'process_mem_use': '' #TODO
 			}
 		}
 
@@ -128,7 +126,6 @@ class LBPRecognizer:
 		ResponseParser().add_image('recognition', 'predict_image', image_ID)
 
 	def recognize_method(self):
-
 		reverse = False
 		# if we are using the correlation or intersection
 		# method, then sort the results in reverse order
@@ -141,6 +138,7 @@ class LBPRecognizer:
 		else:
 			method = self.OPENCV_METHODS[self.algorithm]
 
+		print("Initialize the opencv methods to compute distances")
 		print("Method: ", self.algorithm)
 
 		data, labels, total_image, image_id = self.separation()
@@ -160,9 +158,9 @@ class LBPRecognizer:
 			found_ID = max(distances)[1]
 			distance = max(distances)[0]
 			image_ID = max(distances)[2]
-			print(max(distances))
 
 		percentage = RecognizeHelper.calculate_percentage_for_opencv_methods(self.algorithm, distance, reverse)
+
 		print("Identified " + self.algorithm + "(result: " + str(found_ID) + " - dist - " + repr(
 			distance) + ") -  Percentage: ", percentage, "%")
 
@@ -186,8 +184,8 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',
-				'process_mem_use': ''
+				'process_time': '', #TODO
+				'process_mem_use': '' #TODO
 			}
 		}
 
@@ -205,22 +203,32 @@ class LBPRecognizer:
 
 		if len(set) == 1:
 			prediction = set[0]
+			percentage = 100.00
 		else:
-			model = LinearSVC(C=1.0, random_state=42)
+			print("Create SVC model")
+			model = SVC(kernel='linear', C=1.0, random_state=42, probability=True, tol=0.01)
+			# model = LinearSVC(C=1.0, random_state=42)
 
-			print("########## FIT MODEL #########")
+			print(labels)
+			print("Fit model")
 			model.fit(data, labels)
 
-			print("########## PREDICT #########")
+			print("Predict class")
 			prediction = model.predict(hist.reshape(1, -1))[0]
+			percentage_array = model.predict_proba(hist.reshape(1, -1))
+			percentage = np.sum(percentage_array)
 
-		print(prediction)
+		print(type(percentage), percentage)
 		predict_user = User.query.filter(User.id == prediction).first()
 		process = {
 			"parameters": {
+				'radius': self.range,
+				'points': self.points,
+				'method': self.method,
 				"algorithm": "svm",
 				"recognize_histogram": json.dumps(self.comparing_histogram.tolist()),
 				"total_compared_histograms": total_image,
+				'similarity_percentage': percentage * 100,
 				"predict_user": {
 					"id": int(prediction),
 					"name": predict_user.name,
@@ -228,10 +236,15 @@ class LBPRecognizer:
 					"main_image": Image.avatar_path(predict_user.id)
 				},
 			},
+			"metadata": {
+				'process_time': '',  # TODO
+				'process_mem_use': ''  # TODO
+			}
 		}
 
 		ResponseParser().add_process('recognition', process)
-		ResponseParser().add_image('recognition', 'predict_image', Image.avatar_id(predict_user.id))
+		if Image.avatar_id(predict_user.id) is not None:
+			ResponseParser().add_image('recognition', 'predict_image', Image.avatar_id(predict_user.id))
 		print("########## END #########")
 
 	def separation(self):

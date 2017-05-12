@@ -81,12 +81,23 @@ class Users(Resource):
 
 	@staticmethod
 	def update(user_id):
+
 		try:
-
 			password = request.json.get('password')
-			avatar = request.json.get('avatar')
-			name = request.json.get('name')
+		except:
+			password = None
 
+		try:
+			avatar = request.json.get('avatar')
+		except:
+			avatar = None
+
+		try:
+			name = request.json.get('name')
+		except:
+			name = None
+
+		try:
 			if password is None or password == '':
 				ErrorParser().add_error('password', 'This value is required')
 				abort(422)  # missing arguments

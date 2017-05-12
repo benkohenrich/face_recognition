@@ -175,7 +175,7 @@ def create_app():
 			return jsonify({
 				'code': 405,
 				'message': "List of Users is not allowed",
-			})
+			}), 405
 
 		result = Users.listing()
 		return jsonify(result), 200
@@ -210,7 +210,7 @@ def create_app():
 				return jsonify({
 					'code': 405,
 					'message': "User is not allowed",
-				})
+				}), 405
 
 		result = Users.update(user_id)
 
@@ -220,7 +220,7 @@ def create_app():
 			return jsonify({
 				'code': 404,
 				'message': "User not found",
-			})
+			}), 404
 
 	@app.route("/api/users/<user_id>/", methods=['GET'])
 	@auth.login_required
@@ -231,7 +231,7 @@ def create_app():
 			return jsonify({
 				'code': 405,
 				'message': "User is not allowed",
-			})
+			}), 405
 
 		result = Users.get(user_id)
 
@@ -241,7 +241,7 @@ def create_app():
 			return jsonify({
 				'code': 404,
 				'message': "User not found",
-			})
+			}), 404
 
 	@app.route("/api/users/me/", methods=['GET'])
 	@auth.login_required
@@ -257,7 +257,7 @@ def create_app():
 			return jsonify({
 				'code': 404,
 				'message': "User not found",
-			})
+			}), 404
 
 	@app.route("/api/users/logs/", methods=['GET'])
 	@auth.login_required
@@ -282,7 +282,7 @@ def create_app():
 			return jsonify({
 				'code': 404,
 				'message': "Process not found",
-			})
+			}), 404
 
 	@app.route('/api/users/', methods=['POST'])
 	def new_user():
@@ -314,7 +314,7 @@ def create_app():
 				return jsonify({
 					'code': 405,
 					'message': "User has n permission",
-				})
+				}), 405
 
 		if image is None:
 			return jsonify({
