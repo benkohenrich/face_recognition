@@ -98,14 +98,14 @@ class Users(Resource):
 			name = None
 
 		try:
-			if password is None or password == '':
-				ErrorParser().add_error('password', 'This value is required')
-				abort(422)  # missing arguments
-
 			user = User.query.filter(User.id == user_id).first()
 
-			user.name = name
-			user.hash_password(password)
+			if password is not None or password != '':
+				user.hash_password(password)
+			if name is not None:
+				user.name = name
+
+
 			db.session.add(user)
 			db.session.commit()
 
