@@ -159,6 +159,7 @@ def create_app():
 			# Try to authenticate with username/password
 			user = User.query.filter_by(username=username_or_token).first()
 			if not user or not user.verify_password(password):
+				abort(401)
 				return False
 
 		g.user = user
@@ -168,6 +169,8 @@ def create_app():
 	@app.route('/api/users/')
 	@auth.login_required
 	def listing_user():
+		Utils.reset_singletons()
+
 		if not g.user.is_admin:
 			return jsonify({
 				'code': 405,
@@ -200,6 +203,8 @@ def create_app():
 	@app.route("/api/users/<user_id>/", methods=['PUT'])
 	@auth.login_required
 	def update_user(user_id):
+		Utils.reset_singletons()
+
 		if g.user.id != user_id:
 			if not g.user.is_admin:
 				return jsonify({
@@ -220,6 +225,8 @@ def create_app():
 	@app.route("/api/users/<user_id>/", methods=['GET'])
 	@auth.login_required
 	def get_user_by_id(user_id):
+		Utils.reset_singletons()
+
 		if not g.user.is_admin:
 			return jsonify({
 				'code': 405,
@@ -239,6 +246,8 @@ def create_app():
 	@app.route("/api/users/me/", methods=['GET'])
 	@auth.login_required
 	def get_user():
+		Utils.reset_singletons()
+
 		# Get user detail
 		result = Users.me()
 
@@ -253,6 +262,7 @@ def create_app():
 	@app.route("/api/users/logs/", methods=['GET'])
 	@auth.login_required
 	def get_logs():
+		Utils.reset_singletons()
 		# Get user processes
 		result = Users.logs()
 		print("Logs result")
@@ -262,6 +272,7 @@ def create_app():
 	@app.route("/api/users/logs/<log_id>/", methods=['GET'])
 	@auth.login_required
 	def get_log_details(log_id):
+		Utils.reset_singletons()
 		# Get user processes
 		result = Users.log_details(log_id)
 
@@ -348,6 +359,11 @@ def create_app():
 	def bad_request(error):
 		print(error)
 		return ResponseHelper().create_simple_response(400, getattr(error, 'description', "Bad request")), 400
+
+	@app.errorhandler(401)
+	def unauthorized(error):
+		print(error)
+		return ResponseHelper().create_simple_response(401, "Unauthorized Access"), 401
 
 	@app.errorhandler(422)
 	def unprocessed_entity(error):

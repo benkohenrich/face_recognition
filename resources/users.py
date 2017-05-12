@@ -66,10 +66,7 @@ class Users(Resource):
 			abort(422)
 
 		try:
-			print(image)
-			print(g.user.id)
 			image_id = ImageHelper.save_image(image, 'face', g.user.id, parent_id)
-			print(image_id)
 			# Generation URL name for image
 			if current_app.config['URL_NAME'] is None:
 				url = "http://0.0.0.0:5000" + url_for('get_image', image_id=image_id)
@@ -85,6 +82,7 @@ class Users(Resource):
 	@staticmethod
 	def update(user_id):
 		try:
+
 			password = request.json.get('password')
 			avatar = request.json.get('avatar')
 			name = request.json.get('name')

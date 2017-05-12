@@ -117,9 +117,9 @@ Registrácia nového použivatela. Používatelské udaje sa ulozia do databázy
 + Request (application/json)
     + Attributes
         + username: `benkohenrich@gmail.com` (string, required) - Používateľské meno formou e-mail
-        + password `MagicPassword` (string, required) - Heslo
-        + name `Henrich Benkő` (string, optional) - Meno používateľa
-        + avatar `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Hlavná fotografia používateľa v base64
+        + password: `MagicPassword` (string, required) - Heslo
+        + name: `Henrich Benkő` (string, optional) - Meno používateľa
+        + avatar: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Hlavná fotografia používateľa v base64
 
 + Response 200 (application/json)
     + Attributes (array[User], required)
@@ -158,8 +158,8 @@ Administ´tor má moznost zmenit udaje kazdemu používatelovi v systéme.
 + Request (application/json)
     + Attributes
         + name: `Henrich Benkő` (string, required) - Meno používatela
-        + password `MagicPassword` (string, required) - Heslo
-        + avatar `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Hlavná fotografia používateľa v base64
+        + password: `MagicPassword` (string, required) - Heslo
+        + avatar: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Hlavná fotografia používateľa v base64
 
 + Response 200 (application/json)
     + Attributes (User, required)
