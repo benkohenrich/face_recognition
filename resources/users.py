@@ -99,8 +99,8 @@ class Users(Resource):
 
 		try:
 			user = User.query.filter(User.id == user_id).first()
-
-			if password is not None or password != '':
+			print(name)
+			if password is not None and password != '':
 				user.hash_password(password)
 			if name is not None:
 				user.name = name
@@ -124,6 +124,7 @@ class Users(Resource):
 			result['main_photo'] = Image.avatar_path(user_id)
 			return result
 		except:
+			traceback.print_exc()
 			return False
 
 	@staticmethod
