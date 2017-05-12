@@ -1,8 +1,5 @@
-import base64
-import io
+import timeit
 
-import matplotlib
-from PIL import Image
 import cv2
 from flask import g
 from flask import json
@@ -21,19 +18,18 @@ from helpers.imagehelper import ImageHelper
 from helpers.parsers import InputParser, ResponseParser
 from helpers.processhelper import Process as ProcessHelper
 
-
 import matplotlib
+
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 
 class HistogramMaker(object):
-
-
 	@staticmethod
 	def create_histogram_from_image(image):
 
 		# GET SETTINGS
+		eps = 1e-7
 		options = InputParser().extraction_settings
 
 		# OPEN IMAGE
@@ -42,23 +38,27 @@ class HistogramMaker(object):
 		else:
 			im = cv2.imread(image)
 
-		im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
-		# GRAYSCALE IMAGE
-		gray_image = cv2.imencode('.jpg', im_gray)[1].tostring()
-
+		im = ImageHelper.adjust_gamma(im, gamma=1.5)
 		if Process().is_new:
+			ImageHelper.save_numpy_image(im.astype(np.uint8), 'gamma', g.user.id, ProcessHelper().face_image_id)
+		im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+		# GRAYSCALE IMAGE
+		if Process().is_new:
+			gray_image = cv2.imencode('.jpg', im_gray)[1].tostring()
 			face_grey_id = ImageHelper.save_image(gray_image, 'face_grey', g.user.id, ProcessHelper().face_image_id)
 
-		equ = cv2.equalizeHist(im_gray)
-
 		if Process().is_new:
-			face_equalized_id = ImageHelper.save_numpy_image(equ, 'face_equalized', g.user.id, ProcessHelper().face_image_id)
+			equ = cv2.equalizeHist(im_gray)
+			face_equalized_id = ImageHelper.save_numpy_image(equ, 'face_equalized', g.user.id,
+															 ProcessHelper().face_image_id)
 
-		plt.hist(equ.ravel(), 256, [0, 256])
+			plt.hist(equ.ravel(), 256, [0, 256])
+			histogram_graph_id = ImageHelper.save_plot_image(plt, 'histogram_graph', g.user.id,
+															 ProcessHelper().face_image_id)
 
-		if Process().is_new:
-			histogram_graph_id = ImageHelper.save_plot_image(plt, 'histogram_graph', g.user.id, ProcessHelper().face_image_id)
+		stop = timeit.default_timer()
+		# print("HISTOGRAM: Change image ", stop - start, "s")
 
 		try:
 			radius = int(options['radius'])
@@ -67,9 +67,9 @@ class HistogramMaker(object):
 
 		# Number of points to be considered as neighbourers
 		try:
-			no_points = int(options['points']) * radius
+			no_points = int(options['points'])
 		except KeyError:
-			no_points = 8 * radius
+			no_points = 8
 
 		try:
 			method = options['method']
@@ -78,8 +78,16 @@ class HistogramMaker(object):
 
 		lbp = local_binary_pattern(im_gray, no_points, radius, method=method)
 
+		# (hist, _) = np.histogram(lbp.ravel(),
+		# 						 bins=np.arange(0, no_points + 3),
+		# 						 range=(0, no_points + 2))
+		#
+		# normalize the histogram
+		# hist = hist.astype("float")
+		# hist /= (hist.sum() + eps)
+		# hist, _ = np.histogram(lbp.ravel(), bins=np.arange(0, no_points + 3), range=(0, no_points + 2))
+		# Calculate the histogram
 		x = itemfreq(lbp.ravel())
-
 		# Normalize the histogram
 		hist = x[:, 1] / sum(x[:, 1])
 

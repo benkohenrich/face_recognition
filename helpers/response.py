@@ -8,17 +8,18 @@ from helpers.processhelper import Process
 
 class ResponseHelper(object):
 	@staticmethod
-	def create_response(message=""):
-
+	def create_response(code=200, message="System error"):
+		response = {}
 		errors = ErrorParser()
-
-		response = {'metadata': {}}
-
-		response['metadata']['estimated_time'] = 0
 
 		if not errors.is_empty():
 			response['errors'] = errors.get_errors()
+			response['code'] = code
+			response['message'] = message
 		else:
+			response['metadata'] = {}
+			response['metadata']['estimated_time'] = 0
+
 			if Process().process is not None:
 				response['process'] = ResponseParser().get_response_data()
 				response['process']['uuid'] = Process().process.uuid
@@ -27,5 +28,21 @@ class ResponseHelper(object):
 		ErrorParser().reset()
 		InputParser().reset()
 		ResponseParser().reset()
+
+		return jsonify(response)
+
+	@staticmethod
+	def create_simple_response(code = 200, message="OK", errors = None):
+		response = {}
+
+		if not ErrorParser().is_empty():
+			response['errors'] = ErrorParser().get_errors()
+			response['code'] = code
+			response['message'] = message
+		else:
+			if errors is not None:
+				response['errors'] = errors
+			response['code'] = code
+			response['message'] = message
 
 		return jsonify(response)

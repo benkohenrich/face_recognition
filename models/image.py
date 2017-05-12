@@ -32,7 +32,7 @@ class Image(Base):
 		all_image = []
 
 		users = User.query.all()
-
+		print(actual_face_id)
 		for user in users:
 			images = Image.query \
 				.filter(Image.type == 'face') \
@@ -47,15 +47,23 @@ class Image(Base):
 		return all_image
 
 	@staticmethod
-	def remove(id):
-		Image.query.filter(Image.id == id).delete()
+	def remove(image_id):
+		Image.query.filter(Image.id == image_id).delete()
+		db.session.commit()
+
+	@staticmethod
+	def remove_by_parent(parent_id):
+		Image.query.filter(Image.parent_id == parent_id).delete()
 		db.session.commit()
 
 	@staticmethod
 	def avatar_path(user_id):
-		avatar = Image.query.filter(Image.user_id == user_id).filter(Image.type == 'avatar').first()
-		url = ''
+		if user_id is None:
+			return ''
 
+		avatar = Image.query.filter(Image.user_id == user_id).filter(Image.type == 'avatar').first()
+
+		url = ''
 		if avatar is not None:
 			if current_app.config['URL_NAME'] is None:
 				url = url_for('get_image', image_id=avatar.id)
@@ -68,48 +76,26 @@ class Image(Base):
 	def avatar_id(user_id):
 		avatar = Image.query.filter(Image.user_id == user_id).filter(Image.type == 'avatar').first()
 
-		return avatar.id
+		if avatar is None:
+			return None
+		else:
+			return avatar.id
+	@staticmethod
+	def delete_avatar(user_id):
+		Image.query.filter(Image.user_id == user_id).filter(Image.type == 'avatar').delete()
+		db.session.commit()
+		return True
 
 	@staticmethod
-	def get_train_data():
-		all_image = []
-
-		users = User.query.all()
-
-		for user in users:
-
-			total_image = Image.query \
-				.filter(Image.type == 'face') \
-				.filter(Image.user_id == user.id) \
-				.count()
-
-			if total_image < 10:
-				continue
-
-			images = Image.query \
-				.filter(Image.type == 'face') \
-				.filter(Image.user_id == user.id) \
-				.filter() \
-				.order_by(func.rand()) \
-				.limit(8) \
-				.all()
-
-			all_image += images
-
-		return all_image
-
-	@staticmethod
-	def get_test_data(train_images):
+	def get_train_data(test_images):
 		all_image = []
 		used_image_id = []
-
-		for im in train_images:
-			used_image_id.append(im.id)
-
 		users = User.query.all()
 
+		for im in test_images:
+			used_image_id.append(im.id)
+
 		for user in users:
-			print("Model user id: ", user.id)
 			total_image = Image.query \
 				.filter(Image.type == 'face') \
 				.filter(Image.user_id == user.id) \
@@ -123,7 +109,32 @@ class Image(Base):
 				.filter(Image.user_id == user.id) \
 				.filter(Image.id.notin_(used_image_id)) \
 				.order_by(func.rand()) \
-				.limit(2) \
+				.limit(9) \
+				.all()
+
+			all_image += images
+
+		return all_image
+
+	@staticmethod
+	def get_test_data():
+		all_image = []
+
+		users = User.query.all()
+		for user in users:
+			total_image = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.count()
+
+			if total_image < 10:
+				continue
+
+			images = Image.query \
+				.filter(Image.type == 'face') \
+				.filter(Image.user_id == user.id) \
+				.order_by(func.rand()) \
+				.limit(1) \
 				.all()
 
 			all_image += images

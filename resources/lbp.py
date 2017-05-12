@@ -42,9 +42,7 @@ class LBPHistogram(Resource):
 			return
 
 		if face is not None:
-
 			face, full_image_id = ImageHelper.prepare_face_new(face, i_parser.face_type)
-
 			if face is None:
 				return
 
@@ -155,8 +153,7 @@ class LBPHistogram(Resource):
 		if InputParser().__getattr__('method') is None:
 			errors.add_error('method', 'extraction.method.required')
 		else:
-			print(InputParser().__getattr__('method'))
-			if InputParser().__getattr__('method') not in {'default', 'ror', 'uniform', 'nri_uniform', 'var'}:
+			if InputParser().__getattr__('method') not in {'default', 'ror', 'uniform', 'nri_uniform'}:
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':

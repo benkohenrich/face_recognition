@@ -1,3 +1,4 @@
+import numpy
 from flask import json, g
 from sklearn.svm import SVC
 
@@ -20,20 +21,29 @@ from sklearn.grid_search import GridSearchCV
 
 class EigenfacesRecognizer:
 	SCIPY_METHODS = {
-		"euclidian": dist.euclidean,
+		"euclidean": dist.euclidean,
 		"manhattan": dist.cityblock,
 		"chebysev": dist.chebyshev,
 		"cosine": dist.cosine,
 		"braycurtis": dist.braycurtis,
 	}
 
-	def __init__(self, recognize_face, number_components=24, method='randomized', compared_face_id=None):
+	def __init__(self, recognize_face, number_components=24, method='randomized', compared_face_id=None, whiten = False):
 		self.method = method
 		self.number_components = number_components
 		self.input_parser = InputParser()
 		self.compare_face = recognize_face
 		self.algorithm = "none"
 		self.compared_face_id = compared_face_id
+		if whiten is None:
+			self.whiten = False
+		else:
+			if whiten == 'true' or whiten == 1:
+				self.whiten = True
+			elif whiten == 'false' or whiten == 0:
+				self.whiten = False
+			else:
+				self.whiten = False
 
 	def recognize(self):
 		argument = self.input_parser.__getattr__('algorithm')
@@ -42,7 +52,7 @@ class EigenfacesRecognizer:
 
 		switcher = {
 			'svm': self.svm_recognize,
-			'euclidian': self.scipy_recognize_method,
+			'euclidean': self.scipy_recognize_method,
 			"manhattan": self.scipy_recognize_method,
 			"chebysev": self.scipy_recognize_method,
 			"cosine": self.scipy_recognize_method,
@@ -57,13 +67,12 @@ class EigenfacesRecognizer:
 
 	def svm_recognize(self):
 
-		model, X_pca, y, y_images, total_image = EigenfacesHelper.prepare_data(self.number_components, self.method)
+		model, X_pca, y, y_images, total_image = EigenfacesHelper.prepare_data(self.number_components, self.method, self.whiten)
 
 		# Prepare Image to recognize
 		test = EigenfacesHelper.prepare_image(self.compare_face, 'test')
 		test_pca = model.transform(test)
 
-		################################################################################
 		# Train a SVM classification model
 		print("Fitting the classifier to the training set")
 		param_grid = {
@@ -74,21 +83,30 @@ class EigenfacesRecognizer:
 		# Normalize data
 		X_train, X_test = RecognizeHelper.normalize_data(X_pca, test_pca)
 
-		clf = GridSearchCV(SVC(kernel='rbf'), param_grid, n_jobs=10)
+		clf = GridSearchCV(SVC(kernel='linear', probability=True), param_grid, n_jobs=10)
 		clf = clf.fit(X_train, y)
 
 		Y_pred = clf.predict(X_test)
+		percentage_array = clf.predict_proba(X_test)
 
 		predict_user_id = int(Y_pred[0])
 		predict_user = User.query.filter(User.id == predict_user_id).first()
+		percentage = numpy.sum(percentage_array)
+
+		print(type(percentage), percentage)
+
+		if self.number_components == 0:
+			self.number_components = "auto"
 
 		process = {
 			"parameters": {
-				'n_components': self.number_components,
+				'number_components': self.number_components,
 				'method': self.method,
+				'whiten': self.whiten,
 				"algorithm": self.algorithm,
 				"recognize_eigenfaces": json.dumps(X_test[0].tolist()),
-				"total_compared_faces": total_image,
+				"total_compared_eigenfaces": total_image,
+				'similarity_percentage': percentage * 100,
 				"predict_user": {
 					"id": predict_user_id,
 					"name": predict_user.name,
@@ -97,8 +115,7 @@ class EigenfacesRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',
-				'process_mem_use': ''
+				'process_time': '', #TODO
 			}
 		}
 
@@ -120,7 +137,6 @@ class EigenfacesRecognizer:
 		distances = []
 		distance = None
 		# run through test images (usually one)
-
 		X_train, X_test = RecognizeHelper.normalize_data(X_pca, test)
 
 		for j, ref_pca in enumerate(X_train):
@@ -130,6 +146,7 @@ class EigenfacesRecognizer:
 		found_ID = min(distances)[1]
 		distance = min(distances)[0]
 		found_image_ID = min(distances)[2]
+
 		percentage = RecognizeHelper.calculate_percentage_for_distance_metric_methods(g.user.id, distance, distances)
 		print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
 
@@ -137,11 +154,12 @@ class EigenfacesRecognizer:
 		predict_user = User.query.filter(User.id == found_ID).first()
 		process = {
 			"parameters": {
-				'n_components': self.number_components,
+				'number_components': self.number_components,
 				'method': self.method,
 				"algorithm": self.algorithm,
+				'whiten': self.whiten,
 				"recognize_eigenfaces": json.dumps(test[0].tolist()),
-				"total_compared_histograms": total_image,
+				"total_compared_eigenfaces": total_image,
 				'similarity_percentage': percentage,
 				'distance': str(distance),
 				"predict_user": {
@@ -161,59 +179,3 @@ class EigenfacesRecognizer:
 		ResponseParser().add_image('recognition', 'predict_image', found_image_ID)
 		ResponseParser().add_image('recognition', 'compared_image', ProcessHelper().face_image_id)
 
-	# def euclidian_recognize(self):
-	#
-	# 	model, X_pca, y, images, total_image = EigenfacesHelper.cross_validate(self.number_components, self.method)
-	#
-	# 	npimg = ImageHelper.convert_base64_image_to_numpy(self.compare_face)
-	#
-	# 	img_color = cv2.imdecode(npimg, 1)
-	#
-	# 	img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-	# 	img_gray = cv2.equalizeHist(img_gray)
-	#
-	# 	# ImageHelper.save_numpy_image(img_gray, 'test', g.user.id)
-	# 	# X = np.zeros([1, 100 * 100], dtype='int8')
-	#
-	# 	test = img_gray.flat
-	#
-	# 	print("After flat: ", test)
-	# 	test = model.transform(test)
-	#
-	# 	distances = []
-	# 	# run through test images (usually one)
-	# 	for j, ref_pca in enumerate(X_pca):
-	#
-	# 		dist = math.sqrt(sum([diff ** 2 for diff in (ref_pca - test[0])]))
-	# 		print("Distance: ", float("{0:.20f}".format(dist)), " UserID:", y[j])
-	# 		distances.append((dist, y[j]))
-	#
-	# 	found_ID = min(distances)[1]
-	# 	distance = min(distances)[0]
-	# 	print("Identified (result: " + str(found_ID) + " - dist - " + str(distance) + ")")
-	#
-	# 	predict_user_id = int(found_ID)
-	# 	predict_user = User.query.filter(User.id == found_ID).first()
-	#
-	# 	process = {
-	# 		"parameters": {
-	# 			'num_eigenfaces': self.number_components,
-	# 			'method': self.method,
-	# 			"algorithm": self.algorithm,
-	# 			"recognize_eigenfaces": json.dumps(test[0].tolist()),
-	# 			"total_compared_histograms": total_image,
-	# 			'distance': str(distance),
-	# 			"predict_user": {
-	# 				"id": predict_user_id,
-	# 				"name": predict_user.name,
-	# 				"email": predict_user.username,
-	# 				"main_image": Image.avatar_path(predict_user.id)
-	# 			},
-	# 		},
-	# 		"metadata": {
-	# 			'process_time': '',
-	# 			'process_mem_use': ''
-	# 		}
-	# 	}
-	#
-	# 	ResponseParser().add_process('recognition', process)

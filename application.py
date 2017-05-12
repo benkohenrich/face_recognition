@@ -1,87 +1,80 @@
+import os
+
 import flask
-import time
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask import abort
 from flask import g, jsonify, request
 from flask import make_response
 from flask_httpauth import HTTPBasicAuth
 
-from helpers.imagehelper import ImageHelper
+from helpers.parsers import InputParser, ErrorParser
+from helpers.processhelper import Process
+from helpers.response import ResponseHelper
 from helpers.utilshelper import Utils
 from models.base import db
 from models.image import Image
 from models.user import User
-
+from resources.eigenfaces import Eigenfaces
 from resources.fisherface import Fisherfaces
 from resources.lbp import LBPHistogram
-from resources.eigenfaces import Eigenfaces
 from resources.stats import Stats
 from resources.users import Users
 
-from helpers.response import ResponseHelper
-from helpers.parsers import InputParser, ErrorParser, ResponseParser, Test
-from helpers.processhelper import Process
-
 
 def create_app():
-	app = Flask(__name__)
+	app = Flask(__name__, static_folder="/_docs")
 	app.config.from_object('config.BaseConfig')
-
 	# Auth
 	auth = HTTPBasicAuth()
-
 	# Database init
 	db.init_app(app)
 
-	response = []
 	message = []
 
 	# Local Binary Pattern routers
-	@app.route('/api/lbp/face/', methods=['GET', 'POST'])
+	@app.route('/api/lbp/face/', methods=['POST'])
 	@auth.login_required
 	def lbp_face():
 		Utils.reset_singletons()
 		# Create a new process
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('extraction')
-
-		# Parse inputs to helper
+		# Parse inputs to helper and validate
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings'}
 		inputs.set_attributes(request)
-
+		# Check validation errors
 		error_parser = ErrorParser()
-
 		if not error_parser.is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(422, "Validation error"), 422
 
+		# Run current method
 		if request.method == 'POST':
-
 			LBPHistogram.save_histogram()
-
 			return ResponseHelper.create_response(), 201
-		else:
-			return ResponseHelper.create_response(message), 200
 
 	@app.route('/api/lbp/', methods=['POST'])
 	@auth.login_required
 	def lbp():
 		Utils.reset_singletons()
-
 		# Create a new process
 		Process().create_new_process(g.user.id, 'lbp')
 		Process().set_code('recognition')
-
+		# Parse and validate input values
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
 		inputs.set_attributes(request)
-
+		# Check validation errors
 		error_parser = ErrorParser()
-
 		if not error_parser.is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(422, "Validation error"), 422
 
+		# Run recognition
 		LBPHistogram.recognize_face()
+
+		# Check recognition errors
+		if not ErrorParser().is_empty():
+			return ResponseHelper.create_response(400, "Bad request"), 400
 
 		return ResponseHelper.create_response(message), 200
 
@@ -89,21 +82,22 @@ def create_app():
 	@auth.login_required
 	def eigenfaces():
 		Utils.reset_singletons()
-		# CREATE NEW PROCESS
+		# Create new process
 		Process().create_new_process(g.user.id, 'eigenfaces')
 		Process().set_code('recognition')
-
+		# Parse and validate input values
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
 		inputs.set_attributes(request)
-
+		# Check validation errors
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(422, "Validation error"), 422
 
 		Eigenfaces.recognize_face()
 
+		# Check recognition errors
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(400, "Bad request"), 400
 
 		return ResponseHelper.create_response(message), 200
 
@@ -111,29 +105,30 @@ def create_app():
 	@auth.login_required
 	def fisherfaces():
 		Utils.reset_singletons()
-		# CREATE NEW PROCESS
+		# Create new process
 		Process().create_new_process(g.user.id, 'fisherfaces')
 		Process().set_code('recognition')
-
+		# Parse and validate input values
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings'}
 		inputs.set_attributes(request)
-
+		# Check validation errors
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(422, "Validation error"), 422
 
 		Fisherfaces.recognize_face()
 
+		# Check recognition errors
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(400, "Bad request"), 400
 
 		return ResponseHelper.create_response(message), 200
 
-	# Generate System Success Routers
+	# Generate System Stats Routers
 	@app.route('/api/stats/', methods=['POST'])
 	def stats():
 		Utils.reset_singletons()
-
+		# Parse and validate input values
 		inputs = InputParser()
 		inputs.validate_attributes = {'extraction_settings', 'recognition_settings', 'stats'}
 		inputs.set_attributes(request)
@@ -143,7 +138,7 @@ def create_app():
 		if not ErrorParser().is_empty():
 			return ResponseHelper.create_response(), 400
 
-		Stats.get_stats()
+		Stats.statistics()
 
 		return ResponseHelper.create_response(message), 200
 
@@ -152,22 +147,36 @@ def create_app():
 	@auth.login_required
 	def get_auth_token():
 		Utils.reset_singletons()
+		# Generate the token
 		token = g.user.generate_auth_token()
 		return flask.jsonify({'token': token.decode('ascii')})
 
 	@auth.verify_password
 	def verify_password(username_or_token, password):
-		# first try to authenticate by token
+		# First try to authenticate by token
 		user = User.verify_auth_token(username_or_token)
 		if not user:
-			# try to authenticate with username/password
+			# Try to authenticate with username/password
 			user = User.query.filter_by(username=username_or_token).first()
 			if not user or not user.verify_password(password):
 				return False
+
 		g.user = user
 		return True
 
 	# User Routers
+	@app.route('/api/users/')
+	@auth.login_required
+	def listing_user():
+		if not g.user.is_admin:
+			return jsonify({
+				'code': 405,
+				'message': "List of Users is not allowed",
+			})
+
+		result = Users.listing()
+		return jsonify(result), 200
+
 	@app.route('/api/users/face/', methods=['POST'])
 	@auth.login_required
 	def save_image_for_user():
@@ -176,19 +185,57 @@ def create_app():
 		inputs.set_attributes(request)
 
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(422, "Validation error"), 422
 
 		url = Users.save_face_image()
 
 		if not ErrorParser().is_empty():
 			db.session.rollback()
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(400, "Bad request"), 400
 
 		return jsonify({
 			'image_face': url
 		}), 201
 
-	# TODO user me
+	@app.route("/api/users/<user_id>/", methods=['PUT'])
+	@auth.login_required
+	def update_user(user_id):
+		if g.user.id != user_id:
+			if not g.user.is_admin:
+				return jsonify({
+					'code': 405,
+					'message': "User is not allowed",
+				})
+
+		result = Users.update(user_id)
+
+		if result:
+			return jsonify(result), 200
+		else:
+			return jsonify({
+				'code': 404,
+				'message': "User not found",
+			})
+
+	@app.route("/api/users/<user_id>/", methods=['GET'])
+	@auth.login_required
+	def get_user_by_id(user_id):
+		if not g.user.is_admin:
+			return jsonify({
+				'code': 405,
+				'message': "User is not allowed",
+			})
+
+		result = Users.get(user_id)
+
+		if result:
+			return jsonify(result), 200
+		else:
+			return jsonify({
+				'code': 404,
+				'message': "User not found",
+			})
+
 	@app.route("/api/users/me/", methods=['GET'])
 	@auth.login_required
 	def get_user():
@@ -199,64 +246,115 @@ def create_app():
 			return jsonify(result), 200
 		else:
 			return jsonify({
-				"errors": {
-					"users": "user not found"
-				}
+				'code': 404,
+				'message': "User not found",
 			})
 
-	# TODO user update
-	# TODO user logs
+	@app.route("/api/users/logs/", methods=['GET'])
+	@auth.login_required
+	def get_logs():
+		# Get user processes
+		result = Users.logs()
+		print("Logs result")
+		print(result)
+		return jsonify(result), 200
+
+	@app.route("/api/users/logs/<log_id>/", methods=['GET'])
+	@auth.login_required
+	def get_log_details(log_id):
+		# Get user processes
+		result = Users.log_details(log_id)
+
+		if result:
+			return jsonify(result), 200
+		else:
+			return jsonify({
+				'code': 404,
+				'message': "Process not found",
+			})
 
 	@app.route('/api/users/', methods=['POST'])
 	def new_user():
 		Utils.reset_singletons()
-		username = Users.registration()
-		return jsonify({'username': username}), 201
+		result = Users.registration()
+		return jsonify(result), 201
 
-	@app.route("/images/<image_id>/", methods=['GET'])
+	# Image routers
+	@app.route("/api/images/<image_id>/", methods=['GET'])
 	def get_image(image_id):
 		Utils.reset_singletons()
 		image = Image.get_by_id(image_id)
-
 		if image is None:
 			abort(404)
-
+		# Set up image content type headers to show image with URL
 		response = make_response(image.image)
 		response.headers['Content-Type'] = 'image/jpeg'
 		return response
 
-	# Testing Routers
-	@app.route("/api/singleton/<attr>/<seconds>/")
-	def test(attr, seconds):
+	@app.route("/api/images/<image_id>/", methods=['DELETE'])
+	@auth.login_required
+	def delete_image(image_id):
 		Utils.reset_singletons()
-		if not ErrorParser().is_empty():
-			exit(400)
 
-		print("Request: ", attr, " No set: ", Test().attr)
+		image = Image.get_by_id(image_id)
+		# Check image user permissions
+		if not g.user.is_admin:
+			if g.user.id != image.user_id:
+				return jsonify({
+					'code': 405,
+					'message': "User has n permission",
+				})
 
-		Test().attr = attr
-		print("Request: ", attr, " Set: ", Test().attr)
-		time.sleep(int(seconds))
-		print("Request: ", attr, " After wait: ", Test().attr)
+		if image is None:
+			return jsonify({
+				'code': 404,
+				'message': "Image not found",
+			}), 404
 
-		f = Test().attr
-		Test().reset()
-		return "Singleton test: " + f
+		parent_id = image.parent_id
+		# Delete image
+		Image.remove(image_id)
+		# Delete image by parent_id
+		Image.remove_by_parent(parent_id)
+		# Delete image by image id in parent column
+		Image.remove_by_parent(image_id)
 
-	@app.route("/api/hidden/image/save/")
-	def hidden():
-		ID = '10'
-		import glob
-		for filename in glob.glob('static/faces/' + ID + '/*.jpg'):
-			base64 = ImageHelper.encode_base64_from_path(filename)
+		return "", 204
 
-			face = ImageHelper.prepare_face(base64.decode("utf-8"), 'full')
-			image_id = ImageHelper.save_image(face, 'face', 10)
+	# Testing Routers
+	# @app.route("/api/hidden/image/save/")
+	# def hidden():
+	# 	ID = 23
+	# 	import glob
+	# 	for filename in glob.glob('static/' + str(ID) + '/*.jpg'):
+	# 		base64 = ImageHelper.encode_base64_from_path(filename)
+	#
+	# 		face, parent_id = ImageHelper.prepare_face_new(base64.decode("utf-8"), 'full')
+	# 		image_id = ImageHelper.save_image(face, 'face', ID, parent_id)
+	#
+	# 	return "Done"
 
-		return "Done"
+	@app.route("/api/")
+	def documentation():
+		print("Documentation")
+		return send_from_directory(os.path.join('.', '_docs'), 'Dipl.html')
 
 	@app.route("/")
 	def hello():
-		return "Hello World! Jakub funguje to"
+		ErrorParser().add_error('histogram', 'generals.histogram.required')
+		return ResponseHelper.create_response(400), 400
+
+	@app.errorhandler(400)
+	def bad_request(error):
+		print(error)
+		return ResponseHelper().create_simple_response(400, getattr(error, 'description', "Bad request")), 400
+
+	@app.errorhandler(422)
+	def unprocessed_entity(error):
+		return ResponseHelper().create_simple_response(422, "Validation error"), 422
+
+	@app.errorhandler(500)
+	def internal_error(error):
+		return ResponseHelper().create_simple_response(500, getattr(error, 'description', "Internal server error")), 500
 
 	return app

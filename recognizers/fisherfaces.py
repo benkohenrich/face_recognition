@@ -1,4 +1,5 @@
 # from matplotlib.mlab import PCA
+import numpy
 from PIL import Image
 from flask import json, g
 from sklearn.grid_search import GridSearchCV
@@ -22,7 +23,7 @@ from scipy.spatial import distance as dist
 class FisherfacesRecognizer:
 
 	SCIPY_METHODS = {
-		"euclidian" : dist.euclidean,
+		"euclidean" : dist.euclidean,
 		"manhattan": dist.cityblock,
 		"chebysev": dist.chebyshev,
 		"cosine": dist.cosine,
@@ -41,7 +42,7 @@ class FisherfacesRecognizer:
 		self.algorithm = argument
 		switcher = {
 			'svm': self.svm_recognize,
-			'euclidian': self.scipy_recognize_method,
+			'euclidean': self.scipy_recognize_method,
 			"manhattan":self.scipy_recognize_method,
 			"chebysev":self.scipy_recognize_method,
 			"cosine":self.scipy_recognize_method,
@@ -71,12 +72,15 @@ class FisherfacesRecognizer:
 		# Normalize data
 		X_train, X_test = RecognizeHelper.normalize_data(X_pca, test_pca)
 
-		clf = GridSearchCV(SVC(kernel='rbf'), param_grid, n_jobs=10)
+		clf = GridSearchCV(SVC(kernel='linear', probability=True), param_grid, n_jobs=10)
 		clf = clf.fit(X_train, y)
-
+		percentage_array = clf.predict_proba(X_test)
 		Y_pred = clf.predict(X_test)
 		predict_user_id = int(Y_pred[0])
 		predict_user = User.query.filter(User.id == predict_user_id).first()
+
+		percentage = numpy.sum(percentage_array)
+
 		process = {
 			"parameters": {
 				'n_components': self.number_components,
@@ -84,6 +88,7 @@ class FisherfacesRecognizer:
 				"algorithm": self.algorithm,
 				"recognize_fisherfaces": json.dumps(X_test[0].tolist()),
 				"total_compared_faces": total_image,
+				'similarity_percentage': percentage * 100,
 				"predict_user": {
 					"id": predict_user_id,
 					"name": predict_user.name,

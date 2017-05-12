@@ -66,7 +66,6 @@ class Process(object):
 				process_id=self.process_id,
 				code='errors',
 				errors=jsonify(ErrorParser().get_errors()),
-				# inputs=InputParser().get_inputs()
 			)
 			detail.save()
 		else:

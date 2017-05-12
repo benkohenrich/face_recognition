@@ -1,3 +1,5 @@
+from flask import json
+
 from models.base import Base, db
 
 
@@ -16,4 +18,27 @@ class ProcessDetail(Base):
 		db.session.add(self)
 		db.session.commit()
 		db.session.flush()
+
+	def summary(self):
+
+		if self.extraction_settings is None:
+			extraction_settings = ''
+		else:
+			extraction_settings = json.loads(self.extraction_settings)
+
+		if self.errors is None:
+			errors = ''
+		else:
+			errors = json.loads(self.errors)
+
+		data = {
+			"code": self.code,
+			"responses": json.loads(self.responses),
+			"inputs" : json.loads(self.inputs),
+			"errors": errors,
+			# "extraction_settings": extraction_settings,
+			# "recognition_settings": json.loads(self.recognition_settings),
+		}
+
+		return data
 

@@ -23,7 +23,7 @@ class Histogram(Base):
 	def get_by_image_params(image_id, number_points, radius, method):
 		result = Histogram.query\
 			.filter(Histogram.image_id == image_id)\
-			.filter(Histogram.number_points == (number_points * radius))\
+			.filter(Histogram.number_points == (number_points))\
 			.filter(Histogram.radius == radius)\
 			.filter(Histogram.method == method).first()
 

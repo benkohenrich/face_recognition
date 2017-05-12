@@ -15,13 +15,11 @@ class DetectionHelper(object):
 		img = cv2.imread(filepath)
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-		for scale in [float(i) / 10 for i in range(11, 15)]:
+		for scale in [ float(i) / 10 for i in range(11, 15) ]:
 			for neighbors in range(2, 5):
 				rects = face_cascade.detectMultiScale(gray, scaleFactor=scale, minNeighbors=neighbors)
-				# print(len(rects))
 				if len(rects) == 1:
 					found_face = rects
-					# print(rects)
 
 		faces = found_face
 
@@ -34,18 +32,19 @@ class DetectionHelper(object):
 
 		for (x, y, w, h) in faces:
 
-			distance = 25
+			distance_x = 10
+			distance_y = 20
 
-			if x < distance:
-				distance = x
-			if y < distance:
-				distance = y
+			if x < distance_x:
+				distance_x = x
+			if y < distance_y:
+				distance_y = y
 
-			x -= distance
-			y -= distance
+			x -= distance_x
+			y -= distance_y
 
-			h += distance
-			w += distance
+			h += distance_y
+			w += distance_x
 			crop_img = img[y:(y + h), x:(x + w)]
 			cv2.imwrite(filepath, crop_img)
 

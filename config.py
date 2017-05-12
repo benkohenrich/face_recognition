@@ -12,8 +12,8 @@ class BaseConfig(object):
 	DEBUG = True
 	TESTING = True
 	BASE_DIR = root
-	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://heno:heno007@localhost/dp_v5'
-	# SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_v5'
+	SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://heno:heno007@localhost/dp_v6'
+	# SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost/dp_v6'
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	DATABASE_CONNECT_OPTIONS = {}
 	THREADS_PER_PAGE = 1

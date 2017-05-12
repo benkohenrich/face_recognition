@@ -1,0 +1,37 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list />
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://0.0.0.0:5000" />
+  <option name="urlPath" value="api/stats/" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-Type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Basic ZXlKaGJHY2lPaUpJVXpJMU5pSXNJbWxoZENJNk1UUTRPVFF5TlRZM055d2laWGh3SWpveE5EZzVORGcxTmpjM2ZRLmV5SnBaQ0k2TVgwLnlNcXBkWnB4SEd0djhZX0JrUWFvbW5rZzljUHljelU3TkpKb05yTFVESTg6" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{ &#9;     &quot;stats_type&quot;: &quot;eigenfaces&quot;, &#9;    &quot;extraction_settings&quot;: { &#9;     &quot;number_components&quot;: &quot;1000&quot;, &#9;    &#9;    &quot;method&quot;: &quot;full&quot; &#9;  }, &#9;  &quot;recognition_settings&quot;: { &#9;    &quot;algorithm&quot;: &quot;manhattan&quot; &#9;  }}" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

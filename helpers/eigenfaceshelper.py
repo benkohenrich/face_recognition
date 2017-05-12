@@ -18,7 +18,6 @@ from models.image import Image as ImageModel
 
 
 class EigenfacesHelper(object):
-
 	@staticmethod
 	def prepare_image(file_bytes, type='train'):
 		if type == 'test':
@@ -27,15 +26,20 @@ class EigenfacesHelper(object):
 			npimg = np.fromstring(file_bytes, np.uint8)
 
 		img_color = cv2.imdecode(npimg, 1)
-		adjusted = ImageHelper.adjust_gamma(img_color, gamma=1.5)
+		adjusted = ImageHelper.adjust_gamma(img_color, gamma=1.0)
 		img_gray = cv2.cvtColor(adjusted, cv2.COLOR_BGR2GRAY)
 		img_gray = cv2.equalizeHist(img_gray)
+
+		for x in img_gray.flat:
+			if  np.math.isnan(x) or np.math.isinf(x):
+				return None
+
 		return img_gray.flat
 
 	@staticmethod
-	def prepare_data(n_components=100, method="randomized"):
+	def prepare_data(n_components=100, method="randomized", whiten=False):
 
-		all_image = ImageModel.get_all_to_extraction(ProcessHelper.face_image_id)
+		all_image = ImageModel.get_all_to_extraction(ProcessHelper().face_image_id)
 		total_image = len(all_image)
 
 		# Create an array with flattened images X
@@ -53,7 +57,10 @@ class EigenfacesHelper(object):
 			c += 1
 
 		# Train data with PCA
-		pca = PCA(n_components=n_components, whiten=True, svd_solver=method)
+		if n_components == 0:
+			n_components = None
+
+		pca = PCA(n_components=n_components, whiten=whiten, svd_solver=method)
 		X_pca = pca.fit_transform(X)
 
 		return pca, X_pca, y, images, total_image
@@ -61,7 +68,7 @@ class EigenfacesHelper(object):
 	@staticmethod
 	def prepare_data_fisher(n_components=100, tolerance=0.0001):
 
-		all_image = ImageModel.get_all_to_extraction()
+		all_image = ImageModel.get_all_to_extraction(ProcessHelper().face_image_id)
 		total_image = len(all_image)
 
 		# Create an array with flattened images X
@@ -84,4 +91,3 @@ class EigenfacesHelper(object):
 		X_pca = lda.fit_transform(X, y)
 
 		return lda, X_pca, y, images, total_image
-

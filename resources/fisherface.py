@@ -17,7 +17,6 @@ class Fisherfaces(Resource):
 		if not ErrorParser().is_empty():
 			return
 
-		# face = ImageHelper.prepare_face(InputParser().face, InputParser().face_type)
 		face, parent_id = ImageHelper.prepare_face_new(InputParser().face, InputParser().face_type)
 		if face is None:
 			return
@@ -28,7 +27,16 @@ class Fisherfaces(Resource):
 			Process().face_image_id = image_id
 
 		face = ImageHelper.encode_base64(face)
-		recognizer = FisherfacesRecognizer(face, int(InputParser().__getattr__('number_components')), InputParser().__getattr__('tolerance'))
+
+		number_components = InputParser().__getattr__('number_components')
+
+		if  number_components is not None:
+			if  number_components == 0 or number_components == '0':
+				number_components = None
+			else:
+				number_components = int(number_components)
+
+		recognizer = FisherfacesRecognizer(face, number_components, InputParser().__getattr__('tolerance'))
 		recognizer.recognize()
 
 	@staticmethod
@@ -36,8 +44,8 @@ class Fisherfaces(Resource):
 
 		errors = ErrorParser()
 
-		if InputParser().__getattr__('number_components') is None:
-			errors.add_error('number_components', 'extraction.number_components.required')
+		# if InputParser().__getattr__('number_components') is None:
+		# 	errors.add_error('number_components', 'extraction.number_components.required')
 
 		if InputParser().__getattr__('tolerance') is None:
 			errors.add_error('method', 'extraction.tolerance.required')
@@ -47,7 +55,7 @@ class Fisherfaces(Resource):
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 
 			print(InputParser().__getattr__('algorithm'))
-			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian', "manhattan", "chebysev", "cosine",
+			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidean', "manhattan", "chebysev", "cosine",
 															  "braycurtis"}:
 				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
 

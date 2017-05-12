@@ -169,10 +169,11 @@ class ImageHelper(object):
 
 			# Detection
 			image_path = DetectionHelper.haar_cascade_detect(image_path)
-			ImageHelper.minimalize_face(image_path)
 
 			if image_path is None:
-				return
+				return None, None
+
+			ImageHelper.minimalize_face(image_path)
 
 			if Process().is_new:
 				full_image_id = ImageHelper.save_image(big, 'full', g.user.id)

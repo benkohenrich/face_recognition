@@ -30,7 +30,16 @@ class Eigenfaces(Resource):
 
 		# Recognize
 		face = ImageHelper.encode_base64(face)
-		recognizer = EigenfacesRecognizer(face, int(InputParser().__getattr__('number_components')), InputParser().__getattr__('method'))
+
+		number_components = InputParser().__getattr__('number_components')
+
+		if  number_components is not None:
+			if  number_components == 0:
+				number_components = None
+			else:
+				number_components = int(number_components)
+
+		recognizer = EigenfacesRecognizer(face, number_components, InputParser().__getattr__('method'), InputParser().__getattr__('whiten'))
 		recognizer.recognize()
 
 
@@ -39,13 +48,13 @@ class Eigenfaces(Resource):
 
 		errors = ErrorParser()
 
-		if InputParser().__getattr__('number_components') is None:
-			errors.add_error('number_components', 'extraction.number_components.required')
+		# if InputParser().__getattr__('number_components') is None:
+		# 	errors.add_error('number_components', 'extraction.number_components.required')
 
 		if InputParser().__getattr__('method') is None:
 			errors.add_error('method', 'extraction.method.required')
 		else:
-			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized', 'arpack'}:
+			if InputParser().__getattr__('method') not in {'auto', 'full', 'randomized'}:
 				errors.add_error('method_allowed', 'extraction.method.not_allowed')
 
 		if type == 'recognition':
@@ -53,7 +62,7 @@ class Eigenfaces(Resource):
 				errors.add_error('algorithm', 'recognition.algorithm.required')
 
 			print(InputParser().__getattr__('algorithm'))
-			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidian' , "manhattan", "chebysev", "cosine", "braycurtis" }:
+			if InputParser().__getattr__('algorithm') not in {'svm', 'euclidean' , "manhattan", "chebysev", "cosine", "braycurtis" }:
 				errors.add_error('allowed_algorithm', 'recognition.algorithm.not_allowed')
 
 		return errors
