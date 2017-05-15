@@ -1,11 +1,11 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>API na rozpoznávanie ludských tvár</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}.right .hljs-comment{color:#969896}.right .css .hljs-class,.right .css .hljs-id,.right .css .hljs-pseudo,.right .hljs-attribute,.right .hljs-regexp,.right .hljs-tag,.right .hljs-variable,.right .html .hljs-doctype,.right .ruby .hljs-constant,.right .xml .hljs-doctype,.right .xml .hljs-pi,.right .xml .hljs-tag .hljs-title{color:#c66}.right .hljs-built_in,.right .hljs-constant,.right .hljs-literal,.right .hljs-number,.right .hljs-params,.right .hljs-pragma,.right .hljs-preprocessor{color:#de935f}.right .css .hljs-rule .hljs-attribute,.right .ruby .hljs-class .hljs-title{color:#f0c674}.right .hljs-header,.right .hljs-inheritance,.right .hljs-name,.right .hljs-string,.right .hljs-value,.right .ruby .hljs-symbol,.right .xml .hljs-cdata{color:#b5bd68}.right .css .hljs-hexcolor,.right .hljs-title{color:#8abeb7}.right .coffeescript .hljs-title,.right .hljs-function,.right .javascript .hljs-title,.right .perl .hljs-sub,.right .python .hljs-decorator,.right .python .hljs-title,.right .ruby .hljs-function .hljs-title,.right .ruby .hljs-title .hljs-keyword{color:#81a2be}.right .hljs-keyword,.right .javascript .hljs-function{color:#b294bb}.right .hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em;-webkit-text-size-adjust:none}.right .coffeescript .javascript,.right .javascript .xml,.right .tex .hljs-formula,.right .xml .css,.right .xml .hljs-cdata,.right .xml .javascript,.right .xml .vbscript{opacity:.5}body{color:black;background:white;font:400 14px / 1.42 'Roboto',Helvetica,sans-serif}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:0;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}.triple h1 .permalink,.triple h2 .permalink,.triple h3 .permalink,.triple h4 .permalink,.triple h5 .permalink{opacity:.15}.triple h1:hover .permalink,.triple h2:hover .permalink,.triple h3:hover .permalink,.triple h4:hover .permalink,.triple h5:hover .permalink{opacity:.15}h1{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:36px}h2{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:30px}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}hr.split{border:0;height:1px;width:100%;padding-left:6px;margin:12px auto;background-image:linear-gradient(to right, rgba(0,0,0,0) 20%, rgba(0,0,0,0.2) 51.4%, rgba(255,255,255,0.2) 51.4%, rgba(255,255,255,0) 80%)}dl dt{float:left;width:130px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:150px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{color:black;background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #e6e6e6}.text-muted{opacity:.5}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:200 36px 'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}header{margin-top:24px}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin:-2px 0}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%}.container-fluid.triple nav{width:16.5%;padding-right:1px}.container-fluid.triple .row .content{position:relative;margin-left:16.5%;padding-left:24px}.middle:before,.middle:after{content:'';display:table}.middle:after{clear:both}.middle{box-sizing:border-box;width:51.5%;padding-right:12px}.right{box-sizing:border-box;float:right;width:48.5%;padding-left:12px}.right a{color:#428bca}.right h1,.right h2,.right h3,.right h4,.right h5,.right p,.right div{color:white}.right pre{background-color:#1d1f21;border:1px solid #1d1f21}.right pre code{color:#c5c8c6}.right .description{margin-top:12px}.triple .resource-heading{font-size:125%}.definition{margin-top:12px;margin-bottom:12px}.definition .method{font-weight:bold}.definition .method.get{color:#2e8ab8}.definition .method.head{color:#2e8ab8}.definition .method.options{color:#2e8ab8}.definition .method.post{color:#56b82e}.definition .method.put{color:#b8a22e}.definition .method.patch{color:#b8a22e}.definition .method.delete{color:#b82e2e}.definition .uri{word-break:break-all;word-wrap:break-word}.definition .hostname{opacity:.5}.example-names{background-color:#eee;padding:12px;border-radius:6px}.example-names .tab-button{cursor:pointer;color:black;border:1px solid #ddd;padding:6px;margin-left:12px}.example-names .tab-button.active{background-color:#d5d5d5}.right .example-names{background-color:#444}.right .example-names .tab-button{color:white;border:1px solid #666;border-radius:6px}.right .example-names .tab-button.active{background-color:#5e5e5e}#nav-background{position:fixed;left:0;top:0;bottom:0;width:16.5%;padding-right:14.4px;background-color:#fbfbfb;border-right:1px solid #f0f0f0;z-index:-1}#right-panel-background{position:absolute;right:-12px;top:-12px;bottom:-12px;width:48.6%;background-color:#333;z-index:-1}@media (max-width:1200px){nav{width:198px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:169.4px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content,.container-fluid.triple .row .content{margin-left:auto;margin-right:auto;width:95%}#nav-background{display:none}#right-panel-background{width:48.6%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.triple .content .resource-group{padding:0;border:none}.triple .content .resource-group h2.group-heading,.triple .content .resource-group .heading a{margin:0 0 12px 0;border:1px solid #d9d9d9}nav .resource-group .heading a{padding:12px;margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:6px 12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal;padding:6px 0}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px;display:inline-block}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal;word-break:break-all;display:inline-block;margin-top:2px}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><div id="nav-background"></div><div class="container-fluid triple"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-autentifikácia">Autentifikácia</a></li><li><a href="#header-príklad-hlavičky">Príklad hlavičky</a></li><li><a href="#header-typ-médii">Typ médii</a></li><li><a href="#header-formát-dátmumu-a-času">Formát dátmumu a času</a></li><li><a href="#header-stavové-kódy-a-chyby">Stavové kódy a chyby</a></li><li><a href="#header-príklad-na-standardnú-chybovú-hláku">Príklad na standardnú chybovú hláku</a></li><li><a href="#header-príklad-na-validačnú-chybu">Príklad na validačnú chybu</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#token">Token</a></div><div class="collapse-content"><ul><li><a href="#token-tokens-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Získaj token</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#používatelia">Používatelia</a></div><div class="collapse-content"><ul><li><a href="#používatelia-používateľia">Používateľia</a><ul><li><a href="#používatelia-používateľia-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zoznam používateľov</a></li><li><a href="#používatelia-používateľia-post"><span class="badge post"><i class="fa fa-plus"></i></span>Registrácia používateľa</a></li></ul></li><li><a href="#používatelia-detail-používateľa">Detail používateľa</a><ul><li><a href="#používatelia-detail-používateľa-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Detail používateľa</a></li><li><a href="#používatelia-detail-používateľa-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Zmena údajov používateľa</a></li></ul></li><li><a href="#používatelia-vlastný-profil-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Vlastný profil</a></li><li><a href="#používatelia-používateľské-obrázky-post"><span class="badge post"><i class="fa fa-plus"></i></span>Uložiť obrazok pre používateľa</a></li><li><a href="#používatelia-používateľské-procesy-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zoznam vlastných processov</a></li><li><a href="#používatelia-používateľský-process-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Detail processu</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#obrázky">Obrázky</a></div><div class="collapse-content"><ul><li><a href="#obrázky-obrázky">Obrázky</a><ul><li><a href="#obrázky-obrázky-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zobraziť obrázok</a></li><li><a href="#obrázky-obrázky-delete"><span class="badge delete"><i class="fa fa-times"></i></span>Vymazať obrázok</a></li></ul></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#extrakcia-príznakov">Extrakcia príznakov</a></div><div class="collapse-content"><ul><li><a href="#extrakcia-príznakov-lbp-post"><span class="badge post"><i class="fa fa-plus"></i></span>Vytvorenie histogramu pomocou LBP</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#rozpoznávanie">Rozpoznávanie</a></div><div class="collapse-content"><ul><li><a href="#rozpoznávanie-lbp-histogram-post"><span class="badge post"><i class="fa fa-plus"></i></span>LBP histogram</a></li><li><a href="#rozpoznávanie-pca-eigenfaces-post"><span class="badge post"><i class="fa fa-plus"></i></span>PCA eigenfaces</a></li><li><a href="#rozpoznávanie-lda-fisherfaces-post"><span class="badge post"><i class="fa fa-plus"></i></span>LDA fisherfaces</a></li></ul></div></div><p style="text-align: center; word-wrap: break-word;"><a href="https://api.diplserver.zbytocnosti.dev/api">https://api.diplserver.zbytocnosti.dev/api</a></p></nav><div class="content"><div id="right-panel-background"></div><div class="middle"><header><h1 id="top">API na rozpoznávanie ludských tvár</h1></header></div><div class="right"><h5>API Endpoint</h5><a href="https://api.diplserver.zbytocnosti.dev/api">https://api.diplserver.zbytocnosti.dev/api</a></div><div class="middle"><p>Technická dokumentácia opisuje jednotlivé metody systému. Kazdá metoda je zaradená do skupin a má vlastny endpoint (URL)</p>
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>API na rozpoznávanie ľudských tvár</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}.right .hljs-comment{color:#969896}.right .css .hljs-class,.right .css .hljs-id,.right .css .hljs-pseudo,.right .hljs-attribute,.right .hljs-regexp,.right .hljs-tag,.right .hljs-variable,.right .html .hljs-doctype,.right .ruby .hljs-constant,.right .xml .hljs-doctype,.right .xml .hljs-pi,.right .xml .hljs-tag .hljs-title{color:#c66}.right .hljs-built_in,.right .hljs-constant,.right .hljs-literal,.right .hljs-number,.right .hljs-params,.right .hljs-pragma,.right .hljs-preprocessor{color:#de935f}.right .css .hljs-rule .hljs-attribute,.right .ruby .hljs-class .hljs-title{color:#f0c674}.right .hljs-header,.right .hljs-inheritance,.right .hljs-name,.right .hljs-string,.right .hljs-value,.right .ruby .hljs-symbol,.right .xml .hljs-cdata{color:#b5bd68}.right .css .hljs-hexcolor,.right .hljs-title{color:#8abeb7}.right .coffeescript .hljs-title,.right .hljs-function,.right .javascript .hljs-title,.right .perl .hljs-sub,.right .python .hljs-decorator,.right .python .hljs-title,.right .ruby .hljs-function .hljs-title,.right .ruby .hljs-title .hljs-keyword{color:#81a2be}.right .hljs-keyword,.right .javascript .hljs-function{color:#b294bb}.right .hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em;-webkit-text-size-adjust:none}.right .coffeescript .javascript,.right .javascript .xml,.right .tex .hljs-formula,.right .xml .css,.right .xml .hljs-cdata,.right .xml .javascript,.right .xml .vbscript{opacity:.5}body{color:black;background:white;font:400 14px / 1.42 'Roboto',Helvetica,sans-serif}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:0;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}.triple h1 .permalink,.triple h2 .permalink,.triple h3 .permalink,.triple h4 .permalink,.triple h5 .permalink{opacity:.15}.triple h1:hover .permalink,.triple h2:hover .permalink,.triple h3:hover .permalink,.triple h4:hover .permalink,.triple h5:hover .permalink{opacity:.15}h1{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:36px}h2{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:30px}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}hr.split{border:0;height:1px;width:100%;padding-left:6px;margin:12px auto;background-image:linear-gradient(to right, rgba(0,0,0,0) 20%, rgba(0,0,0,0.2) 51.4%, rgba(255,255,255,0.2) 51.4%, rgba(255,255,255,0) 80%)}dl dt{float:left;width:130px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:150px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{color:black;background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #e6e6e6}.text-muted{opacity:.5}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:200 36px 'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}header{margin-top:24px}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin:-2px 0}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%}.container-fluid.triple nav{width:16.5%;padding-right:1px}.container-fluid.triple .row .content{position:relative;margin-left:16.5%;padding-left:24px}.middle:before,.middle:after{content:'';display:table}.middle:after{clear:both}.middle{box-sizing:border-box;width:51.5%;padding-right:12px}.right{box-sizing:border-box;float:right;width:48.5%;padding-left:12px}.right a{color:#428bca}.right h1,.right h2,.right h3,.right h4,.right h5,.right p,.right div{color:white}.right pre{background-color:#1d1f21;border:1px solid #1d1f21}.right pre code{color:#c5c8c6}.right .description{margin-top:12px}.triple .resource-heading{font-size:125%}.definition{margin-top:12px;margin-bottom:12px}.definition .method{font-weight:bold}.definition .method.get{color:#2e8ab8}.definition .method.head{color:#2e8ab8}.definition .method.options{color:#2e8ab8}.definition .method.post{color:#56b82e}.definition .method.put{color:#b8a22e}.definition .method.patch{color:#b8a22e}.definition .method.delete{color:#b82e2e}.definition .uri{word-break:break-all;word-wrap:break-word}.definition .hostname{opacity:.5}.example-names{background-color:#eee;padding:12px;border-radius:6px}.example-names .tab-button{cursor:pointer;color:black;border:1px solid #ddd;padding:6px;margin-left:12px}.example-names .tab-button.active{background-color:#d5d5d5}.right .example-names{background-color:#444}.right .example-names .tab-button{color:white;border:1px solid #666;border-radius:6px}.right .example-names .tab-button.active{background-color:#5e5e5e}#nav-background{position:fixed;left:0;top:0;bottom:0;width:16.5%;padding-right:14.4px;background-color:#fbfbfb;border-right:1px solid #f0f0f0;z-index:-1}#right-panel-background{position:absolute;right:-12px;top:-12px;bottom:-12px;width:48.6%;background-color:#333;z-index:-1}@media (max-width:1200px){nav{width:198px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:169.4px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content,.container-fluid.triple .row .content{margin-left:auto;margin-right:auto;width:95%}#nav-background{display:none}#right-panel-background{width:48.6%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.triple .content .resource-group{padding:0;border:none}.triple .content .resource-group h2.group-heading,.triple .content .resource-group .heading a{margin:0 0 12px 0;border:1px solid #d9d9d9}nav .resource-group .heading a{padding:12px;margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:6px 12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal;padding:6px 0}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px;display:inline-block}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal;word-break:break-all;display:inline-block;margin-top:2px}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><div id="nav-background"></div><div class="container-fluid triple"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-autentifikácia">Autentifikácia</a></li><li><a href="#header-príklad-hlavičky">Príklad hlavičky</a></li><li><a href="#header-typ-médii">Typ médii</a></li><li><a href="#header-formát-dátumu-a-času">Formát dátumu a času</a></li><li><a href="#header-stavové-kódy-a-chyby">Stavové kódy a chyby</a></li><li><a href="#header-príklad-na-štandardnú-chybovú-hlásku">Príklad na štandardnú chybovú hlásku</a></li><li><a href="#header-príklad-na-validačnú-chybu">Príklad na validačnú chybu</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#token">Token</a></div><div class="collapse-content"><ul><li><a href="#token-tokens-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Získaj token</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#používatelia">Používatelia</a></div><div class="collapse-content"><ul><li><a href="#používatelia-používatelia">Používatelia</a><ul><li><a href="#používatelia-používatelia-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zoznam používateľov</a></li><li><a href="#používatelia-používatelia-post"><span class="badge post"><i class="fa fa-plus"></i></span>Registrácia používateľa</a></li></ul></li><li><a href="#používatelia-detail-používateľa">Detail používateľa</a><ul><li><a href="#používatelia-detail-používateľa-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Detail používateľa</a></li><li><a href="#používatelia-detail-používateľa-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Zmena údajov používateľa</a></li></ul></li><li><a href="#používatelia-vlastný-profil-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Vlastný profil</a></li><li><a href="#používatelia-používateľské-obrázky-post"><span class="badge post"><i class="fa fa-plus"></i></span>Uložiť obrazok pre používateľa</a></li><li><a href="#používatelia-používateľské-procesy-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zoznam vlastných procesov</a></li><li><a href="#používatelia-používateľský-process-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Detail processu</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#obrázky">Obrázky</a></div><div class="collapse-content"><ul><li><a href="#obrázky-obrázky">Obrázky</a><ul><li><a href="#obrázky-obrázky-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Zobraziť obrázok</a></li><li><a href="#obrázky-obrázky-delete"><span class="badge delete"><i class="fa fa-times"></i></span>Vymazať obrázok</a></li></ul></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#extrakcia-príznakov">Extrakcia príznakov</a></div><div class="collapse-content"><ul><li><a href="#extrakcia-príznakov-lbp-post"><span class="badge post"><i class="fa fa-plus"></i></span>Vytvorenie histogramu pomocou LBP</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#rozpoznávanie">Rozpoznávanie</a></div><div class="collapse-content"><ul><li><a href="#rozpoznávanie-lbp-histogram-post"><span class="badge post"><i class="fa fa-plus"></i></span>LBP histogram</a></li><li><a href="#rozpoznávanie-pca-eigenfaces-post"><span class="badge post"><i class="fa fa-plus"></i></span>PCA eigenfaces</a></li><li><a href="#rozpoznávanie-lda-fisherfaces-post"><span class="badge post"><i class="fa fa-plus"></i></span>LDA fisherfaces</a></li></ul></div></div><p style="text-align: center; word-wrap: break-word;"><a href="https://api.diplserver.zbytocnosti.dev/api">https://api.diplserver.zbytocnosti.dev/api</a></p></nav><div class="content"><div id="right-panel-background"></div><div class="middle"><header><h1 id="top">API na rozpoznávanie ľudských tvár</h1></header></div><div class="right"><h5>API Endpoint</h5><a href="https://api.diplserver.zbytocnosti.dev/api">https://api.diplserver.zbytocnosti.dev/api</a></div><div class="middle"><p>Technická dokumentácia opisuje jednotlivé metódy systému. Každá metóda je zaradená do skupín a má vlastný endpoint (URL)</p>
 <h2 id="header-autentifikácia">Autentifikácia <a class="permalink" href="#header-autentifikácia" aria-hidden="true">¶</a></h2>
 <ul>
 <li>
 <p>API používa basic token autorizáciu</p>
 </li>
 <li>
-<p>Token vyprsí kazdý 12 hodín</p>
+<p>Token vyprší každý 12 hodín</p>
 </li>
 <li>
 <p>Token MUSÍ byť poskytované v HTTP hlavičke <code>Authorization</code></p>
@@ -16,19 +16,19 @@
 </ul>
 <h3 id="header-príklad-hlavičky">Príklad hlavičky <a class="permalink" href="#header-príklad-hlavičky" aria-hidden="true">¶</a></h3>
 <pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Base aGVubzpoZW5vMDA3</span></code></pre>
-<p>Pri prihlásenie retazec je kombinácia pouzivatelskeho mena a hesla s jedným dvojbodkou: <code>username:password</code>.
-Retazec je zakodovaný pomocou Base64.</p>
-<p>Po prihlásený na vystup dostaneme token. Poziadavky ktoré vyzaduju autentifikáciu potrbujú zakodovat token: <code>token:</code></p>
+<p>Pri prihlásenie reťazec je kombinácia používateľského mena a hesla s jedným dvojbodkou: <code>username:password</code>.
+Reťazec je zakódovaný pomocou Base64.</p>
+<p>Po prihlásený na vystúp dostaneme token. Požiadavky ktoré vyžadujú autentifikáciu potrebujú zakódovať token: <code>token:</code></p>
 <h2 id="header-typ-médii">Typ médii <a class="permalink" href="#header-typ-médii" aria-hidden="true">¶</a></h2>
 <p>API používa JSON formát na požiadavky a na odpovede.</p>
-<h2 id="header-formát-dátmumu-a-času">Formát dátmumu a času <a class="permalink" href="#header-formát-dátmumu-a-času" aria-hidden="true">¶</a></h2>
-<p>Všetky výmeni údajov a údajov týkajúcich sa času MUSÍ byť vykonaná podľa normy ISO 8601 a uložená v UTC.</p>
+<h2 id="header-formát-dátumu-a-času">Formát dátumu a času <a class="permalink" href="#header-formát-dátumu-a-času" aria-hidden="true">¶</a></h2>
+<p>Všetky výmeny údajov a údajov týkajúcich sa času MUSÍ byť vykonaná podľa normy ISO 8601 a uložená v UTC.</p>
 <p>Pri návrate údajov a údajov týkajúcich sa času MUSÍ byť použité formát YYYY-MM-DDThh: mm: ssZ&quot;</p>
 <h2 id="header-stavové-kódy-a-chyby">Stavové kódy a chyby <a class="permalink" href="#header-stavové-kódy-a-chyby" aria-hidden="true">¶</a></h2>
 <p>API používa na komunikáciu s používateľom HTTP stavové kódy.</p>
 <ul>
 <li>
-<p><code>200 OK</code> - Odpoveď na úspešné požidavky</p>
+<p><code>200 OK</code> - Odpoveď na úspešné požiadavky</p>
 </li>
 <li>
 <p><code>201 Created</code> - Odpoveď na POST, ktorá vedie k vytvoreniu.</p>
@@ -58,7 +58,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 <p><code>500 Internal Server Error</code> - Keď API nemôže spracovať požiadavky alebo existuje iný problém v systéme.</p>
 </li>
 </ul>
-<h3 id="header-príklad-na-standardnú-chybovú-hláku">Príklad na standardnú chybovú hláku <a class="permalink" href="#header-príklad-na-standardnú-chybovú-hláku" aria-hidden="true">¶</a></h3>
+<h3 id="header-príklad-na-štandardnú-chybovú-hlásku">Príklad na štandardnú chybovú hlásku <a class="permalink" href="#header-príklad-na-štandardnú-chybovú-hlásku" aria-hidden="true">¶</a></h3>
 <pre><code class="language-json">{
     "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-number">500</span></span>,
     "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"Unable to find file in your request!"</span>
@@ -82,7 +82,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Autorizačný token"</span>
     </span>}
   </span>}
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="token-tokens-get" class="action get"><h4 class="action-heading"><div class="name">Získaj token</div><a href="#token-tokens-get" class="method get">GET</a><code class="uri">/tokens</code></h4><p>Funkcia slúží na vytvorenie autentifikacného tokenu ktoré potrebujeme pri dalsom volaný. Autentifikačný token je potrebné pre endpointy ktoré sú chránené s autetiofkikáciou.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="token-tokens-get" class="action get"><h4 class="action-heading"><div class="name">Získaj token</div><a href="#token-tokens-get" class="method get">GET</a><code class="uri">/tokens</code></h4><p>Funkcia slúží na vytvorenie autentifikačného tokenu ktoré potrebujeme pri dalšom volaný. Autentifikačný token je potrebné pre endpointy ktoré sú chránené s autentifikáciou.</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -98,7 +98,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tr>
 </tbody>
 </table>
-</div></div><hr class="split"><div class="middle"><section id="používatelia" class="resource-group"><h2 class="group-heading">Používatelia <a href="#používatelia" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="používatelia-používateľia" class="resource"><h3 class="resource-heading">Používateľia <a href="#používatelia-používateľia" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/users/</span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+</div></div><hr class="split"><div class="middle"><section id="používatelia" class="resource-group"><h2 class="group-heading">Používatelia <a href="#používatelia" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="používatelia-používatelia" class="resource"><h3 class="resource-heading">Používatelia <a href="#používatelia-používatelia" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/users/</span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
   {
     "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
     "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Henrich Benko"</span></span>,
@@ -108,7 +108,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 ]</code></pre><div style="height: 1px;"></div><h5>Schema</h5><pre><code>{
   "<span class="hljs-attribute">$schema</span>": <span class="hljs-value"><span class="hljs-string">"http://json-schema.org/draft-04/schema#"</span></span>,
   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"array"</span>
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľia-get" class="action get"><h4 class="action-heading"><div class="name">Zoznam používateľov</div><a href="#používatelia-používateľia-get" class="method get">GET</a><code class="uri">/users/</code></h4><p>Zoznam vsetkých používatelov. Funkcia je dostupné len pre administrátora</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používatelia-get" class="action get"><h4 class="action-heading"><div class="name">Zoznam používateľov</div><a href="#používatelia-používatelia-get" class="method get">GET</a><code class="uri">/users/</code></h4><p>Zoznam všetkých používateľov. Funkcia je dostupné len pre administrátora</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -164,7 +164,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 ]</code></pre><div style="height: 1px;"></div><h5>Schema</h5><pre><code>{
   "<span class="hljs-attribute">$schema</span>": <span class="hljs-value"><span class="hljs-string">"http://json-schema.org/draft-04/schema#"</span></span>,
   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"array"</span>
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľia-post" class="action post"><h4 class="action-heading"><div class="name">Registrácia používateľa</div><a href="#používatelia-používateľia-post" class="method post">POST</a><code class="uri">/users/</code></h4><p>Registrácia nového použivatela. Používatelské udaje sa ulozia do databázy. Po úspesnom registrcii používatel može sa prihlasovať</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používatelia-post" class="action post"><h4 class="action-heading"><div class="name">Registrácia používateľa</div><a href="#používatelia-používatelia-post" class="method post">POST</a><code class="uri">/users/</code></h4><p>Registrácia nového používateľa. Používateľské údaje sa uložia do databázy. Po úspešnom registrácii používateľ môže sa prihlasovať</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -197,7 +197,7 @@ Retazec je zakodovaný pomocou Base64.</p>
   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identidikátor"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor používateľa"</span>
     </span>}</span>,
     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -205,7 +205,7 @@ Retazec je zakodovaný pomocou Base64.</p>
     </span>}</span>,
     "<span class="hljs-attribute">username</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používatelské meno"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používateľské meno"</span>
     </span>}</span>,
     "<span class="hljs-attribute">main_photo</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -220,8 +220,8 @@ Retazec je zakodovaný pomocou Base64.</p>
     <span class="hljs-string">"name"</span>,
     <span class="hljs-string">"username"</span>
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-detail-používateľa-get" class="action get"><h4 class="action-heading"><div class="name">Detail používateľa</div><a href="#používatelia-detail-používateľa-get" class="method get">GET</a><code class="uri">/users/{user_id}/</code></h4><p>Získavanie údajov o používatela pomocou identifikátora. Administrtor má právo získat údaje pre kazdy pouzivatel.</p>
-<p>Bežný používatel može vytiahnút vlastné udaje len pomocou vlastného identifikátora.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-detail-používateľa-get" class="action get"><h4 class="action-heading"><div class="name">Detail používateľa</div><a href="#používatelia-detail-používateľa-get" class="method get">GET</a><code class="uri">/users/{user_id}/</code></h4><p>Získavanie údajov o používateľa pomocou identifikátora. Administrátor má právo získať údaje pre každý používateľ.</p>
+<p>Bežný používateľ môže vytiahnuť vlastné údaje len pomocou vlastného identifikátora.</p>
 <table>
 <thead>
 <tr>
@@ -236,7 +236,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tr>
 </tbody>
 </table>
-<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>user_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor používatela</p>
+<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>user_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor používateľa</p>
 </dd></dl></div></div></div><hr class="split"><div class="right"><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/users/<span class="hljs-attribute" title="user_id">1</span>/</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Henrich Benkő"</span></span>,
   "<span class="hljs-attribute">password</span>": <span class="hljs-value"><span class="hljs-string">"MagicPassword"</span></span>,
@@ -273,7 +273,7 @@ Retazec je zakodovaný pomocou Base64.</p>
   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identidikátor"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor používateľa"</span>
     </span>}</span>,
     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -281,7 +281,7 @@ Retazec je zakodovaný pomocou Base64.</p>
     </span>}</span>,
     "<span class="hljs-attribute">username</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používatelské meno"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používateľské meno"</span>
     </span>}</span>,
     "<span class="hljs-attribute">main_photo</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -293,8 +293,8 @@ Retazec je zakodovaný pomocou Base64.</p>
     <span class="hljs-string">"name"</span>,
     <span class="hljs-string">"username"</span>
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-detail-používateľa-put" class="action put"><h4 class="action-heading"><div class="name">Zmena údajov používateľa</div><a href="#používatelia-detail-používateľa-put" class="method put">PUT</a><code class="uri">/users/{user_id}/</code></h4><p>Kazdý používatel pomocou vlastného identifikátora má prvo zmenit vlasné údaje.</p>
-<p>Administ´tor má moznost zmenit udaje kazdemu používatelovi v systéme.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-detail-používateľa-put" class="action put"><h4 class="action-heading"><div class="name">Zmena údajov používateľa</div><a href="#používatelia-detail-používateľa-put" class="method put">PUT</a><code class="uri">/users/{user_id}/</code></h4><p>Každý používateľ pomocou vlastného identifikátora má prvo zmeniť vlastné údaje.</p>
+<p>Administrátor má možnosť zmeniť údaje každému používateľovi v systéme.</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -310,7 +310,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tr>
 </tbody>
 </table>
-<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>user_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor používatela</p>
+<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>user_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor používateľa</p>
 </dd></dl></div></div></div><hr class="split"><div class="middle"><div id="používatelia-vlastný-profil" class="resource"><h3 class="resource-heading">Vlastný profil <a href="#používatelia-vlastný-profil" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/users/me/</span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">201</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
   "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Henrich Benko"</span></span>,
@@ -328,7 +328,7 @@ Retazec je zakodovaný pomocou Base64.</p>
   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identidikátor"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor používateľa"</span>
     </span>}</span>,
     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -336,7 +336,7 @@ Retazec je zakodovaný pomocou Base64.</p>
     </span>}</span>,
     "<span class="hljs-attribute">username</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používatelské meno"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Používateľské meno"</span>
     </span>}</span>,
     "<span class="hljs-attribute">main_photo</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -351,7 +351,7 @@ Retazec je zakodovaný pomocou Base64.</p>
     <span class="hljs-string">"name"</span>,
     <span class="hljs-string">"username"</span>
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-vlastný-profil-get" class="action get"><h4 class="action-heading"><div class="name">Vlastný profil</div><a href="#používatelia-vlastný-profil-get" class="method get">GET</a><code class="uri">/users/me/</code></h4><p>Endpioint sluzi na získanie vlasných používatelských udajov. Táto metoda nepotrebuje identifiktor používatela. Pomocou hlavicky autorizacie vytiahne údaje.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-vlastný-profil-get" class="action get"><h4 class="action-heading"><div class="name">Vlastný profil</div><a href="#používatelia-vlastný-profil-get" class="method get">GET</a><code class="uri">/users/me/</code></h4><p>Endpioint slúži na získanie vlastných používateľských údajov. Táto metóda nepotrebuje identifikátor používateľa. Pomocou hlavičky autorizácie vytiahne údaje.</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -383,11 +383,11 @@ Retazec je zakodovaný pomocou Base64.</p>
         <span class="hljs-string">"face_gray"</span>
       ]</span>,
       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ poslaného obrázku"</span>
     </span>}</span>,
     "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrazok v base64"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrázok v base64"</span>
     </span>}
   </span>}</span>,
   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -402,13 +402,13 @@ Retazec je zakodovaný pomocou Base64.</p>
   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">face_image</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútná URL-ka ku obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna URL-ka ku obrázku"</span>
     </span>}
   </span>}</span>,
   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
     <span class="hljs-string">"face_image"</span>
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľské-obrázky-post" class="action post"><h4 class="action-heading"><div class="name">Uložiť obrazok pre používateľa</div><a href="#používatelia-používateľské-obrázky-post" class="method post">POST</a><code class="uri">/users/face/</code></h4><p>Použivatel po regisrtcii musi poslat minimalne 10 fotiek aby bol rozpoznávací system  úspesný. Tto funkcia slúzˇí na lozenie obrazka do datab´zy.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľské-obrázky-post" class="action post"><h4 class="action-heading"><div class="name">Uložiť obrazok pre používateľa</div><a href="#používatelia-používateľské-obrázky-post" class="method post">POST</a><code class="uri">/users/face/</code></h4><p>Používateľ po registrácii musí poslať minimálne 10 fotiek aby bol rozpoznávací systém úspešný. Endpoint slúží na lozenie obrázka do databázy.</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -435,8 +435,8 @@ Retazec je zakodovaný pomocou Base64.</p>
 ]</code></pre><div style="height: 1px;"></div><h5>Schema</h5><pre><code>{
   "<span class="hljs-attribute">$schema</span>": <span class="hljs-value"><span class="hljs-string">"http://json-schema.org/draft-04/schema#"</span></span>,
   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"array"</span>
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľské-procesy-get" class="action get"><h4 class="action-heading"><div class="name">Zoznam vlastných processov</div><a href="#používatelia-používateľské-procesy-get" class="method get">GET</a><code class="uri">/users/logs/</code></h4><p>Kazdy používatel ktorý používa system rozpoznvania m¯ulozenú kazdy poziadavku v databze. Tito zznami obsahujú vstupné a výstupné dta.</p>
-<p>Pomocou tychto udajov m moznost prezerat nastavenia a výsledky rozpoznvania.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="používatelia-používateľské-procesy-get" class="action get"><h4 class="action-heading"><div class="name">Zoznam vlastných procesov</div><a href="#používatelia-používateľské-procesy-get" class="method get">GET</a><code class="uri">/users/logs/</code></h4><p>Každý používateľ ktorý používa systém rozpoznania má uloženú každú požiadavku v databáze. Tieto známi obsahujú vstupné a výstupné dáta.</p>
+<p>Pomocou týchto údajov má možnosť prezerať nastavenia a výsledky rozpoznania.</p>
 <p><strong>Endpoint informácia</strong></p>
 <table>
 <thead>
@@ -480,8 +480,8 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tbody>
 </table>
 <div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>log_id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>b429b294-ac24-423f-bb5a-a90998dd7612</span></span><p>Identifikátor procesu UUID4</p>
-</dd></dl></div></div></div><hr class="split"><div class="middle"><section id="obrázky" class="resource-group"><h2 class="group-heading">Obrázky <a href="#obrázky" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="obrázky-obrázky" class="resource"><h3 class="resource-heading">Obrázky <a href="#obrázky-obrázky" class="permalink">&para;</a></h3><p>Zobrazit obrázok pomocou URL.</p>
-</div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/images/<span class="hljs-attribute" title="image_id">1</span></span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">image/jpeg</span></code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="obrázky-obrázky-get" class="action get"><h4 class="action-heading"><div class="name">Zobraziť obrázok</div><a href="#obrázky-obrázky-get" class="method get">GET</a><code class="uri">/images/{image_id}</code></h4><p>Endpoint na zobrazenie obrazkov. Táto metoda neprtrebuje autorizáciu aby mali vsetky pouzviatelia dostepné obrazky</p>
+</dd></dl></div></div></div><hr class="split"><div class="middle"><section id="obrázky" class="resource-group"><h2 class="group-heading">Obrázky <a href="#obrázky" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="obrázky-obrázky" class="resource"><h3 class="resource-heading">Obrázky <a href="#obrázky-obrázky" class="permalink">&para;</a></h3><p>Zobraziť obrázok pomocou URL.</p>
+</div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/images/<span class="hljs-attribute" title="image_id">1</span></span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">image/jpeg</span></code></pre><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="obrázky-obrázky-get" class="action get"><h4 class="action-heading"><div class="name">Zobraziť obrázok</div><a href="#obrázky-obrázky-get" class="method get">GET</a><code class="uri">/images/{image_id}</code></h4><p>Endpoint na zobrazenie obrázkov. Táto metóda nepotrebuje autorizáciu aby mali všetky používatelia dostupné obrázky</p>
 <table>
 <thead>
 <tr>
@@ -496,9 +496,9 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tr>
 </tbody>
 </table>
-<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>image_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor obrazku</p>
-</dd></dl></div></div></div><hr class="split"><div class="right"><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/images/<span class="hljs-attribute" title="image_id">1</span></span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">204</span></div><div class="tab"><div><div class="inner"><div class="description text-muted">This response has no content.</div><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="obrázky-obrázky-delete" class="action delete"><h4 class="action-heading"><div class="name">Vymazať obrázok</div><a href="#obrázky-obrázky-delete" class="method delete">DELETE</a><code class="uri">/images/{image_id}</code></h4><p>kazdy používatel moze vymazat vlastné obrazky.</p>
-<p>Administrator má pravo vymazat obrazky inych pouzivatelov</p>
+<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>image_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor obrázku</p>
+</dd></dl></div></div></div><hr class="split"><div class="right"><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/images/<span class="hljs-attribute" title="image_id">1</span></span></div><div class="tabs"><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">204</span></div><div class="tab"><div><div class="inner"><div class="description text-muted">This response has no content.</div><div style="height: 1px;"></div></div></div></div></div></div></div><div class="middle"><div id="obrázky-obrázky-delete" class="action delete"><h4 class="action-heading"><div class="name">Vymazať obrázok</div><a href="#obrázky-obrázky-delete" class="method delete">DELETE</a><code class="uri">/images/{image_id}</code></h4><p>Každý používateľ má právo vymazať vlastné obrázky.</p>
+<p>Administrátor má pravo vymazať obrázky iných používateľov</p>
 <table>
 <thead>
 <tr>
@@ -513,7 +513,7 @@ Retazec je zakodovaný pomocou Base64.</p>
 </tr>
 </tbody>
 </table>
-<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>image_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor obrazku</p>
+<div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>image_id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Identifikátor obrázku</p>
 </dd></dl></div></div></div><hr class="split"><div class="middle"><section id="extrakcia-príznakov" class="resource-group"><h2 class="group-heading">Extrakcia príznakov <a href="#extrakcia-príznakov" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="extrakcia-príznakov-lbp" class="resource"><h3 class="resource-heading">LBP <a href="#extrakcia-príznakov-lbp" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/api/lbp/face/</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">face_type</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
   "<span class="hljs-attribute">face</span>": <span class="hljs-value"><span class="hljs-string">"data:image/jpeg;base64,/9j/4AAQSkZJRgAB..."</span></span>,
@@ -533,11 +533,11 @@ Retazec je zakodovaný pomocou Base64.</p>
         <span class="hljs-string">"face_gray"</span>
       ]</span>,
       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ poslaného obrázku"</span>
     </span>}</span>,
     "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrazok v base64"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrázok v base64"</span>
     </span>}</span>,
     "<span class="hljs-attribute">recognition_settings</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
@@ -557,7 +557,7 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"braycurtis"</span>
           ]</span>,
           "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -604,7 +604,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">estimated_time</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Cas behu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Čas behu požiadavky"</span>
         </span>}
       </span>}
     </span>}</span>,
@@ -618,19 +618,24 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">full</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný bez výrezu tvári."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný s výrezom tvári alebo systém detegoval a vyrezal tvár."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face_grey</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázka ktorý prevedený do grayscale."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face_equalized</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázka ktorý prehodený do histogramovu ekvalizáciu."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">histogram_graph</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku vygenerovaný graf z histogramu"</span>
                 </span>}
               </span>}</span>,
               "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -654,11 +659,11 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">radius</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa radius na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút rádius na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">points</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa points na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút počet bodov v okruhu na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">method</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -669,7 +674,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                     <span class="hljs-string">"nri_uniform"</span>
                   ]</span>,
                   "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"default"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa method na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút metód na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">histogram</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -697,7 +702,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       ]
     </span>}
   </span>}
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="extrakcia-príznakov-lbp-post" class="action post"><h4 class="action-heading"><div class="name">Vytvorenie histogramu pomocou LBP</div><a href="#extrakcia-príznakov-lbp-post" class="method post">POST</a><code class="uri">/api/lbp/face/</code></h4><p>Táto metoda vygeneruje histogram z poslaneho obrazka.</p>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="extrakcia-príznakov-lbp-post" class="action post"><h4 class="action-heading"><div class="name">Vytvorenie histogramu pomocou LBP</div><a href="#extrakcia-príznakov-lbp-post" class="method post">POST</a><code class="uri">/api/lbp/face/</code></h4><p>Metoda vygeneruje z poslaného obrázka histogram pomocou LBP.</p>
 <table>
 <thead>
 <tr>
@@ -737,26 +742,26 @@ Retazec je zakodovaný pomocou Base64.</p>
         <span class="hljs-string">"face_gray"</span>
       ]</span>,
       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ poslaného obrázku"</span>
     </span>}</span>,
     "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrazok v base64"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Obrázok v base64"</span>
     </span>}</span>,
     "<span class="hljs-attribute">histogram</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Histogram vygenerované na klientskej casti."</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Histogram vygenerované na klientskej časti."</span>
     </span>}</span>,
     "<span class="hljs-attribute">extraction_settings</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">radius</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa radius na nastavenie LBP modelu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút rádius na nastavenie LBP modelu"</span>
         </span>}</span>,
         "<span class="hljs-attribute">points</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa points na nastavenie LBP modelu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút počet bodov v okruhu na nastavenie LBP modelu"</span>
         </span>}</span>,
         "<span class="hljs-attribute">method</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -767,7 +772,7 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"nri_uniform"</span>
           ]</span>,
           "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"default"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa method na nastavenie LBP modelu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút metód na nastavenie LBP modelu"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -793,7 +798,7 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"braycurtis"</span>
           ]</span>,
           "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -863,7 +868,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">estimated_time</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Cas behu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Čas behu požiadavky"</span>
         </span>}
       </span>}
     </span>}</span>,
@@ -877,19 +882,24 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">full</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný bez výrezu tvári."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný s výrezom tvári alebo systém detegoval a vyrezal tvár."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face_grey</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázka ktorý prevedený do grayscale."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">face_equalized</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázka ktorý prehodený do histogramovu ekvalizáciu."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">histogram_graph</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku vygenerovaný graf z histogramu"</span>
                 </span>}
               </span>}</span>,
               "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -913,11 +923,11 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">radius</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa radius na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút rádius na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">points</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa points na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút počet bodov v okruhu na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">method</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -928,7 +938,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                     <span class="hljs-string">"nri_uniform"</span>
                   ]</span>,
                   "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"default"</span></span>,
-                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa method na nastavenie LBP modelu"</span>
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atribút metód na nastavenie LBP modelu"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">histogram</span>": <span class="hljs-value">{
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -953,10 +963,12 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">compared_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný na rozpoznávanie"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">predict_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku rozpoznanú obrázku"</span>
                 </span>}
               </span>}
             </span>}</span>,
@@ -990,7 +1002,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                         <span class="hljs-string">"braycurtis"</span>
                       ]</span>,
                       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1001,16 +1013,20 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
                   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">email</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Email rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Meno rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">main_image</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Hlavná fotka rozpoznaného používateľa"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1023,10 +1039,12 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vygenerovaný histogram"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">similarity_percentage</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vypočítaný pravdepodobnosť totožnosti"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">total_compared_histograms</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Počet porovnaných histogramov"</span>
                 </span>}
               </span>}</span>,
               "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1050,7 +1068,9 @@ Retazec je zakodovaný pomocou Base64.</p>
       ]
     </span>}
   </span>}
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="rozpoznávanie-lbp-histogram-post" class="action post"><h4 class="action-heading"><div class="name">LBP histogram</div><a href="#rozpoznávanie-lbp-histogram-post" class="method post">POST</a><code class="uri">/api/lbp/</code></h4><table>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="rozpoznávanie-lbp-histogram-post" class="action post"><h4 class="action-heading"><div class="name">LBP histogram</div><a href="#rozpoznávanie-lbp-histogram-post" class="method post">POST</a><code class="uri">/api/lbp/</code></h4><p>Metoda na rozpoznávanie. Pomocou LBP vy-extrahujeme dáta (histogramy) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze.
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.</p>
+<table>
 <thead>
 <tr>
 <th>Vlastnosť</th>
@@ -1088,7 +1108,7 @@ Retazec je zakodovaný pomocou Base64.</p>
         <span class="hljs-string">"face_gray"</span>
       ]</span>,
       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ poslaného obrázku"</span>
     </span>}</span>,
     "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -1098,10 +1118,12 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">number_components</span>": <span class="hljs-value">{
-          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Počet komponentov, atribút pre PCA model"</span>
         </span>}</span>,
         "<span class="hljs-attribute">whiten</span>": <span class="hljs-value">{
-          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"boolean"</span>
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"boolean"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Atributa pre PCA model."</span>
         </span>}</span>,
         "<span class="hljs-attribute">method</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -1110,7 +1132,8 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"auto"</span>,
             <span class="hljs-string">"full"</span>
           ]</span>,
-          "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"`randomized"</span>
+          "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"`randomized"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Metoda SVC pre trénovanie PCA modelu."</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1133,7 +1156,7 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"braycurtis"</span>
           ]</span>,
           "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1187,7 +1210,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">estimated_time</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Cas behu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Čas behu požiadavky"</span>
         </span>}
       </span>}
     </span>}</span>,
@@ -1201,10 +1224,12 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">compared_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný na rozpoznávanie"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">predict_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku rozpoznanú obrázku"</span>
                 </span>}
               </span>}
             </span>}</span>,
@@ -1234,7 +1259,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                         <span class="hljs-string">"braycurtis"</span>
                       ]</span>,
                       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1245,16 +1270,20 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
                   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">email</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Email rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Meno rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">main_image</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Hlavná fotka rozpoznaného používateľa"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1267,13 +1296,16 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vygenerovaný histogram"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">similarity_percentage</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vypočítaný pravdepodobnost totožnosti"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">total_compared_eigenfaces</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Počet porovnaných eigenvektorov"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">distance `0.6242404956290856`</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vypočítaný vzdialenosť (minimálny)."</span>
                 </span>}
               </span>}</span>,
               "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1288,7 +1320,8 @@ Retazec je zakodovaný pomocou Base64.</p>
           </span>}
         </span>}</span>,
         "<span class="hljs-attribute">uuid</span>": <span class="hljs-value">{
-          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"UUID procesu"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1296,21 +1329,25 @@ Retazec je zakodovaný pomocou Base64.</p>
       ]
     </span>}
   </span>}
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="rozpoznávanie-pca-eigenfaces-post" class="action post"><h4 class="action-heading"><div class="name">PCA eigenfaces</div><a href="#rozpoznávanie-pca-eigenfaces-post" class="method post">POST</a><code class="uri">/api/eigen/</code></h4><table>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="rozpoznávanie-pca-eigenfaces-post" class="action post"><h4 class="action-heading"><div class="name">PCA eigenfaces</div><a href="#rozpoznávanie-pca-eigenfaces-post" class="method post">POST</a><code class="uri">/api/eigen/</code></h4><p>Metoda na rozpoznávanie. Pomocou PCA vy-extrahujeme dáta (eigenvektory) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze.
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.</p>
+<table>
 <thead>
 <tr>
-<th></th>
+<th>Vlastnosť</th>
 <th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Requires authentication</td>
-<td>Yes</td>
+<td>Vyžaduje autentifikáciu</td>
+<td>Áno</td>
 </tr>
 </tbody>
 </table>
-</div></div><hr class="split"><div class="middle"><div id="rozpoznávanie-lda-fisherfaces" class="resource"><h3 class="resource-heading">LDA fisherfaces <a href="#rozpoznávanie-lda-fisherfaces" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/api/fisher/</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+</div></div><hr class="split"><div class="middle"><div id="rozpoznávanie-lda-fisherfaces" class="resource"><h3 class="resource-heading">LDA fisherfaces <a href="#rozpoznávanie-lda-fisherfaces" class="permalink">&para;</a></h3><p>Metoda na rozpoznávanie. Pomocou LDA vy-extrahujeme dáta (fishervektory) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze.
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.</p>
+</div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">https://api.diplserver.zbytocnosti.dev/api</span>/api/fisher/</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">face_type</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
   "<span class="hljs-attribute">face</span>": <span class="hljs-value"><span class="hljs-string">"data:image/jpeg;base64,/9j/4AAQSkZJRgAB..."</span></span>,
   "<span class="hljs-attribute">extraction_settings</span>": <span class="hljs-value">{
@@ -1333,7 +1370,7 @@ Retazec je zakodovaný pomocou Base64.</p>
         <span class="hljs-string">"face_gray"</span>
       ]</span>,
       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"full"</span></span>,
-      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ obrazku"</span>
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Typ poslaného obrázku"</span>
     </span>}</span>,
     "<span class="hljs-attribute">face</span>": <span class="hljs-value">{
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
@@ -1343,10 +1380,12 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">number_components</span>": <span class="hljs-value">{
-          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Počet komponentov, atribút pre LDA model"</span>
         </span>}</span>,
         "<span class="hljs-attribute">tolerance</span>": <span class="hljs-value">{
-          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Tolerancia chybovosti."</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1368,7 +1407,7 @@ Retazec je zakodovaný pomocou Base64.</p>
             <span class="hljs-string">"braycurtis"</span>
           ]</span>,
           "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
         </span>}
       </span>}</span>,
       "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1407,7 +1446,7 @@ Retazec je zakodovaný pomocou Base64.</p>
         </span>}</span>,
         "<span class="hljs-attribute">recognize_eigenfaces</span>": <span class="hljs-value"><span class="hljs-string">"[0.0449, 0.0332, 0.0233, 0.018, 0.0174, 0.0184, 0.0186, 0.018, 0.0216, 0.0209, 0.0298, 0.0417, 0.0309, 0.025, 0.0179, 0.0148, 0.0054, 0.0061, 0.0029, 0.0027, 0.004, 0.0068, 0.0154, 0.0287, 0.0196, 0.514]"</span></span>,
         "<span class="hljs-attribute">similarity_percentage</span>": <span class="hljs-value"><span class="hljs-number">99.99</span></span>,
-        "<span class="hljs-attribute">total_compared_eigenfaces</span>": <span class="hljs-value"><span class="hljs-number">254</span></span>,
+        "<span class="hljs-attribute">total_compared_fisherfaces</span>": <span class="hljs-value"><span class="hljs-number">254</span></span>,
         "<span class="hljs-attribute">distance `0.6242404956290856`</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span>
       </span>}
     </span>}</span>,
@@ -1422,7 +1461,7 @@ Retazec je zakodovaný pomocou Base64.</p>
       "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
         "<span class="hljs-attribute">estimated_time</span>": <span class="hljs-value">{
           "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
-          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Cas behu"</span>
+          "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Čas behu požiadavky"</span>
         </span>}
       </span>}
     </span>}</span>,
@@ -1436,10 +1475,12 @@ Retazec je zakodovaný pomocou Base64.</p>
               "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
               "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                 "<span class="hljs-attribute">compared_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku obrázku ktorý bol poslaný na rozpoznávanie"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">predict_image</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Absolútna cesta ku rozpoznanú obrázku"</span>
                 </span>}
               </span>}
             </span>}</span>,
@@ -1469,7 +1510,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                         <span class="hljs-string">"braycurtis"</span>
                       ]</span>,
                       "<span class="hljs-attribute">default</span>": <span class="hljs-value"><span class="hljs-string">"svm"</span></span>,
-                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"algorithm"</span>
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Klasifikačný algoritmus"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1480,16 +1521,20 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
                   "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
                     "<span class="hljs-attribute">id</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identifikátor rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">email</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Email rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">name</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Meno rozpoznaného používateľa"</span>
                     </span>}</span>,
                     "<span class="hljs-attribute">main_image</span>": <span class="hljs-value">{
-                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Hlavná fotka rozpoznaného používateľa"</span>
                     </span>}
                   </span>}</span>,
                   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1502,13 +1547,16 @@ Retazec je zakodovaný pomocou Base64.</p>
                   "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vygenerovaný histogram"</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">similarity_percentage</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vypočítaný pravdepodobnosť totožnosti."</span>
                 </span>}</span>,
-                "<span class="hljs-attribute">total_compared_eigenfaces</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span>
+                "<span class="hljs-attribute">total_compared_fisherfaces</span>": <span class="hljs-value">{
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"number"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Počet porovnaných fishervektorov."</span>
                 </span>}</span>,
                 "<span class="hljs-attribute">distance `0.6242404956290856`</span>": <span class="hljs-value">{
-                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span>
+                  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+                  "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Vypočítaný vzdialenosť (minimalný)."</span>
                 </span>}
               </span>}</span>,
               "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
@@ -1517,7 +1565,7 @@ Retazec je zakodovaný pomocou Base64.</p>
                 <span class="hljs-string">"predict_user"</span>,
                 <span class="hljs-string">"recognize_eigenfaces"</span>,
                 <span class="hljs-string">"similarity_percentage"</span>,
-                <span class="hljs-string">"total_compared_eigenfaces"</span>
+                <span class="hljs-string">"total_compared_fisherfaces"</span>
               ]
             </span>}
           </span>}
@@ -1534,18 +1582,18 @@ Retazec je zakodovaný pomocou Base64.</p>
 </span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="rozpoznávanie-lda-fisherfaces-post" class="action post"><h4 class="action-heading"><div class="name">LDA fisherfaces</div><a href="#rozpoznávanie-lda-fisherfaces-post" class="method post">POST</a><code class="uri">/api/fisher/</code></h4><table>
 <thead>
 <tr>
-<th></th>
+<th>Vlastnosť</th>
 <th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Requires authentication</td>
-<td>Yes</td>
+<td>Vyžaduje autentifikáciu</td>
+<td>Áno</td>
 </tr>
 </tbody>
 </table>
-</div></div><hr class="split"><div class="middle"><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 12 May 2017</p></div></div></div></div><script>/* eslint-env browser */
+</div></div><hr class="split"><div class="middle"><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 15 May 2017</p></div></div></div></div><script>/* eslint-env browser */
 /* eslint quotes: [2, "single"] */
 'use strict';
 

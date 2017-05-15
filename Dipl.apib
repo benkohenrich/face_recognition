@@ -1,13 +1,13 @@
 FORMAT: A1
 HOST: https://api.diplserver.zbytocnosti.dev/api
 
-# API na rozpoznávanie ludských tvár
+# API na rozpoznávanie ľudských tvár
 
-Technická dokumentácia opisuje jednotlivé metody systému. Kazdá metoda je zaradená do skupin a má vlastny endpoint (URL)
+Technická dokumentácia opisuje jednotlivé metódy systému. Každá metóda je zaradená do skupín a má vlastný endpoint (URL)
 
 ## Autentifikácia
  - API používa basic token autorizáciu
- - Token vyprsí kazdý 12 hodín
+ - Token vyprší každý 12 hodín
  - Token MUSÍ byť poskytované v HTTP hlavičke `Authorization`
  - Token MUSÍ byť poskytnuté všetky požiadavky, ktoré vyžadujú autentifikáciu
 
@@ -16,17 +16,16 @@ Technická dokumentácia opisuje jednotlivé metody systému. Kazdá metoda je z
 Authorization: Base aGVubzpoZW5vMDA3
 ```
 
+Pri prihlásenie reťazec je kombinácia používateľského mena a hesla s jedným dvojbodkou: `username:password`.
+Reťazec je zakódovaný pomocou Base64. 
 
-Pri prihlásenie retazec je kombinácia pouzivatelskeho mena a hesla s jedným dvojbodkou: `username:password`.
-Retazec je zakodovaný pomocou Base64. 
-
-Po prihlásený na vystup dostaneme token. Poziadavky ktoré vyzaduju autentifikáciu potrbujú zakodovat token: `token:`
+Po prihlásený na vystúp dostaneme token. Požiadavky ktoré vyžadujú autentifikáciu potrebujú zakódovať token: `token:`
 
 ## Typ médii
 API používa JSON formát na požiadavky a na odpovede.
 
-## Formát dátmumu a času
-Všetky výmeni údajov a údajov týkajúcich sa času MUSÍ byť vykonaná podľa normy ISO 8601 a uložená v UTC. 
+## Formát dátumu a času
+Všetky výmeny údajov a údajov týkajúcich sa času MUSÍ byť vykonaná podľa normy ISO 8601 a uložená v UTC. 
 
 Pri návrate údajov a údajov týkajúcich sa času MUSÍ byť použité formát YYYY-MM-DDThh: mm: ssZ"
 
@@ -34,7 +33,7 @@ Pri návrate údajov a údajov týkajúcich sa času MUSÍ byť použité formá
 
 API používa na komunikáciu s používateľom HTTP stavové kódy.
 
-+ `200 OK` - Odpoveď na úspešné požidavky
++ `200 OK` - Odpoveď na úspešné požiadavky
 + `201 Created` - Odpoveď na POST, ktorá vedie k vytvoreniu.
 + `204 No Content` - Ak v odpovedi nie je obsah. Väčšinou sa používa ako odpoveď na úspešnú požiadavku DELETE.
 + `400 Bad Request` - Požiadavku server nemohol pochopiť v dôsledku nesprávnej syntaxe. Klient by namalo opakovať žiadosť bez úprav.
@@ -45,7 +44,7 @@ API používa na komunikáciu s používateľom HTTP stavové kódy.
 + `422 Unprocessable Entity` - Ak overenia vstupov je neplatná.
 + `500 Internal Server Error` - Keď API nemôže spracovať požiadavky alebo existuje iný problém v systéme.
 
-### Príklad na standardnú chybovú hláku
+### Príklad na štandardnú chybovú hlásku
 
 ```json
 {
@@ -74,7 +73,7 @@ API používa na komunikáciu s používateľom HTTP stavové kódy.
 
 ### Získaj token [GET]
 
-Funkcia slúží na vytvorenie autentifikacného tokenu ktoré potrebujeme pri dalsom volaný. Autentifikačný token je potrebné pre endpointy ktoré sú chránené s autetiofkikáciou.
+Funkcia slúží na vytvorenie autentifikačného tokenu ktoré potrebujeme pri dalšom volaný. Autentifikačný token je potrebné pre endpointy ktoré sú chránené s autentifikáciou.
 
 **Endpoint informácia**
 
@@ -89,11 +88,11 @@ Funkcia slúží na vytvorenie autentifikacného tokenu ktoré potrebujeme pri d
 
 # Group Používatelia
 
-## Používateľia [/users/]
+## Používatelia [/users/]
 
 ### Zoznam používateľov [GET]
 
-Zoznam vsetkých používatelov. Funkcia je dostupné len pre administrátora
+Zoznam všetkých používateľov. Funkcia je dostupné len pre administrátora
 
 **Endpoint informácia**
 
@@ -106,7 +105,7 @@ Zoznam vsetkých používatelov. Funkcia je dostupné len pre administrátora
 
 ### Registrácia používateľa [POST]
 
-Registrácia nového použivatela. Používatelské udaje sa ulozia do databázy. Po úspesnom registrcii používatel može sa prihlasovať
+Registrácia nového používateľa. Používateľské údaje sa uložia do databázy. Po úspešnom registrácii používateľ môže sa prihlasovať
 
 **Endpoint informácia**
 
@@ -127,13 +126,13 @@ Registrácia nového použivatela. Používatelské udaje sa ulozia do databázy
 ## Detail používateľa [/users/{user_id}/]
 
 + Parameters
-	+ user_id: `1` (number, required) - Identifikátor používatela
+	+ user_id: `1` (number, required) - Identifikátor používateľa
 
 ### Detail používateľa [GET]
 
-Získavanie údajov o používatela pomocou identifikátora. Administrtor má právo získat údaje pre kazdy pouzivatel. 
+Získavanie údajov o používateľa pomocou identifikátora. Administrátor má právo získať údaje pre každý používateľ. 
 
-Bežný používatel može vytiahnút vlastné udaje len pomocou vlastného identifikátora.
+Bežný používateľ môže vytiahnuť vlastné údaje len pomocou vlastného identifikátora.
   
 | Vlastnosť               |     |
 |-------------------------|-----|
@@ -145,9 +144,9 @@ Bežný používatel može vytiahnút vlastné udaje len pomocou vlastného iden
 
 ### Zmena údajov používateľa [PUT]
 
-Kazdý používatel pomocou vlastného identifikátora má prvo zmenit vlasné údaje.
+Každý používateľ pomocou vlastného identifikátora má prvo zmeniť vlastné údaje.
 
-Administ´tor má moznost zmenit udaje kazdemu používatelovi v systéme.
+Administrátor má možnosť zmeniť údaje každému používateľovi v systéme.
 
 **Endpoint informácia**
 
@@ -168,7 +167,7 @@ Administ´tor má moznost zmenit udaje kazdemu používatelovi v systéme.
 
 ### Vlastný profil [GET]
 
-Endpioint sluzi na získanie vlasných používatelských udajov. Táto metoda nepotrebuje identifiktor používatela. Pomocou hlavicky autorizacie vytiahne údaje. 
+Endpioint slúži na získanie vlastných používateľských údajov. Táto metóda nepotrebuje identifikátor používateľa. Pomocou hlavičky autorizácie vytiahne údaje. 
 
 **Endpoint informácia**
 
@@ -184,7 +183,7 @@ Endpioint sluzi na získanie vlasných používatelských udajov. Táto metoda n
 
 ### Uložiť obrazok pre používateľa [POST]
 
-Použivatel po regisrtcii musi poslat minimalne 10 fotiek aby bol rozpoznávací system  úspesný. Tto funkcia slúzˇí na lozenie obrazka do datab´zy.
+Používateľ po registrácii musí poslať minimálne 10 fotiek aby bol rozpoznávací systém úspešný. Endpoint slúží na lozenie obrázka do databázy.
 
 **Endpoint informácia**
 
@@ -194,20 +193,20 @@ Použivatel po regisrtcii musi poslat minimalne 10 fotiek aby bol rozpoznávací
 
 + Request (application/json)
     + Attributes (FaceTypes, required)
-        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, required) - Obrazok v base64
+        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, required) - Obrázok v base64
 
 + Response 201 (application/json)
     + Attributes
-        + face_image: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútná URL-ka ku obrazku
+        + face_image: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna URL-ka ku obrázku
 
 
 ## Používateľské procesy [/users/logs/]
 
-### Zoznam vlastných processov [GET]
+### Zoznam vlastných procesov [GET]
 
-Kazdy používatel ktorý používa system rozpoznvania m¯ulozenú kazdy poziadavku v databze. Tito zznami obsahujú vstupné a výstupné dta. 
+Každý používateľ ktorý používa systém rozpoznania má uloženú každú požiadavku v databáze. Tieto známi obsahujú vstupné a výstupné dáta. 
 
-Pomocou tychto udajov m moznost prezerat nastavenia a výsledky rozpoznvania.
+Pomocou týchto údajov má možnosť prezerať nastavenia a výsledky rozpoznania.
 
 **Endpoint informácia**
 
@@ -240,14 +239,14 @@ Detailné údaje jednotlivých procesov
 
 ## Obrázky [/images/{image_id}]
 
-Zobrazit obrázok pomocou URL. 
+Zobraziť obrázok pomocou URL. 
 
 + Parameters
-    + image_id: 1 (number, required) - Identifikátor obrazku
+    + image_id: 1 (number, required) - Identifikátor obrázku
 
 ### Zobraziť obrázok [GET]
 
-Endpoint na zobrazenie obrazkov. Táto metoda neprtrebuje autorizáciu aby mali vsetky pouzviatelia dostepné obrazky
+Endpoint na zobrazenie obrázkov. Táto metóda nepotrebuje autorizáciu aby mali všetky používatelia dostupné obrázky
 
 | Vlastnosť               |     |
 |-------------------------|-----|
@@ -257,9 +256,9 @@ Endpoint na zobrazenie obrazkov. Táto metoda neprtrebuje autorizáciu aby mali 
 
 ### Vymazať obrázok [DELETE]
 
-kazdy používatel moze vymazat vlastné obrazky. 
+Každý používateľ má právo vymazať vlastné obrázky. 
 
-Administrator má pravo vymazat obrazky inych pouzivatelov
+Administrátor má pravo vymazať obrázky iných používateľov
 
 | Vlastnosť               |     |
 |-------------------------|-----|
@@ -273,7 +272,7 @@ Administrator má pravo vymazat obrazky inych pouzivatelov
 
 ### Vytvorenie histogramu pomocou LBP [POST]
 
-Táto metoda vygeneruje histogram z poslaneho obrazka. 
+Metoda vygeneruje z poslaného obrázka histogram pomocou LBP.
 
 | Vlastnosť               |     |
 |-------------------------|-----|
@@ -281,13 +280,13 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 
 + Request (application/json)
     + Attributes (FaceTypes, required)
-        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, required) - Obrazok v base64
+        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, required) - Obrázok v base64
         + recognition_settings: (LbpRecognitionSettings, required)
 
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Cas behu
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky
         + process:
             + extraction: (LbpExtraction, optional)
             + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) - UUID procesu
@@ -298,6 +297,8 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 
 ### LBP histogram [POST]
 
+Metoda na rozpoznávanie. Pomocou LBP vy-extrahujeme dáta (histogramy) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze. 
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.
 
 | Vlastnosť               |     |
 |-------------------------|-----|
@@ -305,15 +306,15 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 
 + Request (application/json)
     + Attributes (FaceTypes, required)
-        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Obrazok v base64
-        + histogram: `[ 0.5 0.5 0.8 0.9]` (string, optional) - Histogram vygenerované na klientskej casti.
+        + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, optional) - Obrázok v base64
+        + histogram: `[ 0.5 0.5 0.8 0.9]` (string, optional) - Histogram vygenerované na klientskej časti.
         + extraction_settings: (LbpExtractionSettings, required)
         + recognition_settings: (LbpRecognitionSettings, required)
 
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Cas behu 
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky
         + process:
             + extraction: (LbpExtraction, optional)
             + recognition: (LbpRecognition, optional)
@@ -324,9 +325,12 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 
 ### PCA eigenfaces [POST]
 
-|                         |     |
+Metoda na rozpoznávanie. Pomocou PCA vy-extrahujeme dáta (eigenvektory) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze. 
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.
+
+| Vlastnosť               |     |
 |-------------------------|-----|
-| Requires authentication | Yes |
+| Vyžaduje autentifikáciu | Áno |
 
 + Request (application/json)
     + Attributes (FaceTypes, required)
@@ -337,18 +341,21 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Cas behu
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky
         + process:
             + recognition: (PcaRecognition, optional)
-            + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required)
+            + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) - UUID procesu
 
 ## LDA fisherfaces [/api/fisher/]
 
+Metoda na rozpoznávanie. Pomocou LDA vy-extrahujeme dáta (fishervektory) z obrázka podla nastavenia. Klasifikačný algoritmus porovná s ostatnými obrázkami v databáze. 
+Na výsledok dostaneme rozpoznaný obrázok a pravdepodobnosť totožnosti.
+
 ### LDA fisherfaces [POST]
 
-|                         |     |
+| Vlastnosť               |     |
 |-------------------------|-----|
-| Requires authentication | Yes |
+| Vyžaduje autentifikáciu | Áno |
 
 + Request (application/json)
     + Attributes (FaceTypes, required)
@@ -359,17 +366,17 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Cas behu
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky
         + process:
             + recognition: (LdaRecognition, optional)
-            + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required)
+            + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) UUID procesu
             
 # Data Structures
 
 ## User (object)
-+ id: `1` (number, required) - Identidikátor
++ id: `1` (number, required) - Identifikátor používateľa
 + name: `Henrich Benko`, (string, required) - Meno používateľa
-+ username: `benkohenrich@gmail.com` (string, required) - Používatelské meno
++ username: `benkohenrich@gmail.com` (string, required) - Používateľské meno
 + main_photo: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka používateľa
 
 ## Image (object)
@@ -384,11 +391,15 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 + created_at: `2016-08-01 12:00` (string, required) - Dátum vytvorenia
 
 ## ProcessDetail (object)
-+ algorithm_type_code: `eigenfaces` (string, required)
-+ code: `recognition` (string, required)
-+ errors: (array, optional)
-+ inputs: (array, optional)
-+ responses: (array, optional)
++ algorithm_type_code: `eigenfaces` (string, required) - Kód algoritmu. Systém automatický nastaví podla endpointu.
++ code: `recognition` (enum[string], required) - Typ procesu ktorý systém vykonal
+    + Default: `extraction`
+    + Members
+        + `recognition`
+        + `extraction`
++ errors: (array, optional) - Pole obsahuje chyby počas požiadavky
++ inputs: (array, optional) - Pole obsahuje všetky poslané vstupy
++ responses: (array, optional) - pole obsahuje odpoveď na požiadavku
 
 ## LbpExtraction
 + images: (ExtractionImage, optional)
@@ -406,13 +417,13 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
     + (LbpRecognitionSettings, required)
 	+ predict_user: (PredictUser, required)
     + recognize_histogram: `[0.0449, 0.0332, 0.0233, 0.018, 0.0174, 0.0184, 0.0186, 0.018, 0.0216, 0.0209, 0.0298, 0.0417, 0.0309, 0.025, 0.0179, 0.0148, 0.0054, 0.0061, 0.0029, 0.0027, 0.004, 0.0068, 0.0154, 0.0287, 0.0196, 0.514]` (string, required) - Vygenerovaný histogram
-    + similarity_percentage: 99.99 (number, required) - 
-    + total_compared_histograms: 254 (number, required) - 
+    + similarity_percentage: 99.99 (number, required) - Vypočítaný pravdepodobnosť totožnosti
+    + total_compared_histograms: 254 (number, required) - Počet porovnaných histogramov 
 
 ## LbpExtractionSettings
-+ radius: 8 (number, required) - Atributa radius na nastavenie LBP modelu
-+ points: 24 (number, requeired) - Atributa points na nastavenie LBP modelu
-+ method: `uniform` (enum[string], required) - Atributa method na nastavenie LBP modelu
++ radius: 8 (number, required) - Atribút rádius na nastavenie LBP modelu
++ points: 24 (number, requeired) - Atribút počet bodov v okruhu na nastavenie LBP modelu
++ method: `uniform` (enum[string], required) - Atribút metód na nastavenie LBP modelu
     + Default: `default`
     + Members
         + `default`
@@ -421,7 +432,7 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
         + `nri_uniform`
         
 ## LbpRecognitionSettings
-+ algorithm:`correlation` (enum[string], required) - algorithm
++ algorithm:`correlation` (enum[string], required) - Klasifikačný algoritmus
     + Default: `svm`
     + Members
         + `svm`
@@ -436,14 +447,14 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 	    + `braycurtis`
 
 ## ExtractionImage
-+ full: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) -
-+ face: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) -
-+ face_grey: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) -
-+ face_equalized: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) -
-+ histogram_graph: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) -
++ full: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta ku obrázku ktorý bol poslaný bez výrezu tvári.
++ face: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta ku obrázku ktorý bol poslaný s výrezom tvári alebo systém detegoval a vyrezal tvár.
++ face_grey: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta ku obrázka ktorý prevedený do grayscale.
++ face_equalized: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta ku obrázka ktorý prehodený do histogramovu ekvalizáciu.
++ histogram_graph: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta ku vygenerovaný graf z histogramu
 ## RecognitionImage
-+ compared_image:`http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) -
-+ predict_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) -
++ compared_image:`http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta ku obrázku ktorý bol poslaný na rozpoznávanie
++ predict_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta ku rozpoznanú obrázku
       
 ## PcaRecognition
 + images: (RecognitionImage, optional)
@@ -454,14 +465,14 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
     + (PcaRecognitionSettings, required)
 	+ predict_user: (PredictUser, required)
     + recognize_eigenfaces: `[0.0449, 0.0332, 0.0233, 0.018, 0.0174, 0.0184, 0.0186, 0.018, 0.0216, 0.0209, 0.0298, 0.0417, 0.0309, 0.025, 0.0179, 0.0148, 0.0054, 0.0061, 0.0029, 0.0027, 0.004, 0.0068, 0.0154, 0.0287, 0.0196, 0.514]` (string, required) - Vygenerovaný histogram
-    + similarity_percentage: 99.99 (number, required) - 
-    + total_compared_eigenfaces: 254 (number, required) - 
-    + distance `0.6242404956290856` (string, optional) - 
+    + similarity_percentage: 99.99 (number, required) - Vypočítaný pravdepodobnost totožnosti
+    + total_compared_eigenfaces: 254 (number, required) - Počet porovnaných eigenvektorov
+    + distance `0.6242404956290856` (string, optional) - Vypočítaný vzdialenosť (minimálny).
 
 ## PcaExtractionSettings
-+ number_components: 200 (number, required) - 
-+ whiten: true (boolean, required) - 
-+ method: `randomized` (enum[string], required) - 
++ number_components: 200 (number, required) - Počet komponentov, atribút pre PCA model
++ whiten: true (boolean, required) - Atributa pre PCA model.
++ method: `randomized` (enum[string], required) - Metoda SVC pre trénovanie PCA modelu. 
     + Default: `randomized
     + Members
         + `randomized`
@@ -469,7 +480,7 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
         + `full`
         
 ## PcaRecognitionSettings
-+ algorithm:`euclidean` (enum[string], required) - algorithm
++ algorithm:`euclidean` (enum[string], required) - Klasifikačný algoritmus
     + Default: `svm`
     + Members
         + `svm`
@@ -488,16 +499,16 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
     + (PcaRecognitionSettings, required)
 	+ predict_user: (PredictUser, required)
     + recognize_eigenfaces: `[0.0449, 0.0332, 0.0233, 0.018, 0.0174, 0.0184, 0.0186, 0.018, 0.0216, 0.0209, 0.0298, 0.0417, 0.0309, 0.025, 0.0179, 0.0148, 0.0054, 0.0061, 0.0029, 0.0027, 0.004, 0.0068, 0.0154, 0.0287, 0.0196, 0.514]` (string, required) - Vygenerovaný histogram
-    + similarity_percentage: 99.99 (number, required) - 
-    + total_compared_eigenfaces: 254 (number, required) - 
-    + distance `0.6242404956290856` (string, optional) - 
+    + similarity_percentage: 99.99 (number, required) - Vypočítaný pravdepodobnosť totožnosti.
+    + total_compared_fisherfaces: 254 (number, required) - Počet porovnaných fishervektorov.
+    + distance `0.6242404956290856` (string, optional) - Vypočítaný vzdialenosť (minimalný).
 
 ## LdaExtractionSettings
-+ number_components: 200 (number, required) - 
-+ tolerance: 0.01 (number, required) - 
++ number_components: 200 (number, required) - Počet komponentov, atribút pre LDA model
++ tolerance: 0.01 (number, required) - Tolerancia chybovosti.
   
 ## LdaRecognitionSettings
-+ algorithm:`euclidean` (enum[string], required) - algorithm
++ algorithm:`euclidean` (enum[string], required) - Klasifikačný algoritmus
     + Default: `svm`
     + Members
         + `svm`
@@ -510,13 +521,13 @@ Táto metoda vygeneruje histogram z poslaneho obrazka.
 
 
 ## PredictUser
-+ id: 4 (number, required) - 
-+ email: `terminator` (string, required) -
-+ name: `Arnold Schwarzenegger` (string, optional) - 
-+ main_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) -   
++ id: 4 (number, required) - Identifikátor rozpoznaného používateľa
++ email: `terminator` (string, required) - Email rozpoznaného používateľa
++ name: `Arnold Schwarzenegger` (string, optional) - Meno rozpoznaného používateľa
++ main_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka rozpoznaného používateľa   
 
 ## FaceTypes
-+ face_type: `full` (enum[string], required) - Typ obrazku
++ face_type: `full` (enum[string], required) - Typ poslaného obrázku
     + Default: `full`
     + Members
         + `full`

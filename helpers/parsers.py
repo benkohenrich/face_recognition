@@ -1,4 +1,4 @@
-from flask import json, current_app, url_for
+from flask import json, current_app, url_for, abort
 
 
 class Test(object):
@@ -62,6 +62,10 @@ class InputParser(object):
 				errors.add_error('face_type', 'generals.face_type.required')
 
 			if data.get('face', None) is not None:
+				if "data:image/" in data.get('face'):
+					ErrorParser().add_error('face', 'Face has bad format!')
+					abort(422)
+					
 				self.face = data.get('face')
 			elif data.get('histogram', None) is not None:
 				self.histogram = data.get('histogram')

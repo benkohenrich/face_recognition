@@ -1,15 +1,16 @@
 import os
 import base64
 import PIL
+import binascii
 import cv2
 import numpy as np
 import time
 
-from flask import current_app, g
+from flask import current_app, g, abort
 from PIL import Image
 
 from helpers.detectionhelper import DetectionHelper
-from helpers.parsers import ResponseParser, InputParser
+from helpers.parsers import ResponseParser, InputParser, ErrorParser
 from helpers.processhelper import Process
 
 from models.image import Image as ModelImage
@@ -28,7 +29,11 @@ class ImageHelper(object):
 		for crop in ImageHelper.crop_string:
 			img_string = img_string.replace(crop, "")
 
-		imgdata = base64.b64decode(img_string)
+		try:
+			imgdata = base64.b64decode(img_string)
+		except binascii.Error:
+			ErrorParser().add_error('face', 'Face has bad format!')
+			abort(422)
 
 		path = current_app.config['TEMP_PATH'] + str(time.time()) + filename
 

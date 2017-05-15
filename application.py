@@ -136,11 +136,11 @@ def create_app():
 		Process().is_new = False
 
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(), 400
+			return ResponseHelper.create_response(400, "Validate error"), 400
 
 		Stats.statistics()
 
-		return ResponseHelper.create_response(message), 200
+		return ResponseHelper.create_response(200, message), 200
 
 	# Authorization Routers
 	@app.route('/api/token/', methods=['GET'])
