@@ -1,3 +1,6 @@
+import base64
+
+import binascii
 from flask import json, current_app, url_for, abort
 
 
@@ -57,15 +60,18 @@ class InputParser(object):
 				if data.get('face_type', None) in self.allowed_face_types:
 					self.face_type = data.get('face_type', None)
 				else:
-					errors.add_error('face_type', 'generals.face_type.not_allowed' + data.get('face_type', None))
+					errors.add_error('face_type', 'Face type is not_allowed: ' + data.get('face_type', None))
 			else:
 				errors.add_error('face_type', 'generals.face_type.required')
 
-			if data.get('face', None) is not None:
-				if "data:image/" in data.get('face'):
+			if data.get('face', None) is not None and data.get('face', None) is not '':
+
+				try:
+					imgdata = base64.b64decode(data.get('face', None))
+				except binascii.Error:
 					ErrorParser().add_error('face', 'Face has bad format!')
 					abort(422)
-					
+
 				self.face = data.get('face')
 			elif data.get('histogram', None) is not None:
 				self.histogram = data.get('histogram')
