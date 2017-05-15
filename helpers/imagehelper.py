@@ -30,7 +30,7 @@ class ImageHelper(object):
 			img_string = img_string.replace(crop, "")
 
 		imgdata = base64.b64decode(img_string)
-	
+
 		path = current_app.config['TEMP_PATH'] + str(time.time()) + filename
 
 		with open(path, 'wb') as f:

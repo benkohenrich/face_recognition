@@ -12,6 +12,7 @@ from helpers.processhelper import Process
 from helpers.response import ResponseHelper
 from helpers.utilshelper import Utils
 from models.base import db
+from models.histogram import Histogram
 from models.image import Image
 from models.user import User
 from resources.eigenfaces import Eigenfaces
@@ -222,6 +223,22 @@ def create_app():
 				'message': "User not found",
 			}), 404
 
+	@app.route("/api/users/me/", methods=['GET'])
+	@auth.login_required
+	def get_user():
+		Utils.reset_singletons()
+
+		# Get user detail
+		result = Users.me()
+
+		if result:
+			return jsonify(result), 200
+		else:
+			return jsonify({
+				'code': 404,
+				'message': "User not found",
+			}), 404
+
 	@app.route("/api/users/<user_id>/", methods=['GET'])
 	@auth.login_required
 	def get_user_by_id(user_id):
@@ -243,21 +260,6 @@ def create_app():
 				'message': "User not found",
 			}), 404
 
-	@app.route("/api/users/me/", methods=['GET'])
-	@auth.login_required
-	def get_user():
-		Utils.reset_singletons()
-
-		# Get user detail
-		result = Users.me()
-
-		if result:
-			return jsonify(result), 200
-		else:
-			return jsonify({
-				'code': 404,
-				'message': "User not found",
-			}), 404
 
 	@app.route("/api/users/logs/", methods=['GET'])
 	@auth.login_required
@@ -323,6 +325,9 @@ def create_app():
 			}), 404
 
 		parent_id = image.parent_id
+		# Delete histograms
+		Histogram.remove_by_image(image_id)
+		Histogram.remove_by_image(parent_id)
 		# Delete image
 		Image.remove(image_id)
 		# Delete image by parent_id

@@ -28,3 +28,8 @@ class Histogram(Base):
 			.filter(Histogram.method == method).first()
 
 		return result
+
+	@staticmethod
+	def remove_by_image(image_id):
+		Histogram.query.filter(Histogram.image_id == image_id).delete()
+		db.session.commit()
