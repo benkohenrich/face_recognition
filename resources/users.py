@@ -59,11 +59,7 @@ class Users(Resource):
 	@staticmethod
 	def save_face_image():
 
-		try:
-			image, parent_id = ImageHelper.prepare_face_new(InputParser().face, InputParser().face_type)
-		except binascii.Error:
-			ErrorParser().add_error('face', 'Face has bad format!')
-			abort(422)
+		image, parent_id = ImageHelper.prepare_face_new(InputParser().face, InputParser().face_type)
 
 		try:
 			image_id = ImageHelper.save_image(image, 'face', g.user.id, parent_id)

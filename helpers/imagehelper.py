@@ -29,12 +29,8 @@ class ImageHelper(object):
 		for crop in ImageHelper.crop_string:
 			img_string = img_string.replace(crop, "")
 
-		try:
-			imgdata = base64.b64decode(img_string)
-		except binascii.Error:
-			ErrorParser().add_error('face', 'Face has bad format!')
-			abort(422)
-
+		imgdata = base64.b64decode(img_string)
+	
 		path = current_app.config['TEMP_PATH'] + str(time.time()) + filename
 
 		with open(path, 'wb') as f:

@@ -1,6 +1,8 @@
 import base64
 
 import binascii
+import traceback
+
 from flask import json, current_app, url_for, abort
 
 
@@ -34,6 +36,13 @@ class InputParser(object):
 
 	is_recognize = False
 
+	crop_string = {
+		'data:image/png;base64,',
+		'data:image/jpeg;base64,',
+		'data:image/jpg;base64,'
+	}
+
+
 	def __new__(self):
 		if not hasattr(self, 'instance'):
 			self.instance = super(InputParser, self).__new__(self)
@@ -65,10 +74,14 @@ class InputParser(object):
 				errors.add_error('face_type', 'generals.face_type.required')
 
 			if data.get('face', None) is not None and data.get('face', None) is not '':
+				s = data.get('face', None)
+				valid = False
+				for crop in self.crop_string:
+					if crop in s:
+						valid = True
 
-				try:
-					imgdata = base64.b64decode(data.get('face', None))
-				except binascii.Error:
+				if not valid:
+
 					ErrorParser().add_error('face', 'Face has bad format!')
 					abort(422)
 

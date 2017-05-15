@@ -36,14 +36,14 @@ class EigenfacesRecognizer:
 		self.algorithm = "none"
 		self.compared_face_id = compared_face_id
 		if whiten is None:
-			self.whiten = False
+			self.whiten = True
 		else:
 			if whiten == 'true' or whiten == 1:
 				self.whiten = True
 			elif whiten == 'false' or whiten == 0:
 				self.whiten = False
 			else:
-				self.whiten = False
+				self.whiten = True
 
 	def recognize(self):
 		argument = self.input_parser.__getattr__('algorithm')
