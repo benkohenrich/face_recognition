@@ -53,8 +53,11 @@ class Image(Base):
 
 	@staticmethod
 	def remove_by_parent(parent_id):
-		Image.query.filter(Image.parent_id == parent_id).delete()
-		db.session.commit()
+		try:
+			Image.query.filter(Image.parent_id == parent_id).delete()
+			db.session.commit()
+		except:
+			return
 
 	@staticmethod
 	def avatar_path(user_id):
