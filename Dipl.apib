@@ -259,7 +259,7 @@ Každý používateľ má právo vymazať vlastné obrázky. Administrátor má 
 
 # Group Extrakcia príznakov
 
-## LBP [/api/lbp/face/]
+## LBP [/lbp/face/]
 
 ### Vytvorenie histogramu pomocou LBP [POST]
 
@@ -284,7 +284,7 @@ Metóda vygeneruje z poslaného obrázka histogram pomocou LBP.
 
 # Group Rozpoznávanie
 
-## LBP histogram [/api/lbp/]
+## LBP histogram [/lbp/]
 
 ### LBP histogram [POST]
 
@@ -311,7 +311,7 @@ Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
             + recognition: (LbpRecognition, optional)
             + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) - UUID procesu
 
-## PCA eigenfaces [/api/eigen/]
+## PCA eigenfaces [/eigen/]
 
 ### PCA eigenfaces [POST]
 
@@ -363,7 +363,7 @@ Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
 
 # Group Štatictiky
 
-## ROC graph [/api/stats/]
+## ROC graph [/stats/]
 
 ### Vytvorenie ROC krivky [POST]
 
