@@ -206,7 +206,7 @@ def create_app():
 	def update_user(user_id):
 		Utils.reset_singletons()
 
-		if g.user.id != user_id:
+		if int(g.user.id) != int(user_id):
 			if not g.user.is_admin:
 				return jsonify({
 					'code': 405,
