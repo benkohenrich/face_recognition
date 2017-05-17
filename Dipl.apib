@@ -272,12 +272,12 @@ Metóda vygeneruje z poslaného obrázka histogram pomocou LBP.
 + Request (application/json)
     + Attributes (FaceTypes, required)
         + face: `data:image/jpeg;base64,/9j/4AAQSkZJRgAB...` (string, required) - Obrázok v Base64
-        + recognition_settings: (LbpRecognitionSettings, required)
+        + extraction_settings: (LbpExtractionSettings, required)
 
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Čas behu požiadavky
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky (sekundy)
         + process:
             + extraction: (LbpExtraction, optional)
             + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) - UUID procesu
@@ -305,7 +305,7 @@ Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Čas behu požiadavky
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky (sekundy)
         + process:
             + extraction: (LbpExtraction, optional)
             + recognition: (LbpRecognition, optional)
@@ -331,12 +331,12 @@ Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Čas behu požiadavky
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky (sekundy)
         + process:
             + recognition: (PcaRecognition, optional)
             + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) - UUID procesu
 
-## LDA fisherfaces [/api/fisher/]
+## LDA fisherfaces [/fisher/]
 
 Metóda na rozpoznávanie. Pomocou LDA sú extrahované dáta (fishervektory) z obrázka podľa nastavení. Klasifikačný algoritmus porovnáva extrahované dáta s ostatnými obrázkami v databáze.
 Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
@@ -356,7 +356,7 @@ Výsledkom procesu je rozpoznaný obrázok a pravdepodobnosť totožnosti.
 + Response (application/json)
     + Attributes
         + metadata:
-            + estimated_time: 0 (number, optional) - Čas behu požiadavky
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky (sekundy)
         + process:
             + recognition: (LdaRecognition, optional)
             + uuid: `d184dc16-7ccc-4bde-9dbc-7cec8ac0b204` (string, required) UUID procesu
@@ -412,14 +412,18 @@ Endpoint je založený na vygenerovanie ROC krivky podľa nastavenia. Nastaviť 
 
 + Response (application/json)
     + Attributes
-
+        + images: 
+            + roc: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Roc krivka
+        + metadata:
+            + estimated_time: 0 (number, optional) - Čas behu požiadavky (sekundy)
+ 
 # Data Structures
 
 ## User (object)
 + id: `1` (number, required) - Identifikátor používateľa
 + name: `Henrich Benko`, (string, required) - Meno používateľa
 + username: `benkohenrich@gmail.com` (string, required) - Používateľské meno
-+ main_photo: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka používateľa
++ main_photo: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka používateľa
 
 ## Image (object)
 + id: `1` (number, required) - Identifikátor obrázka
@@ -446,14 +450,14 @@ Endpoint je založený na vygenerovanie ROC krivky podľa nastavenia. Nastaviť 
 ## LbpExtraction
 + images: (ExtractionImage, optional)
 + metadata
-    + process_time: 0 (number, optional) - Čas behu procesu
+    + process_time: 0 (number, optional) - Čas behu procesu (sekundy)
 + parameters: (LbpExtractionSettings, required)
     + histogram: `[0.0449, 0.0332, 0.0233, 0.018, 0.0174, 0.0184, 0.0186, 0.018, 0.0216, 0.0209, 0.0298, 0.0417, 0.0309, 0.025, 0.0179, 0.0148, 0.0054, 0.0061, 0.0029, 0.0027, 0.004, 0.0068, 0.0154, 0.0287, 0.0196, 0.514]` (string, required) - Vygenerovaný histogram
 
 ## LbpRecognition
 + images: (RecognitionImage, optional)
 + metadata
-    + process_time: 0 (number, optional) - Čas behu procesu
+    + process_time: 0 (number, optional) - Čas behu procesu (sekundy)
 + parameters:
     + (LbpExtractionSettings, required)
     + (LbpRecognitionSettings, required)
@@ -489,20 +493,20 @@ Endpoint je založený na vygenerovanie ROC krivky podľa nastavenia. Nastaviť 
 	    + `braycurtis`
 
 ## ExtractionImage
-+ full: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k obrázku, ktorý bol poslaný bez výrezu tváre
-+ face: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol poslaný s výrezom tváre alebo systém detegoval a vyrezal tvár
-+ face_grey: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol prevedený do grayscale
-+ face_equalized: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol prehodený histogramovu ekvalizáciou
-+ histogram_graph: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k vygenerovanému grafu z histogramu
++ full: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k obrázku, ktorý bol poslaný bez výrezu tváre
++ face: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol poslaný s výrezom tváre alebo systém detegoval a vyrezal tvár
++ face_grey: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol prevedený do grayscale
++ face_equalized: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k obrázku, ktorý bol prehodený histogramovu ekvalizáciou
++ histogram_graph: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, required) - Absolútna cesta k vygenerovanému grafu z histogramu
 
 ## RecognitionImage
-+ compared_image:`http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k obrázku, ktorý bol poslaný na rozpoznávanie
-+ predict_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k rozpoznanému obrázku
++ compared_image:`http://diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k obrázku, ktorý bol poslaný na rozpoznávanie
++ predict_image: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Absolútna cesta k rozpoznanému obrázku
 
 ## PcaRecognition
 + images: (RecognitionImage, optional)
 + metadata
-    + process_time: 0 (number, optional) - Čas behu procesu
+    + process_time: 0 (number, optional) - Čas behu procesu (sekundy)
 + parameters:
     + (PcaExtractionSettings, required)
     + (PcaRecognitionSettings, required)
@@ -536,7 +540,7 @@ Endpoint je založený na vygenerovanie ROC krivky podľa nastavenia. Nastaviť 
 ## LdaRecognition
 + images: (RecognitionImage, optional)
 + metadata
-    + process_time: 0 (number, optional) - Čas behu procesu
+    + process_time: 0 (number, optional) - Čas behu procesu (sekundy)
 + parameters:
     + (PcaExtractionSettings, required)
     + (PcaRecognitionSettings, required)
@@ -567,7 +571,7 @@ Endpoint je založený na vygenerovanie ROC krivky podľa nastavenia. Nastaviť 
 + id: 4 (number, required) - Identifikátor rozpoznaného používateľa
 + email: `terminator` (string, required) - E-mail rozpoznaného používateľa
 + name: `Arnold Schwarzenegger` (string, optional) - Meno rozpoznaného používateľa
-+ main_image: `http://api.diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka rozpoznaného používateľa
++ main_image: `http://diplserver.zbytocnosti.sk/api/images/1/` (string, optional) - Hlavná fotka rozpoznaného používateľa
 
 ## FaceTypes
 + face_type: `full` (enum[string], required) - Typ poslaného obrázku

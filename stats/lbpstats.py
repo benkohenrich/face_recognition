@@ -17,7 +17,7 @@ from sklearn.svm import LinearSVC, SVC
 
 from helpers.imagehelper import ImageHelper
 from helpers.lbphelper import HistogramMaker
-from helpers.parsers import InputParser
+from helpers.parsers import InputParser, ResponseParser
 from models.histogram import Histogram
 from models.image import Image
 
@@ -182,120 +182,9 @@ class LBPStats:
 		# plt.savefig(filename)
 		ImageHelper.save_plot_image(plt, 'roc', g.user.id)
 
-
-
-
-
-
-		# print(prediction)
-		# # print(predicted_test_scores)
-		# yyyy = []
-		# for i, pred in enumerate(prediction):
-		# 	if pred == test_labels[i]:
-		# 		yyyy.append(1)
-		# 	else:
-		# 		yyyy.append(0)
-		# 	# roc = roc_curve(model.predict_proba(X), y)
-		# print(yyyy)
-		# fpr, tpr, thresholds = roc_curve(yyyy, predicted_test_scores[0], pos_label=1)
-		# print(tpr)
-		# print(fpr)
-		# print("NEW")
-		# for i, hist_test in enumerate(test_data):
-		# 	prediction = model.predict(hist_test.reshape(1, -1))[0]
-
-
-		# min_score = min(score)
-		# max_score = max(score)
-		# threshold = numpy.linspace(min_score, max_score, 30)
-		#
-		# roc_x_matrix = []
-		# roc_y_matrix = []
-		# for x in range(0, 10):
-		# 	train_data, train_labels, test_data, test_labels = self.prepare_data()
-		# 	roc_x = []
-		# 	roc_y = []
-		# 	for (thr_index, thr) in enumerate(threshold):
-		#
-		# 		FP = 0
-		# 		TP = 0
-		# 		FN = 0
-		# 		TN = 0
-		#
-		# 		for i, hist_test in enumerate(test_data):
-		#
-		# 			for j, hist_train in enumerate(train_data):
-		# 				distance = self.calculate_distance(hist_test, hist_train)
-		#
-		# 				if int(train_labels[j]) == int(test_labels[i]):
-		# 					if distance > thr:
-		# 						FN = FN + 1
-		# 					else:
-		# 						TP = TP + 1
-		# 				else:
-		# 					if distance < thr:
-		# 						FP = FP + 1
-		# 					else:
-		# 						TN = TN + 1
-		# 					# if distance < thr:
-		# 					# 	if int(train_labels[j]) == int(test_labels[i]):
-		# 					# 		TP = TP + 1
-		# 					# 	else:
-		# 					# 		FP = FP + 1
-		# 					# else:
-		# 					# 	if int(train_labels[j]) == int(test_labels[i]):
-		# 					# 		FN += 1
-		# 					# 	else:
-		# 					# 		TN += 1
-		#
-		# 		TPR = TP / (TP + FN)
-		# 		FPR = FP / (FP + TN)
-		# 		# print("TPR: ", TPR)
-		# 		# print("FPR: ", FPR)
-		# 		roc_x.append(FPR)
-		# 		roc_y.append(TPR)
-		# 	# print("CrossValidation: ", x, " | Threshold", thr)
-		#
-		# 	roc_auc = auc(roc_x, roc_y)
-		# 	print(x, " - ROC AUC: ", roc_auc)
-		# 	roc_x_matrix.append(roc_x)
-		# 	roc_y_matrix.append(roc_y)
-		#
 		newTPR = []
 		newFPR = []
-		# for i in range(0, 10):
-		# 	values = []
-		# 	valuesFalse = []
-		# 	for vector in TPR_m:
-		# 		values.append(vector[i])
-		# 	for vector in FPR_m:
-		# 		valuesFalse.append(vector[i])
-		#
-		# 	newTPR.append(numpy.mean(values))
-		# 	newFPR.append(numpy.mean(valuesFalse))
-		#
-		#
-		# print("TPR: ", newTPR)
-		# print("FPR: ", newFPR)
-		#
-		# roc_auc = auc(newFPR, newTPR)
-		# #
-		# # print("AUC MAX:", roc_auc_max)
-		# print("AUC NEW:", roc_auc)
-		# plt.figure()
-		# plt.plot(fpr, tpr, 'r')
-		# plt.plot(FPR_m[2], TPR_m[2], 'b')
-		# plt.plot(FPR_m[4], TPR_m[4], 'g')
-		# for n, k in enumerate(newFPR):
-		# 	plt.text(newFPR[n], newTPR[n], '+ b')
-		#
-		# plt.plot([0, 1], [0, 1], 'k--')
-		# plt.xlim([0.0, 1.0])
-		# plt.ylim([0.0, 1.05])
-		# plt.xlabel('False Positive Rate')
-		# plt.ylabel('True Positive Rate')
-		#
-		# ImageHelper.save_plot_image(plt, 'test', 10)
+
 
 	def check_distances(self):
 		reverse = False
@@ -405,12 +294,14 @@ class LBPStats:
 
 		roc_auc = auc(newFPR, newTPR)
 		print("AUC NEW:", roc_auc)
-
+		filename = 'LBP ROC curve'
 		plt.figure()
+		plt.title(filename)
 		label = "AUC = %0.2f\n" % roc_auc
-		label += "Radius = %i " % self.radius
-		label += "Points = %i " % self.points
-		label += "Method = %s " % self.method
+		label += "Radius = %i \n" % self.radius
+		label += "Points = %i \n" % self.points
+		label += "Method = %s \n" % self.method
+		label += "Algorithm = %s " % self.algorithm
 		plt.plot(newFPR, newTPR, label=label)
 		plt.legend(loc='lower right')
 		plt.plot([0, 1], [0, 1], 'k--')
@@ -419,90 +310,8 @@ class LBPStats:
 		plt.xlabel('False Positive Rate')
 		plt.ylabel('True Positive Rate')
 
-		filename = 'statistics/lbp-roc-a-' + self.algorithm + '-p-' + str(self.points) + '-r-'+ str(self.radius) + '-m-' + self.method +'.png'
-		# plt.savefig(filename)
-		ImageHelper.save_plot_image(plt, 'roc', g.user.id)
-
-	def check(self):
-
-		print("#### Start cross validating ####")
-
-		if self.algorithm in ("correlation", "intersection", "bhattacharyya"):
-			reverse = True
-		else:
-			reverse = False
-
-		true_positive_rate = []
-		false_positive_rate = []
-		TPR_m = []
-		FPR_m = []
-
-		for x in range(0, 10):
-			# True positive
-			TP = 0
-			# True negative
-			TN = 0
-			# False positive
-			FP = 0
-			# False negative
-			FN = 0
-
-			train_data, train_labels, test_data, test_labels = self.prepare_data()
-			print("Train data length: ", len(train_data))
-			print("Test data length: ", len(test_data))
-			print("#### Start computing distances ####")
-			for i, hist_test in enumerate(test_data):
-
-				distances = []
-				distances_only = []
-
-				for j, hist_train in enumerate(train_data):
-					distance = self.calculate_distance(hist_test, hist_train)
-					distances.append((distance, train_labels[j]))
-					distances_only.append(distance)
-
-				# print("PRED:",distances_only)
-
-				for di, do in enumerate(distances_only):
-					distances_only[di] = Decimal(do).quantize(Decimal('.001'))
-
-				print("User test: ", test_labels[i])
-
-				counter = Counter(distances_only)
-				tmp = sorted(counter.items(), key=itemgetter(1), reverse=False)
-				mean = float(tmp[0][0])
-
-				for z, d in enumerate(distances):
-					if reverse:
-						if d[0] >= mean:
-							if int(d[1]) == test_labels[i]:
-								TP += 1
-							else:
-								FP += 1
-						else:
-							if int(d[1]) == test_labels[i]:
-								FN += 1
-							else:
-								TN += 1
-					else:
-						if d[0] <= mean:
-							if int(d[1]) == test_labels[i]:
-								TP += 1
-							else:
-								FP += 1
-						else:
-							if int(d[1]) == test_labels[i]:
-								FN += 1
-							else:
-								TN += 1
-
-			TPR = TP / (TP + FN)
-			FPR = FP / (FP + TN)
-			true_positive_rate.append(TPR)
-			false_positive_rate.append(FPR)
-
-		print(true_positive_rate)
-		print(false_positive_rate)
+		image_id = ImageHelper.save_plot_image(plt, 'roc', g.user.id)
+		ResponseParser().add_image('roc', 'roc_graph', image_id)
 
 	def calculate_distance(self, test, train):
 

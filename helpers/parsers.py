@@ -170,6 +170,8 @@ class ResponseParser:
 	extraction_images = {}
 	recognition_images = {}
 
+	roc_image = None
+
 	def __new__(self):
 		if not hasattr(self, 'instance'):
 			self.instance = super(ResponseParser, self).__new__(self)
@@ -192,6 +194,8 @@ class ResponseParser:
 
 		if type == 'extraction':
 			self.extraction_images[code] = url
+		elif type == 'roc':
+			self.roc_image = url
 		else:
 			self.recognition_images[code] = url
 

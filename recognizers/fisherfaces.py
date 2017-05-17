@@ -1,5 +1,6 @@
 # from matplotlib.mlab import PCA
 import numpy
+import time
 from PIL import Image
 from flask import json, g
 from sklearn.grid_search import GridSearchCV
@@ -56,6 +57,9 @@ class FisherfacesRecognizer:
 		func()
 
 	def svm_recognize(self):
+
+		start_time = time.time()
+
 		model, X_pca, y, y_images, total_image = EigenfacesHelper.prepare_data_fisher(self.number_components, self.tolerance)
 
 		# Prepare Image to recognize
@@ -97,15 +101,14 @@ class FisherfacesRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',
-				'process_mem_use': ''
+				'process_time': time.time() - start_time
 			}
 		}
 
 		ResponseParser().add_process('recognition', process)
 
 	def scipy_recognize_method(self):
-
+		start_time = time.time()
 		if self.SCIPY_METHODS[self.algorithm] is None:
 			ErrorParser().add_error('algorithm', '')
 			return
@@ -152,8 +155,7 @@ class FisherfacesRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',
-				'process_mem_use': ''
+				'process_time': time.time() - start_time
 			}
 		}
 

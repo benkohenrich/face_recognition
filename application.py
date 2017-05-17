@@ -1,6 +1,7 @@
 import os
 
 import flask
+import time
 from flask import Flask, send_from_directory
 from flask import abort
 from flask import g, jsonify, request
@@ -31,6 +32,8 @@ def create_app():
 	db.init_app(app)
 
 	message = []
+
+	ResponseHelper().start_time = time.time()
 
 	# Local Binary Pattern routers
 	@app.route('/api/lbp/face/', methods=['POST'])
@@ -127,6 +130,7 @@ def create_app():
 
 	# Generate System Stats Routers
 	@app.route('/api/stats/', methods=['POST'])
+	@auth.login_required
 	def stats():
 		Utils.reset_singletons()
 		# Parse and validate input values
@@ -137,11 +141,14 @@ def create_app():
 		Process().is_new = False
 
 		if not ErrorParser().is_empty():
-			return ResponseHelper.create_response(400, "Validate error"), 400
+			return ResponseHelper.create_response(422, "Validate error"), 422
 
-		Stats.statistics()
+		result = Stats.get_stats()
 
-		return ResponseHelper.create_response(200, message), 200
+		if not result:
+			return ResponseHelper.create_response(422, "Validate error"), 422
+		else:
+			return ResponseHelper.create_response(200, message), 200
 
 	# Authorization Routers
 	@app.route('/api/token/', methods=['GET'])

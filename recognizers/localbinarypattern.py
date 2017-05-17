@@ -2,6 +2,8 @@ import cv2
 
 # Flask
 import json
+
+import time
 from flask import g
 # OpenCv
 from sklearn.svm import LinearSVC, SVC
@@ -70,7 +72,7 @@ class LBPRecognizer:
 		func()
 
 	def scipy_recognize_method(self):
-
+		start_time = time.time()
 		if self.SCIPY_METHODS[self.algorithm] is None:
 			ErrorParser().add_error('algorithm', '')
 			return
@@ -117,8 +119,7 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '', #TODO
-				'process_mem_use': '' #TODO
+				'process_time': time.time() - start_time
 			}
 		}
 
@@ -126,6 +127,7 @@ class LBPRecognizer:
 		ResponseParser().add_image('recognition', 'predict_image', image_ID)
 
 	def recognize_method(self):
+		start_time = time.time()
 		reverse = False
 		# if we are using the correlation or intersection
 		# method, then sort the results in reverse order
@@ -184,8 +186,7 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '', #TODO
-				'process_mem_use': '' #TODO
+				'process_time': time.time() - start_time
 			}
 		}
 
@@ -194,6 +195,7 @@ class LBPRecognizer:
 
 	def svm_recognize(self):
 		print("Linear Support Vector Machine ")
+		start_time = time.time()
 
 		data, labels, total_image, image_id = self.separation()
 
@@ -237,8 +239,7 @@ class LBPRecognizer:
 				},
 			},
 			"metadata": {
-				'process_time': '',  # TODO
-				'process_mem_use': ''  # TODO
+				'process_time': time.time() - start_time
 			}
 		}
 

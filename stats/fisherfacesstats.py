@@ -4,23 +4,23 @@ from operator import itemgetter
 import cv2
 import numpy
 from decimal import Decimal
-from flask import json, current_app
+from flask import json, current_app, g
 import matplotlib.pyplot as plt
 
 from scipy.spatial import distance as dist
-from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import roc_curve, auc
 
 from helpers.eigenfaceshelper import EigenfacesHelper
 from helpers.imagehelper import ImageHelper
 from helpers.lbphelper import HistogramMaker
-from helpers.parsers import InputParser
+from helpers.parsers import InputParser, ResponseParser
 from helpers.recognizerhelper import RecognizeHelper
 from models.histogram import Histogram
 from models.image import Image
 
 
-class EigenfacesStats:
+class FisherfacesStats:
 	SCIPY_METHODS = {
 		"euclidean": dist.euclidean,
 		"manhattan": dist.cityblock,
@@ -29,19 +29,10 @@ class EigenfacesStats:
 		"braycurtis": dist.braycurtis,
 	}
 
-	def __init__(self, number_components=24, method='randomized', algorithm='chi-squared', whiten = True):
-		self.method = method
+	def __init__(self, number_components=100, tolerance=0.0001, algorithm = "euclidean"):
+		self.tolerance = float(tolerance)
 		self.number_components = number_components
 		self.algorithm = algorithm
-		if whiten is None:
-			self.whiten = False
-		else:
-			if whiten == 'true' or whiten == 1:
-				self.whiten = True
-			elif whiten == 'false' or whiten == 0:
-				self.whiten = False
-			else:
-				self.whiten = False
 
 	def check_distances(self):
 
@@ -132,11 +123,13 @@ class EigenfacesStats:
 
 		roc_auc = auc(newFPR, newTPR)
 		print("AUC NEW:", roc_auc)
+		filename = 'LDA ROC curve: tolerance: ' + str(self.tolerance)
 
 		plt.figure()
 		label = "AUC = %0.2f\n" % roc_auc
 		label += "Algorithm = %s " % self.algorithm
 		plt.plot(newFPR, newTPR, label=label)
+		plt.title(filename)
 		plt.legend(loc='lower right')
 		plt.plot([0, 1], [0, 1], 'k--')
 		plt.xlim([0.0, 1.0])
@@ -144,235 +137,10 @@ class EigenfacesStats:
 		plt.xlabel('False Positive Rate')
 		plt.ylabel('True Positive Rate')
 
-		filename = 'statistics/pca-roc-a-' + self.algorithm + '-method-' + self.method + '.png'
-		plt.savefig(filename)
-		# ImageHelper.save_plot_image(plt, 'roc', g.user.id)
-	def check3(self):
+		# plt.savefig(filename)
+		image_id = ImageHelper.save_plot_image(plt, 'roc', g.user.id)
+		ResponseParser().add_image('roc', 'roc_graph', image_id)
 
-		true_positive_rate = []
-		false_positive_rate = []
-
-		TPR_m = []
-		FPR_m = []
-
-		roc_auc_max = 0
-
-		for x in range(0, 10):
-			train_data, train_labels, test_data, test_labels = self.prepare_data()
-
-			# print(train_data)
-			# print(test_data)
-			train_data, test_data = RecognizeHelper.normalize_data(train_data, test_data)
-
-			for i, hist_test in enumerate(test_data):
-				distances = []
-				score = []
-				y = []
-
-				for j, hist_train in enumerate(train_data):
-					distance = self.calculate_distance(hist_test, hist_train)
-					distances.append((distance, train_labels[j]))
-					score.append(distance)
-					y.append(train_labels[j])
-
-				roc_x = []
-				roc_y = []
-				min_score = min(score)
-				max_score = max(score)
-				thr = numpy.linspace(min_score, max_score, 1000)
-				FP = 0
-				TP = 0
-				FN = 0
-				TN = 0
-				print(train_labels)
-				# N = 8
-				# P = len(y) - N
-
-				for (h, T) in enumerate(thr):
-					for k in range(0, len(score)):
-						if (score[k] > T):
-							if (y[k] == test_labels[i]):
-								TP = TP + 1
-							else:
-								FP = FP + 1
-						else:
-							if int(y[k]) == test_labels[i]:
-								FN += 1
-							else:
-								TN += 1
-
-					TPR = TP / (TP + FN)
-					FPR = FP / (FP + TN)
-					roc_x.append(FPR)
-					roc_y.append(TPR)
-					FP = 0
-					TP = 0
-					FN = 0
-					TN = 0
-
-				roc_auc = auc(roc_x, roc_y)
-				if roc_auc > 0.50:
-					FPR_m.append(roc_x)
-					TPR_m.append(roc_y)
-
-				print("AUC:", roc_auc)
-
-				if roc_auc > roc_auc_max:
-					roc_auc_max = roc_auc
-					true_positive_rate = roc_y
-					false_positive_rate = roc_x
-
-		newTPR = []
-		newFPR = []
-		for i in range(0, 1000):
-			values = []
-			valuesFalse = []
-			for vector in TPR_m:
-				values.append(vector[i])
-			for vector in FPR_m:
-				valuesFalse.append(vector[i])
-
-			newTPR.append(numpy.mean(values))
-			newFPR.append(numpy.mean(valuesFalse))
-
-		# newFPR.append(0.0)
-		# newTPR.append(0.0)
-		# newFPR.append(1.0)
-		# newTPR.append(1.0)
-		newTPR = sorted(newTPR, key=float)
-		newFPR = sorted(newFPR, key=float)
-		print("TPR NEW:", newTPR)
-		print("FPR NEW:", newFPR)
-		roc_auc = auc(newFPR, newTPR)
-
-		print("AUC New:", roc_auc)
-		# print("TPR:", true_positive_rate)
-		# print("FPR", false_positive_rate)
-		print("AUC MAX", roc_auc_max)
-		# return
-		plt.figure()
-		plt.plot(false_positive_rate, true_positive_rate)
-		plt.plot([0, 1], [0, 1], 'k--')
-		plt.xlim([0.0, 1.0])
-		plt.ylim([0.0, 1.05])
-		plt.xlabel('False Positive Rate')
-		plt.ylabel('True Positive Rate')
-
-		ImageHelper.save_plot_image(plt, 'test', 10)
-
-	def check2(self):
-
-		true_positive_rate = []
-		false_positive_rate = []
-
-		TPR_m = []
-		FPR_m = []
-
-		roc_auc_max = 0
-
-		for x in range(0, 10):
-			train_data, train_labels, test_data, test_labels = self.prepare_data()
-
-			# print(train_data)
-			# print(test_data)
-			train_data, test_data = RecognizeHelper.normalize_data(train_data, test_data)
-
-			for i, hist_test in enumerate(test_data):
-				distances = []
-				score = []
-				y = []
-
-				for j, hist_train in enumerate(train_data):
-					distance = self.calculate_distance(hist_test, hist_train)
-					distances.append((distance, train_labels[j]))
-					score.append(distance)
-					y.append(train_labels[j])
-
-				roc_x = []
-				roc_y = []
-				min_score = min(score)
-				max_score = max(score)
-				thr = numpy.linspace(min_score, max_score, 100)
-				FP = 0
-				TP = 0
-				FN = 0
-				TN = 0
-				print(train_labels)
-				# N = 8
-				# P = len(y) - N
-
-				for (k, T) in enumerate(thr):
-					for k in range(0, len(score)):
-						if (score[k] > T):
-							if (y[k] == test_labels[i]):
-								TP = TP + 1
-							else:
-								FP = FP + 1
-						else:
-							if int(y[k]) == test_labels[i]:
-								FN += 1
-							else:
-								TN += 1
-
-					TPR = TP / (TP + FN)
-					FPR = FP / (FP + TN)
-					roc_x.append(FPR)
-					roc_y.append(TPR)
-					FP = 0
-					TP = 0
-					FN = 0
-					TN = 0
-
-				roc_auc = auc(roc_x, roc_y)
-				if roc_auc > 0.50:
-					FPR_m.append(roc_x)
-					TPR_m.append(roc_y)
-
-				print("AUC:", roc_auc)
-
-				if roc_auc > roc_auc_max:
-					roc_auc_max = roc_auc
-					true_positive_rate = roc_y
-					false_positive_rate = roc_x
-				# print(roc_y)
-
-		newTPR = []
-		newFPR = []
-		for i in range(0, 100):
-			values = []
-			valuesFalse = []
-			for vector in TPR_m:
-				values.append(vector[i])
-			for vector in FPR_m:
-				valuesFalse.append(vector[i])
-
-			newTPR.append(numpy.mean(values))
-			newFPR.append(numpy.mean(valuesFalse))
-
-		newFPR.append(0.0)
-		newTPR.append(0.0)
-		newFPR.append(1.0)
-		newTPR.append(1.0)
-		newTPR = sorted(newTPR, key=float)
-		newFPR = sorted(newFPR, key=float)
-		print("TPR NEW:", newTPR)
-		print("FPR NEW:", newFPR)
-		roc_auc = auc(newFPR, newTPR)
-
-		print("AUC New:", roc_auc)
-		# print("TPR:", true_positive_rate)
-		# print("FPR", false_positive_rate)
-		print("AUC MAX", roc_auc_max)
-		# return
-		plt.figure()
-		plt.plot(newFPR, newTPR)
-		plt.plot([0, 1], [0, 1], 'k--')
-		plt.xlim([0.0, 1.0])
-		plt.ylim([0.0, 1.05])
-		plt.xlabel('False Positive Rate')
-		plt.ylabel('True Positive Rate')
-
-		ImageHelper.save_plot_image(plt, 'test', 10)
 
 	def prepare_data(self):
 
@@ -404,10 +172,10 @@ class EigenfacesStats:
 			c += 1
 
 		# Train data with PCA
-		print("PCA train: nc=", self.number_components, " w=", self.whiten, " svd=", self.method)
-		pca = PCA(n_components=self.number_components, whiten=self.whiten, svd_solver=self.method)
-
-		train_data = pca.fit_transform(X)
+		# print("PCA train: nc=", self.number_components, " w=", self.whiten, " svd=", self.method)
+		print("Fisherfaces LDA with tolerance ", self.tolerance)
+		lda = LinearDiscriminantAnalysis(n_components=self.number_components, tol=self.tolerance)
+		train_data = lda.fit_transform(X, train_labels)
 
 		for image in test_images:
 			testX = EigenfacesHelper.prepare_image(image.image)
@@ -419,92 +187,11 @@ class EigenfacesStats:
 			for x in testX:
 				t2.append(x)
 			t.append(t2)
-			test_data.append(pca.transform(t)[0])
+			test_data.append(lda.transform(t)[0])
 
 		train_data, test_data = RecognizeHelper.normalize_data(train_data, test_data)
 
 		return train_data, train_labels, test_data, test_labels
-
-	# def check(self):
-	#
-	# 	print("#### Start cross validating ####")
-	#
-	# 	if self.algorithm in ("correlation", "intersection", "bhattacharyya"):
-	# 		reverse = True
-	# 	else:
-	# 		reverse = False
-	#
-	# 	true_positive_rate = []
-	# 	false_positive_rate = []
-	# 	TPR_m = []
-	# 	FPR_m = []
-	#
-	# 	for x in range(0, 10):
-	# 		# True positive
-	# 		TP = 0
-	# 		# True negative
-	# 		TN = 0
-	# 		# False positive
-	# 		FP = 0
-	# 		# False negative
-	# 		FN = 0
-	#
-	# 		train_data, train_labels, test_data, test_labels = self.prepare_data()
-	# 		print("Train data length: ", len(train_data))
-	# 		print("Test data length: ", len(test_data))
-	# 		print("#### Start computing distances ####")
-	# 		for i, hist_test in enumerate(test_data):
-	#
-	# 			distances = []
-	# 			distances_only = []
-	#
-	# 			for j, hist_train in enumerate(train_data):
-	# 				distance = self.calculate_distance(hist_test, hist_train)
-	# 				distances.append((distance, train_labels[j]))
-	# 				distances_only.append(distance)
-	#
-	# 			# print("PRED:",distances_only)
-	#
-	# 			for di, do in enumerate(distances_only):
-	# 				distances_only[di] = Decimal(do).quantize(Decimal('.001'))
-	#
-	# 			print("User test: ", test_labels[i])
-	#
-	# 			counter = Counter(distances_only)
-	# 			tmp = sorted(counter.items(), key=itemgetter(1), reverse=False)
-	# 			mean = float(tmp[0][0])
-	#
-	# 			for z, d in enumerate(distances):
-	# 				if reverse:
-	# 					if d[0] >= mean:
-	# 						if int(d[1]) == test_labels[i]:
-	# 							TP += 1
-	# 						else:
-	# 							FP += 1
-	# 					else:
-	# 						if int(d[1]) == test_labels[i]:
-	# 							FN += 1
-	# 						else:
-	# 							TN += 1
-	# 				else:
-	# 					if d[0] <= mean:
-	# 						if int(d[1]) == test_labels[i]:
-	# 							TP += 1
-	# 						else:
-	# 							FP += 1
-	# 					else:
-	# 						if int(d[1]) == test_labels[i]:
-	# 							FN += 1
-	# 						else:
-	# 							TN += 1
-	#
-	# 		TPR = TP / (TP + FN)
-	# 		FPR = FP / (FP + TN)
-	# 		true_positive_rate.append(TPR)
-	# 		false_positive_rate.append(FPR)
-	#
-	# 	print(true_positive_rate)
-	# 	print(false_positive_rate)
 
 	def calculate_distance(self, test, train):
 
